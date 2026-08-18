@@ -22,7 +22,7 @@
     { "n": null, "date": "10/2",  "topic": "臨時休業（スポーツフェスティバル）" },
     { "n": 4,    "date": "10/9",  "topic": "<a href=\"#w4\">p5.jsでアルゴリズム（１）</a>・規則性の発見と手順化", "task": "草間模様（5）" },
     { "n": null, "date": "10/16", "topic": "臨時休業（大妻祭・千代田）" },
-    { "n": 5,    "date": "10/23", "topic": "<a href=\"#w5\">p5.jsでアルゴリズム（２）</a>・再帰関数・3Dグラフィックス", "task": "3D幾何模様（5）" },
+    { "n": 5,    "date": "10/23", "topic": "<a href=\"#w5\">p5.jsでアルゴリズム（２）</a>・模様をデータで記述する", "task": "作品シリーズ（5）" },
     { "n": 6,    "date": "10/30", "topic": "<a href=\"#w6\">DOMとイベント（１）</a>・ローカルストレージ・JSONの保存・クイズ", "task": "クイズ（5）" },
     { "n": 7,    "date": "11/6",  "topic": "<a href=\"#w7\">DOMとイベント（２）</a>・状態推移モデル・診断チャート", "task": "診断チャート（5）" },
     { "n": 8,    "date": "11/13", "topic": "<a href=\"#w8\">サーバとの通信</a>・非同期処理・Google Books API", "task": "Google Books（5）" },
@@ -599,7 +599,7 @@
       <li><a href="#w2"><span class="n">02</span>条件分岐、日付処理</a></li>
       <li><a href="#w3"><span class="n">03</span>配列、オブジェクト、JSON、DOM</a></li>
       <li><a href="#w4"><span class="n">04</span>p5.jsでアルゴリズム（１）</a></li>
-      <li><a href="#w5"><span class="n">05</span>再帰関数と3D</a></li>
+      <li><a href="#w5"><span class="n">05</span>模様をデータで記述する</a></li>
       <li><a href="#w6"><span class="n">06</span>ローカルストレージとクイズ</a></li>
       <li><a href="#w7"><span class="n">07</span>状態推移モデル</a></li>
       <li><a href="#w8"><span class="n">08</span>サーバとの通信</a></li>
@@ -1549,213 +1549,329 @@ function draw() {
   <section class="week" id="w5">
     <div class="week-head">
       <span class="week-num">第５回</span>
-      <h2>p5.jsでアルゴリズム（２）<br>再帰関数と3Dグラフィックス</h2>
+      <h2>p5.jsでアルゴリズム（２）<br>模様をデータで記述する</h2>
     </div>
 
-    <p>前回は「規則性を手順に分解する」練習をしました。今回は、その手順が<strong>自分自身を呼び出す</strong>場合を扱います。これを<strong>再帰</strong>と呼びます。</p>
+    <p>前回は、模様の規則を見つけて<strong>手順書</strong>に書き、その手順書どおりに実装しました。今回はその続きです。手順書の中に埋まっている<strong>数値を外に取り出して、模様そのものをデータで表します</strong>。</p>
 
-    <h3>再帰関数</h3>
-    <p>まず、次の手順書を読んでください。前回と同じ形式で書いてあります。</p>
+    <p>そうすると何が起きるか。<em>コードを一行も書き換えずに、数値を変えるだけで別の作品が生まれます。</em>第３回のじゃんけんで <code>hands</code> の表を書き換えると挙動が変わったのと、まったく同じことです。</p>
+
+    <h3>手順書には数値が埋まっている</h3>
+    <p>前回書いた手順書を見返してください。たとえばこういうものだったはずです。</p>
 
     <div class="code">
-      <div class="code-bar"><span class="code-name">手順書</span></div>
-      <pre><code>1. 500×500pxのキャンバスを用意する
-2. 線の長さの初期値を10にセットする
-3. 中心座標からスタートし、右方向に指定された長さの線を引く
-4. 座標系を線の右端に移動する
-5. 座標系を90度回転する
-6. 線の長さを1.2倍して、手順3に戻る
-   ただし、線の長さがキャンバスの1/2を超えたら終了する</code></pre>
+      <div class="code-bar"><span class="code-name">前回の手順書</span></div>
+      <pre><code>1. 800×500pxのキャンバスを用意する
+2. 背景を赤（R=200, G=30, B=30）で塗る
+3. 画面を縦20×横12の格子に分ける
+4. 各格子の中心に白い円を描く
+5. ただし円の直径は、格子ごとに20〜40の範囲でランダムに決める</code></pre>
     </div>
 
-    <p>「手順3に戻る」を、関数が自分自身を呼び出すことで実現します。</p>
+    <p>太字にできる数値がいくつあるでしょうか。<strong>背景の色、格子の数、円の色、直径の範囲</strong>——これらは全部「変えられるもの」です。手順の<em>骨格</em>は変わらないまま、数値だけが作品ごとに変わります。</p>
+
+    <p>そこで、変わる部分だけを一箇所に集めます。</p>
 
     <div class="code">
-      <div class="code-bar"><span class="code-name">turtle.html</span></div>
+      <div class="code-bar"><span class="code-name">design オブジェクト</span></div>
       <pre><code>"use strict";
 
-let theta;
-let maxLength;
-
-function setup() {
-  createCanvas(500, 500);
-  background(220);
-  strokeWeight(3);
-  theta = (90 / 180) * PI;
-  maxLength = width / 2;
-  translate(width / 2, height / 2);
-  branch(10);                 <span class="cmt">// 初期値は10</span>
-}
-
-function branch(len) {
-  if (len &gt; maxLength) return;  <span class="cmt">// 終了条件（これがないと無限に続く）</span>
-  line(0, 0, len, 0);
-  translate(len, 0);
-  rotate(theta);
-  branch(len * 1.2);            <span class="cmt">// 再帰呼び出し</span>
-}</code></pre>
+const design = {
+  background: [200, 30, 30],
+  grid: { cols: 20, rows: 12 },
+  dot:  { minSize: 20, maxSize: 40, color: [255, 255, 255] }
+};</code></pre>
     </div>
 
-    <div class="note mark"><strong>再帰で最も重要なのは終了条件です。</strong><code>if (len &gt; maxLength) return;</code> を消すと、ブラウザが固まります。「どうなったら止まるか」を必ず先に決めてください。</div>
+    <p>これが今日の主役です。<strong>この <code>design</code> ひとつが、一枚の作品を完全に表しています。</strong></p>
 
-    <h4>パターンを作る</h4>
-    <ul>
-      <li><strong>パターンA</strong>：回転角度と拡大率を変えたもの</li>
-      <li><strong>パターンB</strong>：パターンAを元に、回転角度をさらに小さくしたもの</li>
-      <li><strong>パターンC</strong>：パターンAを元に、線の太さが変化するもの</li>
-    </ul>
-    <p>さらに色が変化するものや、<code>line()</code> ではなく <code>rect()</code>, <code>image()</code>, <code>text()</code> を使用するなど、各自で工夫してください。</p>
-
-    <h3>アニメーションと再帰</h3>
-    <p>次のコードは、<code>draw()</code> を使って再帰模様をアニメーションさせます。前のコードと違い、<strong>終了条件を繰り返し回数で指定している</strong>点に注目してください。</p>
+    <h3>design を読んで描く</h3>
+    <p>描画のコードは、<code>design</code> の中身を読むだけにします。数値を直接書きません。</p>
 
     <div class="code">
-      <div class="code-bar"><span class="code-name">box00.html（2D）</span></div>
+      <div class="code-bar"><span class="code-name">dots.html</span></div>
       <pre><code>"use strict";
 
-const maxTheta  = 5;                        <span class="cmt">// 最大回転角度</span>
-const delta     = (0.1 / 180) * Math.PI;    <span class="cmt">// 毎フレーム0.1度ずつ追加</span>
-const boxHeight = 24;
-const boxWidth  = 20;
-const boxRepeat = 25;
+const design = {
+  background: [200, 30, 30],
+  grid: { cols: 20, rows: 12 },
+  dot:  { minSize: 20, maxSize: 40, color: [255, 255, 255] }
+};
 
 function setup() {
-  createCanvas(500, 500);
-}
-
-let theta = 0;
-
-function draw() {
-  background(220);
-  theta += delta;
-  if (theta &gt; (maxTheta / 180) * PI) theta = 0;
-  translate(0, height / 2);
-  branch(boxRepeat);
-}
-
-function branch(count) {
-  if (count &lt;= 0) return;       <span class="cmt">// 終了条件は「回数」</span>
-  rect(0, 0, boxWidth, boxHeight);
-  translate(boxWidth, 0);
-  rotate(theta);
-  branch(count - 1);            <span class="cmt">// 再帰呼び出し</span>
-}</code></pre>
-    </div>
-
-    <div class="note"><strong>2つの終了条件を見比べてください。</strong>前のコードは「線の長さがある値を超えたら」、こちらは「あと何回残っているか」で止めています。どちらも正しい再帰ですが、<em>止め方の設計が違います</em>。自分の作りたい模様にどちらが向いているか考えてみましょう。</div>
-
-    <h3>3Dグラフィックス</h3>
-    <p>JavaScriptで本格的な3Dを扱うには<a href="https://threejs.org/">three.js</a>を使いますが、この授業ではp5.jsで基本を学びます。<code>createCanvas()</code> の第3引数に <code>WEBGL</code> を指定すると3D空間になります。</p>
-    <ul>
-      <li><a href="https://p5js.org/tutorials/coordinates-and-transformations/">3Dグラフィックスの座標系について</a></li>
-      <li><a href="https://p5js.org/tutorials/lights-camera-materials/">ライト、カメラ、マテリアルについて</a></li>
-    </ul>
-
-    <div class="code">
-      <div class="code-bar"><span class="code-name">balls00.html</span></div>
-      <pre><code>"use strict";
-
-let x = 0;      <span class="cmt">// 初期x座標</span>
-const r = 30;   <span class="cmt">// 球体の半径</span>
-
-function setup() {
-  createCanvas(500, 500, WEBGL);   <span class="cmt">// 3D空間を設定</span>
+  createCanvas(800, 500);
   noStroke();
+  noLoop();               <span class="cmt">// アニメーションではないので1回だけ描く</span>
 }
 
 function draw() {
-  ambientLight(125, 125, 125);              <span class="cmt">// 環境光</span>
-  directionalLight(80, 60, 60, -1, -1, -1); <span class="cmt">// 指向性ライト</span>
-  pointLight(60, 60, 60, 0, 0, 800);        <span class="cmt">// 点光源</span>
-  background(0);
-  orbitControl();                           <span class="cmt">// マウスで視点を回転できる</span>
+  <span class="cmt">// 背景の色も design から読む</span>
+  background(design.background[0], design.background[1], design.background[2]);
 
-  push();                     <span class="cmt">// 座標変換を保存</span>
-  translate(0, 0, -50);
-  box(500, 500, 30);          <span class="cmt">// 床にあたる箱</span>
-  pop();                      <span class="cmt">// 座標変換を元に戻す</span>
+  <span class="cmt">// 格子1マスの大きさは、格子の数から計算する</span>
+  const cellW = width  / design.grid.cols;
+  const cellH = height / design.grid.rows;
 
-  push();
-  specularMaterial(200, 200, 200);   <span class="cmt">// 材質の反射特性</span>
-  translate(x, 0, 0);
-  sphere(r);
-  x += 2;
-  if (x &gt; width / 2 + r) x = -width / 2 - r;   <span class="cmt">// 画面外に出たら戻す</span>
-  pop();
+  fill(design.dot.color[0], design.dot.color[1], design.dot.color[2]);
+
+  for (let row = 0; row &lt; design.grid.rows; row++) {
+    for (let col = 0; col &lt; design.grid.cols; col++) {
+      const x = cellW * col + cellW / 2;   <span class="cmt">// マスの中心</span>
+      const y = cellH * row + cellH / 2;
+      const d = random(design.dot.minSize, design.dot.maxSize);
+      circle(x, y, d);
+    }
+  }
 }</code></pre>
     </div>
 
-    <div class="note"><code>push()</code> と <code>pop()</code> は必ずペアで使います。<code>push()</code> で今の座標系を覚えておき、<code>pop()</code> で元に戻します。これがないと、移動や回転が次の描画にも影響してしまいます。</div>
+    <div class="note"><code>draw()</code> の中に数字が3つしか出てきません（<code>0</code>, <code>1</code>, <code>2</code> は配列の番号、<code>2</code> は「半分」の意味）。<strong>作品を決める数値は、すべて <code>design</code> の側にあります。</strong>これが「データとコードを分ける」ということです。</div>
 
-    <h4>練習</h4>
-    <ol>
-      <li><strong>balls01.html</strong>：<code>balls00.html</code> の様々なパラメータを変化させ、仕組みをよく理解しましょう</li>
-      <li><strong>2Dアニメーションの3D化</strong>：上の <code>box00.html</code> を3Dにしてみましょう</li>
-    </ol>
+    <h3>データを変えると作品が変わる</h3>
+    <p><code>draw()</code> には一切触れずに、<code>design</code> だけを書き換えてみてください。</p>
 
-    <details>
-      <summary>3D化の解答例</summary>
-      <div class="code">
-        <div class="code-bar"><span class="code-name">box01.html（3D）</span></div>
-        <pre><code>"use strict";
-
-const maxTheta  = 20;
-const delta     = (0.1 / 180) * Math.PI;
-const boxWidth  = 20;
-const boxHeight = 24;
-const boxRepeat = 25;
-
-function setup() {
-  createCanvas(500, 500, WEBGL);
-  noStroke();
-}
-
-let theta = 0;
-
-function draw() {
-  background(0);
-  orbitControl();
-  ambientLight(125, 125, 125);
-  directionalLight(80, 60, 60, -1, -1, -1);
-  pointLight(255, 10, 10, 0, 0, 100);
-
-  push();
-  translate(0, 0, -25);
-  box(500, 500, 30);
-  pop();
-
-  theta += delta;
-  if (theta &gt; (maxTheta / 180) * PI) theta = 0;
-
-  push();
-  translate(0, 0, 0);
-  branch(boxRepeat);
-  pop();
-}
-
-function branch(count) {
-  if (count &lt;= 0) return;
-  box(boxWidth, boxWidth, boxHeight);
-  translate(boxWidth, 0);
-  rotate(theta);
-  branch(count - 1);
-}</code></pre>
+    <div class="cmp">
+      <div>
+        <h5>粒を細かく、白地に黒</h5>
+        <div class="code">
+          <div class="code-bar"><span class="code-name">design</span></div>
+          <pre><code>const design = {
+  background: [245, 245, 240],
+  grid: { cols: 40, rows: 25 },
+  dot:  { minSize: 4, maxSize: 14,
+          color: [20, 20, 20] }
+};</code></pre>
+        </div>
       </div>
-    </details>
+      <div>
+        <h5>大きな粒をまばらに</h5>
+        <div class="code">
+          <div class="code-bar"><span class="code-name">design</span></div>
+          <pre><code>const design = {
+  background: [250, 200, 0],
+  grid: { cols: 6, rows: 4 },
+  dot:  { minSize: 40, maxSize: 110,
+          color: [10, 10, 10] }
+};</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <h4>授業内の練習</h4>
+      <p><code>design</code> だけを書き換えて、印象の違う作品を3つ作ってください。<strong><code>draw()</code> は絶対に触らないこと。</strong></p>
+      <p>触りたくなったら、それは <code>design</code> に足りない項目があるということです。何を足せばよいか考えてください（円ではなく四角にしたい、色を2色使いたい、など）。</p>
+    </div>
+
+    <h3>再帰も、3つの数値で表せる</h3>
+    <p>ここからが今日のもう一つの山です。前回の授業で少し触れた<strong>再帰</strong>——関数が自分自身を呼び出す仕組み——を使うと、木のような模様が描けます。</p>
+
+    <p>驚くことに、この複雑な形も<strong>たった3つの数値で決まります</strong>。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">tree.html</span></div>
+      <pre><code>"use strict";
+
+const design = {
+  background: [12, 14, 24],
+  branch: {
+    length: 130,     <span class="cmt">// 最初の枝の長さ</span>
+    depth:  9,       <span class="cmt">// 何回枝分かれするか</span>
+    angle:  25,      <span class="cmt">// 左右に何度ひらくか</span>
+    scale:  0.75,    <span class="cmt">// 次の枝は何倍の長さになるか</span>
+    color:  [255, 220, 120]
+  }
+};
+
+function setup() {
+  createCanvas(800, 500);
+  noLoop();
+}
+
+function draw() {
+  background(design.background[0], design.background[1], design.background[2]);
+  stroke(design.branch.color[0], design.branch.color[1], design.branch.color[2]);
+  strokeWeight(2);
+
+  translate(width / 2, height);          <span class="cmt">// 画面の下端中央から生やす</span>
+  drawBranch(design.branch.length, design.branch.depth);
+}
+
+function drawBranch(len, depth) {
+  if (depth &lt;= 0) return;                <span class="cmt">// 終了条件</span>
+
+  line(0, 0, 0, -len);                   <span class="cmt">// 上に向かって枝を1本</span>
+  translate(0, -len);                    <span class="cmt">// 枝の先端へ移動</span>
+
+  push();                                <span class="cmt">// 今の位置と向きを覚えておく</span>
+  rotate(radians(design.branch.angle));  <span class="cmt">// 右にひらいて</span>
+  drawBranch(len * design.branch.scale, depth - 1);
+  pop();                                 <span class="cmt">// 覚えた位置に戻る</span>
+
+  push();
+  rotate(radians(-design.branch.angle)); <span class="cmt">// 左にひらいて</span>
+  drawBranch(len * design.branch.scale, depth - 1);
+  pop();
+}</code></pre>
+    </div>
+
+    <div class="note mark"><strong><code>push()</code> と <code>pop()</code> がなぜ必要か。</strong>枝は左右に分かれます。右の枝を描き終えたあと、左の枝を描くには<em>分かれる前の場所に戻らなければなりません</em>。<code>push()</code> で今の位置と向きを覚え、<code>pop()</code> でそこへ戻る。この2つがないと、右の枝の先端から左の枝が生えてしまいます。実際に <code>push()</code>／<code>pop()</code> を消して確かめてみてください。</div>
+
+    <h4>4つの数値を動かしてみる</h4>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th scope="col">項目</th><th scope="col">小さくすると</th><th scope="col">大きくすると</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row"><code>depth</code></th><td>幹だけの素朴な形</td><td>枝が細かく茂る（12を超えると重くなります）</td></tr>
+          <tr><th scope="row"><code>angle</code></th><td>ほうきのようにまっすぐ</td><td>大きく開いて扇のよう</td></tr>
+          <tr><th scope="row"><code>scale</code></th><td>先がすぐ縮んで小さくまとまる</td><td>先まで長さが残り、広がる（0.8以上は巨大化）</td></tr>
+          <tr><th scope="row"><code>length</code></th><td>全体が小さい</td><td>全体が大きい</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note"><strong>これが再帰の本質です。</strong>木の形をひとつひとつ描いた人はいません。「枝を描いて、その先で同じことをする」という規則と、<em>4つの数値</em>だけがある。複雑に見えるものが、少ない情報で完全に記述できる——第４回で「規則性を見つける」と言ったのは、こういうことです。</div>
+
+    <h3>発展：同じ design を3Dで描く</h3>
+    <p><code>design</code> に項目をひとつ足すだけで、立体にできます。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">3D モードを足す</span></div>
+      <pre><code>const design = {
+  mode: "3D",              <span class="cmt">// ← これを足す</span>
+  background: [12, 14, 24],
+  dot: { size: 40, color: [200, 200, 210] },
+  grid: { cols: 8, rows: 5 }
+};
+
+function setup() {
+  <span class="cmt">// mode によってキャンバスの種類を変える</span>
+  if (design.mode === "3D") {
+    createCanvas(800, 500, WEBGL);
+  } else {
+    createCanvas(800, 500);
+  }
+  noStroke();
+}
+
+function draw() {
+  background(design.background[0], design.background[1], design.background[2]);
+  ambientLight(120, 120, 130);
+  directionalLight(255, 240, 200, -0.5, -1, -0.5);
+  orbitControl();          <span class="cmt">// マウスで視点を回せる</span>
+
+  const cellW = 90;
+  const cellH = 90;
+
+  for (let row = 0; row &lt; design.grid.rows; row++) {
+    for (let col = 0; col &lt; design.grid.cols; col++) {
+      push();
+      translate(
+        cellW * col - (cellW * (design.grid.cols - 1)) / 2,
+        cellH * row - (cellH * (design.grid.rows - 1)) / 2,
+        random(-60, 60)
+      );
+      specularMaterial(design.dot.color[0], design.dot.color[1], design.dot.color[2]);
+      sphere(design.dot.size / 2);
+      pop();
+    }
+  }
+}</code></pre>
+    </div>
+
+    <p>3D空間では原点が画面の中央になるため、格子の位置を計算し直しています。<code>orbitControl()</code> を入れておくと、マウスドラッグで視点を回せます。</p>
+
+    <h3>AIに design を作らせる</h3>
+    <p>ここまでで、<strong>作品は <code>design</code> というデータで完全に表せる</strong>ことがわかりました。ということは——このデータを、自分で書く必要はありません。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">AIに渡すプロンプト</span></div>
+      <pre><code>以下の形式のJSON配列だけを返してください。説明文は不要です。
+
+草間彌生風の水玉模様のパラメータを5種類、作風を変えて作ってください。
+
+[
+  {
+    "name": "作品名",
+    "background": [R, G, B],
+    "grid": { "cols": 数値, "rows": 数値 },
+    "dot": { "minSize": 数値, "maxSize": 数値, "color": [R, G, B] }
+  }
+]
+
+条件：
+- R, G, B は 0〜255 の整数
+- cols は 4〜40、rows は 3〜25
+- minSize は maxSize より小さいこと</code></pre>
+    </div>
+
+    <p>返ってきたJSONを配列として受け取れば、<strong>5枚の作品が一度に描けます</strong>。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">受け取って全部描く</span></div>
+      <pre><code>"use strict";
+
+<span class="cmt">// AIが返してきたJSON文字列（実際はfetchで受け取る／第9回以降）</span>
+const designs = JSON.parse(responseText);
+
+function setup() {
+  <span class="cmt">// 作品の数だけキャンバスを作る</span>
+  for (let i = 0; i &lt; designs.length; i++) {
+    const c = createCanvas(400, 250);
+    drawDesign(designs[i]);
+  }
+}
+
+function drawDesign(d) {
+  background(d.background[0], d.background[1], d.background[2]);
+  <span class="cmt">// ↑ 中身は今日書いた draw() とまったく同じ</span>
+}</code></pre>
+    </div>
+
+    <div class="note mark"><strong>今日いちばん大事なところです。</strong>AIに<em>コードを書かせた</em>のではありません。<strong>データを作らせて、自分のコードで描いた</strong>のです。この2つはまったく違います。<br><br>前者はAIの出力が正しいか読まないと分かりませんが、後者は<em>自分の書いたコードが動いている</em>ので、何が起きているか完全に把握できます。しかもデータの形は自分で決めたものです。<br><br>これが第１０回でやることの予告編です。そのときには、AIにクイズの問題データを作らせます。<em>形を指定できるのは、その形を自分で設計したからです。</em></div>
 
     <div class="task">
-      <h3>第５回課題　再帰呼び出しを使った3Dアニメーション<span class="pts">5点</span></h3>
-      <h4>基本課題</h4>
-      <p>練習2をさらに工夫して、複数の球体や立方体を3D空間に配置し、規則的またはランダムに並べてアニメーションを作ります。<strong>再帰呼び出しを使ったオブジェクトを一つ以上含んでいること</strong>を条件とします。</p>
-      <h4>発展課題</h4>
+      <h3>第５回課題　作品シリーズを作る<span class="pts">5点</span></h3>
+
+      <p>一枚の作品ではなく、<strong>同じ設計から生まれた作品のシリーズ</strong>を制作してください。</p>
+
+      <h4>必須条件</h4>
+      <ol>
+        <li>模様のパラメータを <code>design</code> のようなオブジェクトにまとめること</li>
+        <li>描画コードは <code>design</code> を読むだけにし、<strong>数値を直接書かないこと</strong></li>
+        <li><code>design</code> だけを変えた<strong>作品を5つ</strong>並べて、1ページに表示すること</li>
+        <li>5つが「同じシリーズに見える」こと。ばらばらの5枚ではなく、<em>一貫した作風の中でのバリエーション</em>にすること</li>
+      </ol>
+
+      <h4>発展課題（どこまで実装するかは自由。評価対象です）</h4>
       <ul>
-        <li><strong>別の物体の追加</strong>：多数の3Dオブジェクトを追加し、より複雑な模様を作る（現実世界の何かを表現したものが望ましい）</li>
-        <li><strong>色や光の効果</strong>：オブジェクトの色や光の反射、陰影を工夫し、リアリティを追求する</li>
-        <li><strong>動きの効果</strong>：動きを工夫する</li>
+        <li><strong>再帰模様</strong>：<code>depth</code> / <code>angle</code> / <code>scale</code> を変えたシリーズにする</li>
+        <li><strong>形を選べるようにする</strong>：<code>shape: "circle"</code> / <code>"square"</code> / <code>"star"</code> を <code>design</code> に足し、描き分ける</li>
+        <li><strong>3D化</strong>：<code>mode: "3D"</code> を足して立体で描く</li>
+        <li><strong>スライダー</strong>：<code>createSlider()</code> でパラメータを画面上から動かせるようにする</li>
+        <li><strong>AIに作らせる</strong>：上のプロンプトでAIに <code>design</code> を5つ生成させ、それを貼り付けて描く</li>
       </ul>
+
       <h4>提出方法</h4>
-      <p>プレビュー画面のURLをmanabaのレポート機能で提出してください。<code>https://xxxxx.csb.app/box02.html</code> のように書いてください。</p>
+      <p>プレビュー画面のURLをmanabaのレポート機能で提出してください。<code>https://xxxxx.csb.app/series.html</code> のように書いてください。</p>
       <p class="deadline">提出締切：来週木曜日 13:00</p>
+
+      <h4>評価</h4>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th scope="col">項目</th><th scope="col" class="c">配点</th><th scope="col">観点</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">データとコードの分離</th><td class="c">2点</td><td>作品を決める数値がすべて <code>design</code> 側に出ているか。描画コードに数値が直接書かれていないか</td></tr>
+            <tr><th scope="row">パラメータの設計</th><td class="c">2点</td><td>何を変えられるようにしたかが適切か。5作品の違いが、そのパラメータでよく表現できているか</td></tr>
+            <tr><th scope="row">シリーズとしての完成度</th><td class="c">1点</td><td>5つが一貫した作風の中で、それぞれ違う魅力を持っているか</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>一枚の絵の美しさではなく、<strong>「変えられるものを何にしたか」という設計</strong>を評価します。</p>
     </div>
   </section>
 
