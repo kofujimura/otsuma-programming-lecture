@@ -1,0 +1,763 @@
+<title>JSONを背骨にする</title>
+<style>
+  :root {
+    --ground: #F6F8F9;
+    --surface: #FFFFFF;
+    --surface-alt: #EDF1F2;
+    --code-bg: #F0F3F4;
+    --ink: #14181C;
+    --ink-mid: #414A50;
+    --ink-soft: #6C767D;
+    --rule: #DDE4E6;
+    --rule-strong: #C4CED1;
+    --accent: #0F7A6E;
+    --accent-ink: #0C6459;
+    --accent-soft: #E2F1EE;
+    --warn: #A9640B;
+    --warn-soft: #FBF0DC;
+    --shadow: 0 1px 2px rgba(20, 24, 28, .04), 0 10px 28px -16px rgba(20, 24, 28, .18);
+
+    --font-ui: "Hiragino Kaku Gothic ProN", "Yu Gothic", "YuGothic", "Noto Sans JP", "Meiryo", sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Menlo", "Consolas", "Roboto Mono", monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #14181A;
+      --surface: #1D2225;
+      --surface-alt: #262C30;
+      --code-bg: #22282B;
+      --ink: #E8EDEF;
+      --ink-mid: #B6C0C4;
+      --ink-soft: #8A959A;
+      --rule: #2E3539;
+      --rule-strong: #434C51;
+      --accent: #3FBFAE;
+      --accent-ink: #5FD4C3;
+      --accent-soft: #12312D;
+      --warn: #E0A044;
+      --warn-soft: #33280F;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 10px 28px -16px rgba(0, 0, 0, .6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #14181A;
+    --surface: #1D2225;
+    --surface-alt: #262C30;
+    --code-bg: #22282B;
+    --ink: #E8EDEF;
+    --ink-mid: #B6C0C4;
+    --ink-soft: #8A959A;
+    --rule: #2E3539;
+    --rule-strong: #434C51;
+    --accent: #3FBFAE;
+    --accent-ink: #5FD4C3;
+    --accent-soft: #12312D;
+    --warn: #E0A044;
+    --warn-soft: #33280F;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 10px 28px -16px rgba(0, 0, 0, .6);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--font-ui);
+    font-size: 15.5px;
+    line-height: 1.8;
+    margin: 0;
+    padding: 3.5rem 1.5rem 6rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 52rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 3.25rem;
+  }
+
+  /* ---------- masthead ---------- */
+
+  .masthead {
+    display: flex;
+    flex-direction: column;
+    gap: .85rem;
+    padding-bottom: 1.9rem;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: .72rem;
+    letter-spacing: .14em;
+    font-weight: 600;
+    color: var(--accent-ink);
+    margin: 0;
+  }
+
+  h1 {
+    font-size: clamp(1.75rem, 4.6vw, 2.3rem);
+    font-weight: 700;
+    letter-spacing: -.01em;
+    line-height: 1.4;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .standfirst {
+    font-size: 1rem;
+    color: var(--ink-mid);
+    margin: 0;
+    max-width: 40rem;
+    text-wrap: pretty;
+  }
+
+  /* ---------- sections ---------- */
+
+  section { display: flex; flex-direction: column; gap: 1.15rem; }
+
+  h2 {
+    font-size: 1.28rem;
+    font-weight: 700;
+    letter-spacing: -.005em;
+    line-height: 1.5;
+    margin: 0;
+    display: flex;
+    align-items: baseline;
+    gap: .7rem;
+    padding-bottom: .55rem;
+    border-bottom: 1px solid var(--rule-strong);
+    text-wrap: balance;
+  }
+
+  h2 .num {
+    font-family: var(--font-mono);
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--accent);
+    flex: none;
+  }
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  h4 {
+    font-family: var(--font-mono);
+    font-size: .74rem;
+    letter-spacing: .1em;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  p { margin: 0; max-width: 44rem; text-wrap: pretty; }
+
+  ul, ol {
+    margin: 0;
+    padding-left: 1.3rem;
+    display: flex;
+    flex-direction: column;
+    gap: .45rem;
+    max-width: 44rem;
+  }
+
+  li::marker { color: var(--ink-soft); }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: .87em;
+    background: var(--code-bg);
+    padding: .12em .35em;
+    border-radius: 3px;
+  }
+
+  a { color: var(--accent-ink); text-underline-offset: .2em; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+  /* ---------- findings ---------- */
+
+  .findings { display: flex; flex-direction: column; gap: .9rem; }
+
+  .finding {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--warn);
+    border-radius: 0 4px 4px 0;
+    padding: 1.1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: .55rem;
+  }
+
+  .finding-head {
+    display: flex;
+    align-items: baseline;
+    gap: .7rem;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: var(--font-mono);
+    font-size: .68rem;
+    letter-spacing: .06em;
+    font-weight: 600;
+    padding: .2em .55em;
+    border-radius: 3px;
+    background: var(--warn-soft);
+    color: var(--warn);
+    white-space: nowrap;
+    flex: none;
+  }
+
+  .tag.bug { background: var(--warn); color: var(--surface); }
+
+  .finding-title { font-size: .97rem; font-weight: 700; margin: 0; }
+
+  .finding p { font-size: .91rem; color: var(--ink-mid); max-width: none; }
+
+  /* ---------- code ---------- */
+
+  pre {
+    font-family: var(--font-mono);
+    font-size: .8rem;
+    line-height: 1.75;
+    background: var(--code-bg);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: .95rem 1.05rem;
+    overflow-x: auto;
+    margin: 0;
+    color: var(--ink);
+    tab-size: 2;
+  }
+
+  pre code { background: none; padding: 0; font-size: inherit; }
+
+  .cmp {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (min-width: 56rem) {
+    .cmp { grid-template-columns: 1fr 1fr; align-items: start; }
+  }
+
+  .pane { display: flex; flex-direction: column; gap: .5rem; min-width: 0; }
+  .pane.before h4 { color: var(--warn); }
+  .pane.after h4 { color: var(--accent); }
+  .pane.before pre { border-left: 3px solid var(--warn); }
+  .pane.after pre { border-left: 3px solid var(--accent); }
+
+  .why {
+    font-size: .89rem;
+    color: var(--ink-mid);
+    margin: 0;
+    max-width: none;
+  }
+
+  /* ---------- convention table ---------- */
+
+  .table-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 38rem;
+    font-size: .88rem;
+    background: var(--surface);
+  }
+
+  th, td {
+    text-align: left;
+    padding: .75rem .95rem;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+    line-height: 1.65;
+  }
+
+  thead th {
+    background: var(--surface-alt);
+    font-size: .74rem;
+    letter-spacing: .07em;
+    font-weight: 700;
+    color: var(--ink-mid);
+    white-space: nowrap;
+  }
+
+  tbody tr:last-child th, tbody tr:last-child td { border-bottom: none; }
+
+  td.mono, th.mono {
+    font-family: var(--font-mono);
+    font-size: .82rem;
+    white-space: nowrap;
+  }
+
+  /* ---------- chain ---------- */
+
+  .chain { display: flex; flex-direction: column; gap: 0; }
+
+  .link {
+    display: grid;
+    grid-template-columns: 4.2rem 1fr;
+    gap: 1.1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: start;
+  }
+
+  .link:last-child { border-bottom: none; }
+
+  .link-week {
+    font-family: var(--font-mono);
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--accent);
+    padding-top: .15rem;
+    white-space: nowrap;
+  }
+
+  .link-body { display: flex; flex-direction: column; gap: .4rem; min-width: 0; }
+  .link-title { font-size: .96rem; font-weight: 700; margin: 0; }
+  .link-body p { font-size: .89rem; color: var(--ink-mid); max-width: none; }
+
+  .note {
+    background: var(--accent-soft);
+    border-radius: 4px;
+    padding: 1rem 1.15rem;
+    font-size: .91rem;
+    line-height: 1.75;
+    margin: 0;
+    max-width: none;
+  }
+
+  .callout {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    box-shadow: var(--shadow);
+    padding: 1.4rem 1.4rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: .9rem;
+  }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 1.4rem;
+    font-size: .84rem;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 34rem) {
+    body { padding: 2.25rem 1rem 4rem; }
+    .link { grid-template-columns: 1fr; gap: .3rem; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">教材リファクタリング案　第３回 → 第１０回</p>
+    <h1>JSONを背骨にする</h1>
+    <p class="standfirst">じゃんけん・クイズ・診断チャート・API・ローカルストレージを、<strong>すべて同じ形のデータ</strong>で貫く。カリキュラムの順序は変えず、データ設計と記法だけを統一します。</p>
+  </header>
+
+  <section>
+    <h2><span class="num">01</span>現状の不整合</h2>
+    <p>資料を通しで読み、データ構造と記法のずれを洗い出しました。いずれも個々には小さいものですが、学生から見ると「毎回ちがう書き方が出てくる」状態になり、データ構造という一本の軸が見えなくなっています。</p>
+
+    <div class="findings">
+
+      <div class="finding">
+        <div class="finding-head">
+          <span class="tag">第６回 ↔ 第１０回</span>
+          <p class="finding-title">同じクイズアプリなのに、正解番号の起点が違う</p>
+        </div>
+        <p>第６回の <code>quizData</code> は <code>answer: 1</code> が第１選択肢を指す<strong>1始まり</strong>。第１０回のAI生成では「正解の選択肢のインデックス（0, 1, 2のいずれか）」と明記されており<strong>0始まり</strong>です。第６回のコードに第１０回のデータを流し込むと、全問が一つずれて不正解になります。</p>
+      </div>
+
+      <div class="finding">
+        <div class="finding-head">
+          <span class="tag bug">第６回</span>
+          <p class="finding-title">1問版のサンプルコードが構文エラーで動かない</p>
+        </div>
+        <p>「1問のクイズを作成する方法」の <code>next.addEventListener</code> のコードは、<code>else</code> の後の波括弧が閉じ過ぎており、そのままでは実行できません。複数問版のコードは正しいので、1問版だけの問題です。</p>
+      </div>
+
+      <div class="finding">
+        <div class="finding-head">
+          <span class="tag bug">第３回</span>
+          <p class="finding-title">おみくじの手順解説どおりに書くと、毎回同じ結果が出る</p>
+        </div>
+        <p>「イベントの設定」の節では <code>selectedResult</code> をハンドラの<strong>外</strong>で確定させているため、何回押しても結果が変わりません。後段の「説明したおみくじのコード例」では <code>showKekka()</code> の内側に入っていて正しく動きます。同じ節の中に、動かない版と動く版が並んでいます。</p>
+      </div>
+
+      <div class="finding">
+        <div class="finding-head">
+          <span class="tag">第３回</span>
+          <p class="finding-title">JSONを教えた直後の課題が、JSONを一切使わない</p>
+        </div>
+        <p>第３回はSnow Manの配列で <code>[{...}, {...}]</code> という理想的な形を見せた上で、課題のじゃんけんは <code>0 / 1 / 2</code> の生の数値と <code>if-else</code> の連鎖です。せっかく導入したデータ構造が、その日の課題につながっていません。</p>
+      </div>
+
+      <div class="finding">
+        <div class="finding-head">
+          <span class="tag">第６回</span>
+          <p class="finding-title">ローカルストレージとJSONが、同じ回で教えられて結びついていない</p>
+        </div>
+        <p>メモ帳が保存するのは素の文字列、最高得点は数値。<code>JSON.stringify()</code> / <code>JSON.parse()</code> でオブジェクトを保存する往復が、<strong>授業全体を通して一度も登場しません</strong>。これが最も大きな欠落だと思います。</p>
+      </div>
+
+      <div class="finding">
+        <div class="finding-head">
+          <span class="tag">第６回</span>
+          <p class="finding-title">選択肢が3個に固定されている</p>
+        </div>
+        <p><code>option1</code> / <code>option2</code> / <code>option3</code> を個別に取得し、<code>selections[0]</code>〜<code>[2]</code> を手で並べています。データの長さがUIを決める形になっていないため、第１０回でAIに問題数や選択肢数を変えさせた瞬間に破綻します。</p>
+      </div>
+
+      <div class="finding">
+        <div class="finding-head">
+          <span class="tag">第７回</span>
+          <p class="finding-title">診断チャートの形が、基本と発展課題で別物になる</p>
+        </div>
+        <p>基本は <code>{question, yes, no}</code>、発展課題のヒントは <code>{question, options:[{text, next}]}</code>。乗り換えの説明がないため、発展課題に進む学生は実質作り直しになります。また終端 <code>t4</code> だけ <code>image</code> を持ち、レコードの形が揃っていません。</p>
+      </div>
+
+      <div class="finding">
+        <div class="finding-head">
+          <span class="tag">第２回 ↔ 第６回</span>
+          <p class="finding-title">記法が回ごとに揺れる</p>
+        </div>
+        <p>配列の宣言が <code>let list1</code>（第３回本文）と <code>const results</code>（同じ回のコード例）で混在。イベントも <code>onclick =</code> と <code>addEventListener</code> の両方が説明なく使われます。第６回では <code>selectedOption.value == quizData[0].answer</code> と、第２回で教えた <code>===</code> ではなく <code>==</code> の暗黙の型変換に依存しています。</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">02</span>統一する規約</h2>
+    <p>まず、全回で守る約束を決めます。ここが決まれば、あとは各回のコードを寄せるだけです。</p>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">項目</th>
+            <th scope="col">統一後</th>
+            <th scope="col">理由</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">データの基本形</th>
+            <td class="mono">[{ }, { }, { }]</td>
+            <td>「同じ形のレコードが並ぶ」を全回の基本形にする。第３回のSnow Manの例がそのまま雛形になる。</td>
+          </tr>
+          <tr>
+            <th scope="row">インデックス</th>
+            <td class="mono">0始まり</td>
+            <td>配列と一致し、第１０回のAI生成形式とも一致する。第６回を0始まりに直す。</td>
+          </tr>
+          <tr>
+            <th scope="row">選択肢のキー名</th>
+            <td class="mono">choices</td>
+            <td><code>selections</code> / <code>options</code> / <code>selectionsList</code> の揺れを一本化。</td>
+          </tr>
+          <tr>
+            <th scope="row">変数宣言</th>
+            <td class="mono">const 優先</td>
+            <td>再代入するものだけ <code>let</code>。データ定義は必ず <code>const</code>。</td>
+          </tr>
+          <tr>
+            <th scope="row">イベント</th>
+            <td class="mono">addEventListener</td>
+            <td><code>onclick =</code> は使わない。第６回以降と実務に合わせ、覚えるものを一つに絞る。</td>
+          </tr>
+          <tr>
+            <th scope="row">比較</th>
+            <td class="mono">=== のみ</td>
+            <td>DOMから来る値は <code>Number()</code> で明示的に変換してから比較する。</td>
+          </tr>
+          <tr>
+            <th scope="row">保存</th>
+            <td class="mono">JSON.stringify / parse</td>
+            <td>ローカルストレージは文字列しか保存できない、という事実を第６回で必ず教える。</td>
+          </tr>
+          <tr>
+            <th scope="row">冒頭</th>
+            <td class="mono">"use strict";</td>
+            <td>全コード例の先頭に必ず置く（現状は有無が混在）。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="note"><strong>あわせて第３回で一度だけ明示したいこと：</strong>JSONは「キーを必ずダブルクォートで囲んだテキスト」であり、JavaScriptのオブジェクトリテラルとは別物である、という区別。現状はこの線引きがないまま両方が同じ顔で出てくるため、<code>JSON.parse()</code> が何を変換しているのかが曖昧になっています。</p>
+  </section>
+
+  <section>
+    <h2><span class="num">03</span>じゃんけん ── ルールをデータにする</h2>
+    <p>ここが最も効く改訂です。じゃんけんの勝敗を <code>if-else</code> ではなく<strong>表</strong>で表現します。第３回で教えたばかりの <code>[{...}]</code> が、その日の課題でそのまま使われる形になります。</p>
+
+    <div class="cmp">
+      <div class="pane before">
+        <h4>現状</h4>
+        <pre><code>let randomHand = Math.floor(Math.random() * 3);
+// 0: グー, 1: チョキ, 2: パー
+
+if (userHand === randomHand) {
+  result = "引き分け";
+} else if ((userHand === 0 && randomHand === 1) ||
+           (userHand === 1 && randomHand === 2) ||
+           (userHand === 2 && randomHand === 0)) {
+  result = "勝ち";
+} else {
+  result = "負け";
+}</code></pre>
+      </div>
+      <div class="pane after">
+        <h4>改訂案</h4>
+        <pre><code>"use strict";
+
+const hands = [
+  { name: "グー",   emoji: "✊", beats: 1 },
+  { name: "チョキ", emoji: "✌️", beats: 2 },
+  { name: "パー",   emoji: "✋", beats: 0 }
+];
+
+function judge(myIndex, cpuIndex) {
+  if (myIndex === cpuIndex) return "引き分け";
+  if (hands[myIndex].beats === cpuIndex) return "勝ち";
+  return "負け";
+}</code></pre>
+      </div>
+    </div>
+
+    <p class="why"><strong>何が変わるか：</strong>勝敗の知識が <code>beats</code> という<strong>データ</strong>に移り、判定コードは3行になります。手を5種類（グー・チョキ・パー・井戸・紙）に増やしたくなったとき、現状のコードは条件式を書き直す必要がありますが、改訂案は配列に行を足すだけです。<em>「データを変えれば挙動が変わる」</em>という感覚が、ここで初めて手に入ります。</p>
+
+    <p class="why">発展課題の「結果の画像表示」も、<code>emoji</code> を <code>image</code> に差し替えるだけになり、現状のように <code>innerHTML</code> を別途組み立てる話にはなりません。第１０回で「AIに <code>hands</code> 相当の表を作らせる」という展開にもそのまま接続します。</p>
+  </section>
+
+  <section>
+    <h2><span class="num">04</span>クイズ ── 第１０回と同じ形にそろえる</h2>
+    <p>キー名を <code>choices</code>、正解を0始まりに統一し、選択肢の描画をデータ長に従わせます。こうすると、<strong>第６回で手書きしたデータと第１０回でAIが生成するデータが、完全に同じ形</strong>になります。</p>
+
+    <div class="cmp">
+      <div class="pane before">
+        <h4>現状（第６回）</h4>
+        <pre><code>const quizData = [
+  {
+    question: "通るときには閉まって…",
+    selections: ["踏み切り", "洗濯機", "冷蔵庫"],
+    answer: 1,          // 1始まり
+  },
+];
+
+option1.innerHTML = `&lt;label&gt;&lt;input type="radio"
+  name="answer" value="1"&gt;
+  ${quizData[count].selections[0]}&lt;/label&gt;`;
+option2.innerHTML = /* value="2" … */;
+option3.innerHTML = /* value="3" … */;
+
+if (selectedOption.value == quizData[count].answer)</code></pre>
+      </div>
+      <div class="pane after">
+        <h4>改訂案</h4>
+        <pre><code>"use strict";
+
+const quizData = [
+  {
+    question: "通るときには閉まって…",
+    choices: ["踏み切り", "洗濯機", "冷蔵庫"],
+    answer: 0           // 0始まり＝配列と一致
+  }
+];
+
+// 選択肢の数はデータが決める
+choicesEl.innerHTML = quiz.choices
+  .map((text, i) =&gt;
+    `&lt;label&gt;&lt;input type="radio" name="answer"
+      value="${i}"&gt;${text}&lt;/label&gt;`)
+  .join("");
+
+if (Number(picked.value) === quiz.answer)</code></pre>
+      </div>
+    </div>
+
+    <p class="why"><strong>何が変わるか：</strong>選択肢が3個でも5個でも同じコードで動きます。<code>.map().join("")</code> は第９回でプロンプト生成のために教えている記法なので、ここで先に出しておくと第９回が復習になります。<code>Number()</code> で明示変換することで、第２回で教えた <code>===</code> の原則も守れます。</p>
+
+    <p class="note"><strong>第１０回への接続：</strong>AIへのシステムプロンプトに書く出力形式を、この <code>quizData</code> と一字一句同じにします。授業では「第６回で自分の手で書いた形のデータを、今日はAIに書かせます」と言えるようになり、AI活用が新しい話ではなく<strong>これまでの延長</strong>として提示できます。</p>
+  </section>
+
+  <section>
+    <h2><span class="num">05</span>診断チャート ── 配列とオブジェクトの使い分けを教える場にする</h2>
+    <p>ここは「なぜ配列ではなくオブジェクトなのか」を教える絶好の機会です。クイズは<strong>先頭から順に処理する</strong>ので配列、診断チャートは<strong>IDで飛び先を引く</strong>のでオブジェクト。この対比を明示します。</p>
+
+    <p>あわせて、基本課題と発展課題で形が変わる問題を解消します。最初から <code>choices</code> 形式にしておけば、Yes/Noは「選択肢が2つの場合」にすぎません。</p>
+
+    <div class="cmp">
+      <div class="pane before">
+        <h4>現状（基本と発展で別形式）</h4>
+        <pre><code>// 基本
+const chart = {
+  q1: { question: "…", yes: "q2", no: "q3" },
+  t1: { answer: "あなたはタイプNです" },
+  t4: { answer: "…", image: "https://…" }
+};
+
+// 発展課題のヒントでは形が変わる
+q1: {
+  question: "週末にしたいことは？",
+  options: [ { text: "…", next: "q2" } ]
+}</code></pre>
+      </div>
+      <div class="pane after">
+        <h4>改訂案（最初から一つの形）</h4>
+        <pre><code>"use strict";
+
+const chart = {
+  q1: {
+    question: "デザインよりプログラミングが好き",
+    choices: [
+      { text: "はい",   next: "q2" },
+      { text: "いいえ", next: "q3" }
+    ]
+  },
+  t1: { result: "あなたはタイプNです", image: null }
+};
+
+// 終端の判定も一つの条件で済む
+if (chart[state].choices) showQuestion();
+else showResult();</code></pre>
+      </div>
+    </div>
+
+    <p class="why"><strong>何が変わるか：</strong>発展課題（２）「選択肢の動的変更」が、作り直しではなく<strong>データを書き換えるだけ</strong>になります。終端ノードも <code>image: null</code> を必ず持たせてレコードの形を揃えるので、<code>t4</code> だけ特別扱いする必要がなくなります。第１０回の応用例にある「診断チャートメーカー」で、AIにこの構造を生成させる展開にも直結します。</p>
+  </section>
+
+  <section>
+    <h2><span class="num">06</span>ローカルストレージ ── 欠けている環を埋める</h2>
+    <p>現状、ローカルストレージに保存するのは文字列と数値だけで、オブジェクトを保存する方法が最後まで出てきません。ここに <code>JSON.stringify()</code> / <code>JSON.parse()</code> の往復を入れると、<strong>JSONが「必要だから使う」ものになります</strong>。</p>
+
+    <div class="callout">
+      <h3>第６回に追加する説明（案）</h3>
+      <p><code>localStorage</code> は<strong>文字列しか保存できません</strong>。オブジェクトや配列をそのまま渡すと <code>[object Object]</code> という文字列になり、中身が消えます。</p>
+      <pre><code>"use strict";
+
+// ✗ 中身が消える
+localStorage.setItem("log", { score: 8 });
+
+// ○ JSON文字列に変換してから保存する
+const log = [
+  { date: "2025-10-31", score: 8, total: 10 }
+];
+localStorage.setItem("log", JSON.stringify(log));
+
+// 読み出すときは文字列をオブジェクトに戻す
+const saved = JSON.parse(localStorage.getItem("log") ?? "[]");
+saved.push({ date: "2025-11-07", score: 9, total: 10 });
+localStorage.setItem("log", JSON.stringify(saved));</code></pre>
+      <p class="why">第３回で <code>JSON.parse()</code> を「他言語とのデータ連携に使う」と説明していますが、この例なら<strong>自分のアプリの中で今すぐ必要になる</strong>ので、初学者にとって動機がはるかに明確です。</p>
+    </div>
+
+    <p>これに伴い、第６回の課題「最高得点の保存」を<strong>「成績履歴の保存」</strong>に変更することを提案します。数値1個ならJSONは不要ですが、履歴の配列なら必然的に <code>stringify</code> / <code>parse</code> が要ります。メモ帳の練習で既に求めている「タイトルや日時を複数追加する」という指示とも、ここで初めて噛み合います。</p>
+  </section>
+
+  <section>
+    <h2><span class="num">07</span>API ── 外の形を自分の形に変換する</h2>
+    <p>第８回で最も重要な考え方は、fetchの書き方ではなく<strong>「外部APIの形は自分では選べない。だから自分のアプリの形に変換する」</strong>という点です。これを明示的に教えると、第３回から積み上げてきたデータ設計の意味が完成します。</p>
+
+    <pre><code>"use strict";
+
+const res  = await fetch("https://www.googleapis.com/books/v1/volumes?q=" + word);
+const data = await res.json();
+
+// Google Booksの深い構造を、自分のアプリの形に変換する
+const books = (data.items ?? []).map(item =&gt; ({
+  title:   item.volumeInfo.title,
+  authors: item.volumeInfo.authors ?? ["著者不明"],
+  cover:   item.volumeInfo.imageLinks?.thumbnail ?? "noimage.png"
+}));
+
+// ここから先は、第３回からずっと同じ [{ }, { }] の世界
+books.forEach(book =&gt; { /* … */ });</code></pre>
+
+    <p class="why"><strong>何が変わるか：</strong>APIの応答をそのまま画面に流し込むと、コードの中に <code>item.volumeInfo.imageLinks.thumbnail</code> のような外部都合の記述が散らばります。入口で一度変換しておけば、以降のコードはこれまでと同じ形のデータを扱うだけになります。<code>?.</code> と <code>??</code> は、<strong>APIの応答には欠けているフィールドがある</strong>という現実とセットで教えると腑に落ちます（Google Booksは表紙画像のない本が実際に多く、資料が用意している <code>result.json</code> でも確認できます）。</p>
+  </section>
+
+  <section>
+    <h2><span class="num">08</span>統一後に見えてくる流れ</h2>
+    <p>同じ形のデータが、毎回「どこから来るか」だけを変えて登場します。学生には毎回この一行を見せるだけで、全体の位置づけが伝わります。</p>
+
+    <div class="chain">
+      <div class="link">
+        <div class="link-week">第３回</div>
+        <div class="link-body">
+          <p class="link-title">自分で書く</p>
+          <p><code>hands</code> の表を手で書く。ルールがデータになることを知る。</p>
+        </div>
+      </div>
+      <div class="link">
+        <div class="link-week">第６回</div>
+        <div class="link-body">
+          <p class="link-title">自分で書く ＋ 保存する</p>
+          <p><code>quizData</code> を手で書き、成績履歴を <code>JSON.stringify()</code> でブラウザに残す。</p>
+        </div>
+      </div>
+      <div class="link">
+        <div class="link-week">第７回</div>
+        <div class="link-body">
+          <p class="link-title">形を選ぶ</p>
+          <p>順に処理するなら配列、IDで引くならオブジェクト。用途でデータ構造を選べるようになる。</p>
+        </div>
+      </div>
+      <div class="link">
+        <div class="link-week">第８回</div>
+        <div class="link-body">
+          <p class="link-title">外から取ってくる</p>
+          <p>APIの応答を、これまでと同じ形に変換して使う。</p>
+        </div>
+      </div>
+      <div class="link">
+        <div class="link-week">第１０回</div>
+        <div class="link-body">
+          <p class="link-title">AIに作らせる</p>
+          <p>第６回と同じ形のデータを、今度はAIに生成させる。<strong>形を指定できるのは、その形を知っているから。</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <p class="note">この最後の一文が、シラバスに書かれた「AIが生成するコードを責任をもってチェックし、判断する」という到達目標と、そのまま重なります。<strong>データの形を自分で設計できる人だけが、AIに正しい形を要求できます。</strong></p>
+  </section>
+
+  <section>
+    <h2><span class="num">09</span>作業量の目安</h2>
+    <ul>
+      <li><strong>すぐ直せるもの：</strong>第６回の構文エラー、第３回おみくじのハンドラ位置、<code>let</code>/<code>const</code> の揺れ、<code>'use strict'</code> の欠落。誤りの修正なので判断は不要です。</li>
+      <li><strong>データ形式の統一：</strong>第６回を0始まり・<code>choices</code> に変更し、第１０回のプロンプトを同じ形に揃える。サンプルSandboxの差し替えが必要です。</li>
+      <li><strong>新規追加：</strong>第６回のJSON往復の説明と、第８回の変換の節。それぞれ本文半ページ程度。</li>
+      <li><strong>課題文の変更：</strong>第３回（じゃんけんを表で書かせる）、第６回（最高得点→成績履歴）。</li>
+    </ul>
+    <p>第７回の <code>choices</code> 統一は影響範囲がやや広いので、他が済んでから着手するのが安全だと思います。</p>
+  </section>
+
+  <footer>
+    <p>プログラミング論及び演習（2025）　教材リファクタリング案　第３回・第６回・第７回・第８回・第１０回</p>
+  </footer>
+
+</div>

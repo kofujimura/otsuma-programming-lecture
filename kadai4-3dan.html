@@ -1,0 +1,530 @@
+<title>草間模様の三段構成</title>
+<style>
+  :root {
+    --ground: #FBFAF7;
+    --surface: #FFFFFF;
+    --surface-alt: #F4F2ED;
+    --ink: #1C1A18;
+    --ink-mid: #4A4540;
+    --ink-soft: #736C64;
+    --rule: #E4DFD7;
+    --rule-strong: #CFC8BE;
+    --accent: #D0342A;
+    --accent-ink: #A82820;
+    --accent-soft: #FBEAE7;
+    --shadow: 0 1px 2px rgba(28, 26, 24, .05), 0 8px 24px -12px rgba(28, 26, 24, .12);
+
+    --font-display: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "MS PMincho", serif;
+    --font-body: "Hiragino Kaku Gothic ProN", "Yu Gothic", "YuGothic", "Noto Sans JP", "Meiryo", sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Menlo", "Consolas", "Courier New", monospace;
+
+    --measure: 34rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #1A1817;
+      --surface: #232120;
+      --surface-alt: #2B2826;
+      --ink: #F2EFEA;
+      --ink-mid: #C9C2BA;
+      --ink-soft: #9A928A;
+      --rule: #35312E;
+      --rule-strong: #474240;
+      --accent: #F0564A;
+      --accent-ink: #F58076;
+      --accent-soft: #3A2320;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px -12px rgba(0, 0, 0, .5);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #1A1817;
+    --surface: #232120;
+    --surface-alt: #2B2826;
+    --ink: #F2EFEA;
+    --ink-mid: #C9C2BA;
+    --ink-soft: #9A928A;
+    --rule: #35312E;
+    --rule-strong: #474240;
+    --accent: #F0564A;
+    --accent-ink: #F58076;
+    --accent-soft: #3A2320;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px -12px rgba(0, 0, 0, .5);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.85;
+    margin: 0;
+    padding: 4rem 1.5rem 6rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: var(--measure);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+  }
+
+  /* ---- masthead ---- */
+
+  .masthead {
+    display: flex;
+    flex-direction: column;
+    gap: .9rem;
+    padding-bottom: 2.25rem;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .eyebrow {
+    font-size: .7rem;
+    letter-spacing: .18em;
+    font-weight: 700;
+    color: var(--accent-ink);
+    margin: 0;
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 5.5vw, 2.6rem);
+    line-height: 1.35;
+    font-weight: 600;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .standfirst {
+    font-size: 1rem;
+    color: var(--ink-mid);
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  /* ---- generic sections ---- */
+
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: 1.32rem;
+    font-weight: 600;
+    line-height: 1.5;
+    margin: 0;
+    padding-bottom: .55rem;
+    border-bottom: 1px solid var(--rule-strong);
+    text-wrap: balance;
+  }
+
+  h3 {
+    font-family: var(--font-body);
+    font-size: .95rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--ink);
+  }
+
+  p { margin: 0; text-wrap: pretty; }
+
+  ul, ol {
+    margin: 0;
+    padding-left: 1.35rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+  }
+
+  li { padding-left: .15rem; }
+
+  li::marker { color: var(--ink-soft); }
+
+  strong { font-weight: 700; }
+
+  em {
+    font-style: normal;
+    background: var(--accent-soft);
+    padding: .1em .3em;
+    border-radius: 2px;
+  }
+
+  a {
+    color: var(--accent-ink);
+    text-underline-offset: .2em;
+    text-decoration-thickness: 1px;
+  }
+
+  a:focus-visible,
+  summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ---- stage cards ---- */
+
+  .stages {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    counter-reset: stage;
+  }
+
+  .stage {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    box-shadow: var(--shadow);
+    padding: 1.75rem 1.6rem 1.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .stage-head {
+    display: flex;
+    align-items: baseline;
+    gap: .85rem;
+    padding-bottom: .8rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  /* the dot is the subject: Kusama's polka dot doubles as the step marker */
+  .dot {
+    counter-increment: stage;
+    flex: none;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #FFF7F6;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-mono);
+    font-size: .95rem;
+    font-weight: 600;
+    align-self: center;
+  }
+
+  .dot::before { content: counter(stage); }
+
+  .stage-title {
+    font-family: var(--font-display);
+    font-size: 1.18rem;
+    font-weight: 600;
+    line-height: 1.45;
+    margin: 0;
+  }
+
+  .stage-when {
+    font-size: .74rem;
+    letter-spacing: .1em;
+    color: var(--ink-soft);
+    margin: .1rem 0 0;
+  }
+
+  /* ---- example / prompt boxes ---- */
+
+  .spec {
+    background: var(--surface-alt);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 3px 3px 0;
+    padding: 1.1rem 1.2rem;
+    font-family: var(--font-mono);
+    font-size: .86rem;
+    line-height: 1.95;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    margin: 0;
+    color: var(--ink);
+  }
+
+  .spec.bad {
+    border-left-color: var(--rule-strong);
+    color: var(--ink-soft);
+  }
+
+  .caption {
+    font-size: .82rem;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  .note {
+    background: var(--accent-soft);
+    border-radius: 3px;
+    padding: 1rem 1.15rem;
+    font-size: .9rem;
+    line-height: 1.8;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  /* ---- table ---- */
+
+  .table-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 30rem;
+    font-size: .9rem;
+    background: var(--surface);
+  }
+
+  th, td {
+    text-align: left;
+    padding: .85rem 1rem;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+    line-height: 1.7;
+  }
+
+  thead th {
+    background: var(--surface-alt);
+    font-size: .78rem;
+    letter-spacing: .06em;
+    font-weight: 700;
+    color: var(--ink-mid);
+    white-space: nowrap;
+  }
+
+  td.pts {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    color: var(--accent-ink);
+    font-weight: 600;
+  }
+
+  tbody tr:last-child th,
+  tbody tr:last-child td { border-bottom: none; }
+
+  tr.total td, tr.total th {
+    background: var(--surface-alt);
+    font-weight: 700;
+  }
+
+  /* ---- checklist ---- */
+
+  .checklist {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+  }
+
+  .checklist li {
+    padding-left: 1.6rem;
+    position: relative;
+  }
+
+  .checklist li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: .62em;
+    width: .62rem;
+    height: .62rem;
+    border-radius: 50%;
+    border: 1.5px solid var(--accent);
+  }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 1.5rem;
+    font-size: .84rem;
+    color: var(--ink-soft);
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+  }
+
+  @media (max-width: 34rem) {
+    body { padding: 2.5rem 1.1rem 4rem; }
+    .stage { padding: 1.4rem 1.15rem 1.5rem; }
+    .stage-head { flex-wrap: wrap; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">第４回　課題</p>
+    <h1>草間彌生風の模様を作成する</h1>
+    <p class="standfirst">この課題は「規則性の記述」「実装」「検証」の三段階で提出します。評価するのは絵の華やかさではなく、<strong>模様の規則をどれだけ正確に言葉にできたか</strong>です。</p>
+  </header>
+
+  <section>
+    <h2>なぜ三段階にするのか</h2>
+    <p>この回の目的は、p5.jsの描き方を覚えることではありません。<strong>複雑に見えるものの中に規則を見つけ、それを手順に分解する</strong>という、プログラミングの最も本質的な部分を訓練することです。</p>
+    <p>模様の絵だけを提出してもらうと、規則を考え抜いた人と、なんとなく描けてしまった人の区別がつきません。そこで、頭の中で起きているはずのプロセスそのものを提出してもらいます。</p>
+    <p>この力は、AIにコードを書かせる時代にはむしろ重要になります。<em>手順を正確に言語化できない人は、AIに正しい指示を出せません。</em>第３段階では、そのことを実際に確かめてもらいます。</p>
+  </section>
+
+  <div class="stages">
+
+    <article class="stage">
+      <div class="stage-head">
+        <div class="dot" aria-hidden="true"></div>
+        <div>
+          <h2 class="stage-title">規則性の記述（手順書をつくる）</h2>
+          <p class="stage-when">CodeSandbox を開く前に行う</p>
+        </div>
+      </div>
+
+      <p><a href="https://www.google.com/search?q=%E8%8D%89%E9%96%93%E5%BD%8C%E7%94%9F">「草間彌生」で画像検索</a>して、再現したい模様を一つ選んでください。そして、コードを書く前に、次の４点を<strong>日本語だけで</strong>書き出します。</p>
+
+      <ol>
+        <li><strong>描画の最小単位</strong>：この模様は何の繰り返しでできているか（円、線、点など）</li>
+        <li><strong>固定されているもの</strong>：どの模様でも変わらない要素は何か</li>
+        <li><strong>変化しているもの</strong>：位置、大きさ、色のうち、何がどう変わっているか</li>
+        <li><strong>描画手順</strong>：上から順に実行すれば模様が完成する手順を、番号をつけて書く</li>
+      </ol>
+
+      <h3>手順書の書き方（例）</h3>
+      <pre class="spec">1. 800×500pxのキャンバスを用意する
+2. 背景を赤（R=200, G=30, B=30）で塗る
+3. 画面を縦横40px間隔の格子に分ける
+4. 各格子の中心に白い円を描く
+5. ただし円の直径は、格子ごとに20〜40の範囲でランダムに決める
+6. 画面の右にいくほど直径の最大値を小さくする</pre>
+      <p class="caption">第５回で扱う再帰の手順書と同じ形式です。番号どおりに実行すれば、誰が読んでも同じ絵になることが条件です。</p>
+
+      <h3>これでは手順書になりません</h3>
+      <pre class="spec bad">赤い背景に、白い水玉をいい感じにたくさん散らす。
+だんだん小さくなるようにする。</pre>
+      <p class="caption">「いい感じ」「たくさん」「だんだん」は、読む人によって違う絵になります。<strong>数値と順序で書けているか</strong>を基準にしてください。</p>
+
+      <div class="note"><strong>重要なルール：</strong>手順書には <code>ellipse()</code> や <code>for</code> などのコードや関数名を書かないでください。日本語だけで、一意に伝わるように書くことがこの段階の訓練です。</div>
+    </article>
+
+    <article class="stage">
+      <div class="stage-head">
+        <div class="dot" aria-hidden="true"></div>
+        <div>
+          <h2 class="stage-title">実装</h2>
+          <p class="stage-when">自分の手順書に従って書く</p>
+        </div>
+      </div>
+
+      <p>第１段階で書いた手順書に従って、p5.jsで実装してください。キャンバスは<strong>幅800px、高さ500px</strong>とします。テンプレートは <a href="https://codesandbox.io/p/sandbox/p5-js-sample-97x2kk">p5.js sample on CodeSandbox</a> を使ってください。</p>
+
+      <p>実装している最中に、<strong>手順書に書いていなかったことに必ず気づきます。</strong>「円が画面からはみ出したときどうするか」「ランダムの範囲に小数を許すか」など、書いたときには意識していなかった点です。</p>
+
+      <p>気づいたら、その都度メモしてください。<em>このメモが第３段階の材料になります。</em>ただし、第１段階で提出した手順書そのものは書き直さず、最初のまま残しておいてください。</p>
+
+      <p>模様としての完成度も評価します。手順書を守りつつ、色や密度を調整して、できるだけ本物に近づけてください。</p>
+    </article>
+
+    <article class="stage">
+      <div class="stage-head">
+        <div class="dot" aria-hidden="true"></div>
+        <div>
+          <h2 class="stage-title">検証（AIに同じ手順書を渡す）</h2>
+          <p class="stage-when">自分の実装が完成してから行う</p>
+        </div>
+      </div>
+
+      <p>自分の実装が終わったら、第１段階で書いた<strong>修正前の手順書</strong>を、そのままAI（ChatGPT、Geminiなど）に渡して実装させます。プロンプトは次のとおりです。</p>
+
+      <pre class="spec">以下の手順に従って、p5.jsのコードを書いてください。
+手順に書かれていないことは、補ったり工夫したりしないでください。
+
+（ここに第１段階の手順書をそのまま貼る）</pre>
+
+      <p class="caption">「補わないでください」が重要です。AIに気を利かせないことで、手順書に書かれていることだけが絵になります。</p>
+
+      <div class="note">AIは<strong>作品を作らせるために使うのではありません。</strong>自分の手順書がどれだけ正確だったかを測るための道具として使います。AIの出した絵が意図と違ったなら、それはAIの失敗ではなく、手順書の記述が曖昧だったということです。</div>
+
+      <h3>考察として書くこと</h3>
+      <ul class="checklist">
+        <li>自分の実装とAIの実装は、どこが一致し、どこがずれたか</li>
+        <li>ずれた原因は、手順書のどの記述が曖昧だったからか</li>
+        <li>その部分は、どう書き直せば一意に伝わるか</li>
+        <li>自分で実装したときに、手順書に書かず無意識に補っていたことは何か</li>
+      </ul>
+
+      <p class="caption">分量は400字程度で構いません。「ずれなかった」場合も、なぜずれなかったのかを書いてください。</p>
+    </article>
+
+  </div>
+
+  <section>
+    <h2>提出方法</h2>
+    <p>完成したSandboxのプレビュー画面のURL（https://xxxxx.csb.app）を、manabaのレポート機能で提出してください。<strong>提出するURLは１つ</strong>で、そのWebページに以下の三つをすべて載せてください。</p>
+
+    <ol>
+      <li><strong>作品</strong>（幅800px×高さ500pxのキャンバス）</li>
+      <li><strong>手順書</strong>（第１段階で書いたもの。修正しないこと）</li>
+      <li><strong>検証と考察</strong>（AIの実装との比較）</li>
+    </ol>
+
+    <p>index.html以外のファイルをトップ画面とした場合には、<code>https://xxxxx.csb.app/kusama.html</code> のようにファイル名を <code>/</code> の後に書いてください。</p>
+
+    <p>複数の模様にチャレンジして複数のURLを提出しても構いません。その場合は一番上を自信作としてください。ただし、手順書と考察は自信作のものだけで結構です。</p>
+
+    <p><strong>提出期限は来週木曜日の13:00です。</strong></p>
+
+    <div class="note">提出するURLはシークレットウィンドウなどで開き、ログインなしの状態で正しく表示されるか確認してください。また、CodeSandboxで作成したページは公開されますので、草間彌生の作品画像そのものを貼り付けることは<strong>絶対にしないでください</strong>（著作権）。あくまで自分のコードで描いたものを提出します。</div>
+  </section>
+
+  <section>
+    <h2>評価（5点）</h2>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">評価項目</th>
+            <th scope="col">配点</th>
+            <th scope="col">評価の観点</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">手順書の精度</th>
+            <td class="pts">2点</td>
+            <td>模様の規則を正しく見抜けているか。番号どおりに実行すれば同じ絵になる程度に、数値と順序で一意に書けているか。コードや関数名に頼らず日本語で書けているか。</td>
+          </tr>
+          <tr>
+            <th scope="row">実装</th>
+            <td class="pts">2点</td>
+            <td>手順書のとおりに動作しているか。エラーなく動くか。模様としての完成度（密度、配色、本物への近さ）。</td>
+          </tr>
+          <tr>
+            <th scope="row">検証と考察</th>
+            <td class="pts">1点</td>
+            <td>自分の実装とAIの実装の差を具体的に指摘できているか。ずれの原因を手順書の記述に立ち返って説明できているか。</td>
+          </tr>
+          <tr class="total">
+            <th scope="row">合計</th>
+            <td class="pts">5点</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">絵の華やかさだけでは点数は伸びません。逆に、模様が簡素でも、手順書が正確で考察が鋭ければ高く評価します。</p>
+  </section>
+
+  <footer>
+    <p>プログラミング論及び演習（2025）　第４回　p5.jsでアルゴリズム（１）</p>
+    <p>質問は授業中にいつでも声をかけてください。授業時間外は fujimura@otsuma.ac.jp まで。</p>
+  </footer>
+
+</div>

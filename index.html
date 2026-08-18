@@ -1,0 +1,3129 @@
+<title>プログラミング論及び演習 2026</title>
+
+<!-- ==========================================================
+     授業データ　ここだけ書き換えれば、表紙・スケジュール表・
+     メールアドレスがすべて更新されます。HTMLは触りません。
+       n     : 授業回。休業日は null
+       date  : 表示する日付
+       topic : 内容（HTMLタグ可）
+       task  : 課題（配点）
+     ========================================================== -->
+<script id="course-data" type="application/json">
+{
+  "course": "プログラミング論及び演習",
+  "year": 2026,
+  "instructor": { "name": "藤村　考", "email": "fujimura@otsuma.ac.jp" },
+  "sa":         { "name": "田中七菜子", "affiliation": "藤村ゼミ４年" },
+  "campus": "千代田",
+  "schedule": [
+    { "n": 1,    "date": "9/11",  "topic": "<a href=\"#w1\">プログラミング言語の歴史とJavaScript</a>・ガイダンス・開発環境", "task": "第１回課題（3）" },
+    { "n": 2,    "date": "9/18",  "topic": "<a href=\"#w2\">JavaScript言語入門（１）</a>・条件分岐、日付処理", "task": "第２回課題（3）" },
+    { "n": 3,    "date": "9/25",  "topic": "<a href=\"#w3\">JavaScript言語入門（２）</a>・配列、オブジェクト、JSON、DOM", "task": "じゃんけん（5）" },
+    { "n": null, "date": "10/2",  "topic": "臨時休業（スポーツフェスティバル）" },
+    { "n": 4,    "date": "10/9",  "topic": "<a href=\"#w4\">p5.jsでアルゴリズム（１）</a>・規則性の発見と手順化", "task": "草間模様（5）" },
+    { "n": null, "date": "10/16", "topic": "臨時休業（大妻祭・千代田）" },
+    { "n": 5,    "date": "10/23", "topic": "<a href=\"#w5\">p5.jsでアルゴリズム（２）</a>・再帰関数・3Dグラフィックス", "task": "3D幾何模様（5）" },
+    { "n": 6,    "date": "10/30", "topic": "<a href=\"#w6\">DOMとイベント（１）</a>・ローカルストレージ・JSONの保存・クイズ", "task": "クイズ（5）" },
+    { "n": 7,    "date": "11/6",  "topic": "<a href=\"#w7\">DOMとイベント（２）</a>・状態推移モデル・診断チャート", "task": "診断チャート（5）" },
+    { "n": 8,    "date": "11/13", "topic": "<a href=\"#w8\">サーバとの通信</a>・非同期処理・Google Books API", "task": "Google Books（5）" },
+    { "n": 9,    "date": "11/20", "topic": "<a href=\"#w9\">LLM APIの活用（１）</a>・プロンプト・APIキー<br><small>学校記念日・授業実施日</small>", "task": "（小テスト準備）" },
+    { "n": 10,   "date": "11/27", "topic": "<a href=\"#w10\">LLM APIの活用（２）</a>・AIによるJSON生成　<strong>小テスト実施</strong>", "task": "AIデータ生成（5）" },
+    { "n": 11,   "date": "12/4",  "topic": "<a href=\"#w11\">他のAPIの活用</a>・Web API調査・Sheet API", "task": "API活用（3）" },
+    { "n": 12,   "date": "12/11", "topic": "<a href=\"#w12\">総合課題（企画と設計）</a>・授業評価アンケート", "task": "総合課題（35）" },
+    { "n": 13,   "date": "12/18", "topic": "<a href=\"#w13\">総合課題（制作）</a>（１限のみ・２限はゼミ説明会）", "task": "↑ 継続" },
+    { "n": null, "date": "12/25", "topic": "冬季休業（12/24〜1/6）" },
+    { "n": 14,   "date": "1/8",   "topic": "<a href=\"#w14\">総合課題（制作）</a>　<strong>第２回小テスト 9:05-9:30</strong>", "task": "↑ 継続" },
+    { "n": 15,   "date": "1/15",  "topic": "<a href=\"#w15\">総合課題（発表）</a>・プレゼンと投票", "task": "当日9:10までにシート入力" }
+  ]
+}
+</script>
+
+<style>
+  :root {
+    --ground: #FAF9F6;
+    --surface: #FFFFFF;
+    --surface-alt: #F1EFE9;
+    --code-bg: #23262B;
+    --code-ink: #E6E9EE;
+    --code-dim: #8B93A1;
+    --code-key: #C9A227;
+    --ink: #1A1A18;
+    --ink-mid: #45443F;
+    --ink-soft: #6E6C64;
+    --rule: #E2DFD6;
+    --rule-strong: #C9C4B7;
+    --accent: #2B4C7E;
+    --accent-ink: #233E68;
+    --accent-soft: #E6ECF5;
+    --mark: #A8760A;
+    --mark-soft: #FAF1DC;
+    --shadow: 0 1px 2px rgba(26, 26, 24, .04), 0 12px 30px -18px rgba(26, 26, 24, .2);
+
+    --font-display: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "MS PMincho", serif;
+    --font-ui: "Hiragino Kaku Gothic ProN", "Yu Gothic", "YuGothic", "Noto Sans JP", "Meiryo", sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Menlo", "Consolas", "Roboto Mono", monospace;
+
+    --nav-h: 3.25rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #191817;
+      --surface: #212020;
+      --surface-alt: #2A2927;
+      --code-bg: #131518;
+      --code-ink: #DDE2E8;
+      --code-dim: #7A828F;
+      --code-key: #D8B33F;
+      --ink: #EDEBE6;
+      --ink-mid: #BEBAB2;
+      --ink-soft: #918C84;
+      --rule: #333230;
+      --rule-strong: #4A4844;
+      --accent: #7BA3DC;
+      --accent-ink: #97B8E8;
+      --accent-soft: #1C2836;
+      --mark: #E0A93F;
+      --mark-soft: #322710;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 12px 30px -18px rgba(0, 0, 0, .7);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #191817;
+    --surface: #212020;
+    --surface-alt: #2A2927;
+    --code-bg: #131518;
+    --code-ink: #DDE2E8;
+    --code-dim: #7A828F;
+    --code-key: #D8B33F;
+    --ink: #EDEBE6;
+    --ink-mid: #BEBAB2;
+    --ink-soft: #918C84;
+    --rule: #333230;
+    --rule-strong: #4A4844;
+    --accent: #7BA3DC;
+    --accent-ink: #97B8E8;
+    --accent-soft: #1C2836;
+    --mark: #E0A93F;
+    --mark-soft: #322710;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 12px 30px -18px rgba(0, 0, 0, .7);
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 1.5rem); }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; }
+  }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--font-ui);
+    font-size: 16px;
+    line-height: 1.9;
+    margin: 0;
+    padding: 0 0 7rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- nav ---------- */
+
+  nav.jump {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--ground);
+    border-bottom: 1px solid var(--rule);
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: 0 1rem;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  nav.jump .brand {
+    font-family: var(--font-mono);
+    font-size: .72rem;
+    letter-spacing: .1em;
+    font-weight: 600;
+    color: var(--accent-ink);
+    white-space: nowrap;
+    padding-right: .5rem;
+    border-right: 1px solid var(--rule-strong);
+    flex: none;
+  }
+
+  nav.jump a {
+    font-family: var(--font-mono);
+    font-size: .78rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+    padding: .2rem .45rem;
+    border-radius: 3px;
+    white-space: nowrap;
+    flex: none;
+    transition: color .15s, background .15s;
+  }
+
+  nav.jump a:hover { color: var(--ink); background: var(--surface-alt); }
+  nav.jump a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  /* ---------- layout ---------- */
+
+  .wrap {
+    max-width: 47rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .masthead {
+    padding: 4.5rem 0 2.25rem;
+    border-bottom: 3px double var(--rule-strong);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .masthead h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 6vw, 2.9rem);
+    font-weight: 600;
+    line-height: 1.35;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .masthead .meta {
+    font-size: .92rem;
+    color: var(--ink-mid);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .15rem;
+  }
+
+  .masthead .warn {
+    background: var(--mark-soft);
+    color: var(--ink);
+    border-radius: 4px;
+    padding: .85rem 1.05rem;
+    font-size: .9rem;
+    line-height: 1.75;
+    margin: 0;
+  }
+
+  /* ---------- week ---------- */
+
+  .week {
+    padding-top: 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.35rem;
+  }
+
+  .week-head {
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: .5rem;
+  }
+
+  .week-num {
+    font-family: var(--font-mono);
+    font-size: .74rem;
+    letter-spacing: .16em;
+    font-weight: 600;
+    color: var(--accent-ink);
+  }
+
+  .week-head h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 4.2vw, 2rem);
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  h3 {
+    font-size: 1.16rem;
+    font-weight: 700;
+    line-height: 1.55;
+    margin: 1.5rem 0 0;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--rule-strong);
+    text-wrap: balance;
+  }
+
+  h4 {
+    font-size: .99rem;
+    font-weight: 700;
+    margin: .9rem 0 0;
+    line-height: 1.6;
+  }
+
+  p { margin: 0; text-wrap: pretty; }
+
+  ul, ol {
+    margin: 0;
+    padding-left: 1.35rem;
+    display: flex;
+    flex-direction: column;
+    gap: .45rem;
+  }
+
+  li::marker { color: var(--ink-soft); }
+  li > ul, li > ol { margin-top: .45rem; }
+
+  strong { font-weight: 700; }
+
+  em {
+    font-style: normal;
+    background: var(--mark-soft);
+    padding: .08em .28em;
+    border-radius: 2px;
+  }
+
+  a { color: var(--accent-ink); text-underline-offset: .2em; text-decoration-thickness: 1px; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: .87em;
+    background: var(--surface-alt);
+    padding: .12em .35em;
+    border-radius: 3px;
+    word-break: break-word;
+  }
+
+  /* ---------- code block ---------- */
+
+  .code {
+    position: relative;
+    background: var(--code-bg);
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .code-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: .45rem .5rem .45rem .95rem;
+    background: rgba(255, 255, 255, .04);
+    border-bottom: 1px solid rgba(255, 255, 255, .07);
+  }
+
+  .code-name {
+    font-family: var(--font-mono);
+    font-size: .71rem;
+    letter-spacing: .06em;
+    color: var(--code-dim);
+  }
+
+  .copy {
+    font-family: var(--font-mono);
+    font-size: .68rem;
+    letter-spacing: .05em;
+    color: var(--code-dim);
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, .16);
+    border-radius: 3px;
+    padding: .2rem .55rem;
+    cursor: pointer;
+    transition: color .15s, border-color .15s;
+    flex: none;
+  }
+
+  .copy:hover { color: var(--code-ink); border-color: rgba(255, 255, 255, .38); }
+  .copy:focus-visible { outline: 2px solid var(--code-key); outline-offset: 1px; }
+  .copy[data-done="1"] { color: var(--code-key); border-color: var(--code-key); }
+
+  .code pre {
+    font-family: var(--font-mono);
+    font-size: .81rem;
+    line-height: 1.8;
+    color: var(--code-ink);
+    margin: 0;
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+    tab-size: 2;
+  }
+
+  .code pre code { background: none; padding: 0; font-size: inherit; }
+
+  .cmt { color: var(--code-dim); }
+  .bad-line { color: #E8927C; }
+
+  /* ---------- boxes ---------- */
+
+  .box {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 5px 5px 0;
+    padding: 1.15rem 1.3rem;
+    display: flex;
+    flex-direction: column;
+    gap: .7rem;
+  }
+
+  .box.mark { border-left-color: var(--mark); }
+  .box h4 { margin-top: 0; }
+
+  .note {
+    background: var(--accent-soft);
+    border-radius: 4px;
+    padding: .95rem 1.15rem;
+    font-size: .93rem;
+    line-height: 1.8;
+    margin: 0;
+  }
+
+  .note.mark { background: var(--mark-soft); }
+
+  /* ---------- assignment ---------- */
+
+  .task {
+    background: var(--surface);
+    border: 1px solid var(--rule-strong);
+    border-top: 4px solid var(--mark);
+    border-radius: 5px;
+    box-shadow: var(--shadow);
+    padding: 1.6rem 1.5rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .task > h3 {
+    margin-top: 0;
+    border-bottom: none;
+    padding-bottom: 0;
+    display: flex;
+    align-items: baseline;
+    gap: .7rem;
+    flex-wrap: wrap;
+  }
+
+  .pts {
+    font-family: var(--font-mono);
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .05em;
+    background: var(--mark-soft);
+    color: var(--mark);
+    padding: .18em .55em;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .deadline {
+    font-size: .9rem;
+    font-weight: 700;
+    color: var(--mark);
+    margin: 0;
+  }
+
+  /* ---------- table ---------- */
+
+  .table-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--rule);
+    border-radius: 5px;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 34rem;
+    font-size: .88rem;
+    background: var(--surface);
+  }
+
+  th, td {
+    text-align: left;
+    padding: .7rem .9rem;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+    line-height: 1.7;
+  }
+
+  thead th {
+    background: var(--surface-alt);
+    font-size: .75rem;
+    letter-spacing: .06em;
+    font-weight: 700;
+    color: var(--ink-mid);
+    white-space: nowrap;
+  }
+
+  tbody tr:last-child th, tbody tr:last-child td { border-bottom: none; }
+
+  td.c, th.c { text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  td.mono { font-family: var(--font-mono); font-size: .82rem; }
+  tr.off td { color: var(--ink-soft); background: var(--surface-alt); font-style: italic; }
+
+  /* ---------- misc ---------- */
+
+  details {
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    background: var(--surface);
+    padding: .3rem .95rem;
+  }
+
+  summary {
+    cursor: pointer;
+    font-weight: 700;
+    font-size: .93rem;
+    padding: .55rem 0;
+    list-style-position: inside;
+  }
+
+  summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+
+  details > *:not(summary) { margin-bottom: .8rem; }
+
+  .cmp { display: grid; grid-template-columns: 1fr; gap: .9rem; }
+  @media (min-width: 58rem) {
+    .cmp { grid-template-columns: 1fr 1fr; align-items: start; }
+  }
+  .cmp > div { display: flex; flex-direction: column; gap: .45rem; min-width: 0; }
+  .cmp h5 {
+    font-family: var(--font-mono);
+    font-size: .71rem;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    margin: 0;
+    color: var(--ink-soft);
+  }
+
+  .toc {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: .1rem 1.5rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .toc li { border-bottom: 1px solid var(--rule); }
+
+  .toc a {
+    display: flex;
+    gap: .6rem;
+    padding: .5rem 0;
+    text-decoration: none;
+    font-size: .89rem;
+    color: var(--ink);
+  }
+
+  .toc a:hover { color: var(--accent-ink); }
+  .toc .n { font-family: var(--font-mono); font-size: .78rem; color: var(--accent); flex: none; }
+
+  footer {
+    margin-top: 5rem;
+    border-top: 3px double var(--rule-strong);
+    padding-top: 1.6rem;
+    font-size: .85rem;
+    color: var(--ink-soft);
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+  }
+
+  @media (max-width: 34rem) {
+    body { font-size: 15.5px; }
+    .wrap { padding: 0 1.1rem; }
+    .masthead { padding-top: 2.75rem; }
+    .task { padding: 1.25rem 1.1rem 1.4rem; }
+  }
+</style>
+
+<nav class="jump">
+  <span class="brand">プログラミング論 2026</span>
+  <a href="#schedule">日程</a>
+  <a href="#syllabus">シラバス</a>
+  <a href="#w1">1</a><a href="#w2">2</a><a href="#w3">3</a><a href="#w4">4</a><a href="#w5">5</a>
+  <a href="#w6">6</a><a href="#w7">7</a><a href="#w8">8</a><a href="#w9">9</a><a href="#w10">10</a>
+  <a href="#w11">11</a><a href="#w12">12</a><a href="#w13">13</a><a href="#w14">14</a><a href="#w15">15</a>
+</nav>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <h1>プログラミング論及び演習<br>授業ノート 2026</h1>
+    <div class="meta">
+      <span><span data-f="instructor.name"></span>　　<a data-mail href="mailto:"></a></span>
+      <span>Student Assistant　<span data-f="sa.affiliation"></span>　<span data-f="sa.name"></span></span>
+    </div>
+    <p class="warn"><strong>この資料が教科書です。</strong>毎回の授業ですぐ開けるようにブックマークしておいてください。閲覧には大妻Googleアカウントのログインが必要です。紙媒体での配布は行いません。必要に応じてご自身で印刷してください。</p>
+  </header>
+
+  <section class="week" id="schedule">
+    <div class="week-head">
+      <span class="week-num">SCHEDULE</span>
+      <h2>スケジュール</h2>
+    </div>
+    <p>授業の進行状況により修正することがあります。</p>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col" class="c">回</th>
+            <th scope="col" class="c">日付</th>
+            <th scope="col">内容</th>
+            <th scope="col">課題（配点）</th>
+          </tr>
+        </thead>
+        <tbody id="schedule-body"></tbody>
+      </table>
+    </div>
+
+    <h3>目次</h3>
+    <ul class="toc">
+      <li><a href="#w1"><span class="n">01</span>プログラミング言語の歴史とJavaScript</a></li>
+      <li><a href="#w2"><span class="n">02</span>条件分岐、日付処理</a></li>
+      <li><a href="#w3"><span class="n">03</span>配列、オブジェクト、JSON、DOM</a></li>
+      <li><a href="#w4"><span class="n">04</span>p5.jsでアルゴリズム（１）</a></li>
+      <li><a href="#w5"><span class="n">05</span>再帰関数と3D</a></li>
+      <li><a href="#w6"><span class="n">06</span>ローカルストレージとクイズ</a></li>
+      <li><a href="#w7"><span class="n">07</span>状態推移モデル</a></li>
+      <li><a href="#w8"><span class="n">08</span>サーバとの通信</a></li>
+      <li><a href="#w9"><span class="n">09</span>LLM APIの活用（１）</a></li>
+      <li><a href="#w10"><span class="n">10</span>LLM APIの活用（２）</a></li>
+      <li><a href="#w11"><span class="n">11</span>他のAPIの活用</a></li>
+      <li><a href="#w12"><span class="n">12</span>総合課題（企画と設計）</a></li>
+      <li><a href="#w13"><span class="n">13</span>総合課題（制作）</a></li>
+      <li><a href="#w14"><span class="n">14</span>総合課題（制作）</a></li>
+      <li><a href="#w15"><span class="n">15</span>総合課題（発表）</a></li>
+    </ul>
+  </section>
+
+  <section class="week" id="syllabus">
+    <div class="week-head">
+      <span class="week-num">SYLLABUS</span>
+      <h2>シラバス</h2>
+    </div>
+
+    <h3>授業の概要、ねらい</h3>
+    <p>近年、HTML5の普及により利用が広がっているJavaScriptを使って、実践的なプログラミング技術を学びます。JavaScriptはWebブラウザ上で実行する言語で、OSに依存せずスマートフォン上でも実行可能です。またJavaScript実行エンジンの進歩により性能が著しく向上し、3Dグラフィックスやゲーム等、これまで他の言語で開発されていた用途でも利用が広がりつつあります。</p>
+    <p>この授業では、JavaScriptとそのライブラリを活用して、対話的なユーザインタフェースの設計等、Webプログラミングの基礎を学びます。最後の総合課題では、各自がテーマを決めてWebアプリ作品を制作することで応用力を育成します。</p>
+
+    <h3>この授業を貫く一本の軸</h3>
+    <p>第３回から第１０回まで、扱うアプリは毎回変わりますが、<strong>データの形はずっと同じ</strong>です。</p>
+    <div class="note">
+      <strong>じゃんけん → クイズ → 診断チャート → API → AI生成</strong><br>
+      すべて「同じ形のレコードが並んだデータ」と「それを解釈するコード」の組み合わせでできています。違うのは<em>データがどこから来るか</em>だけです。第３回では自分で書き、第８回では外部のサーバから取ってきて、第１０回ではAIに作らせます。
+    </div>
+    <p>この授業で本当に身につけてほしいのは、個々の構文ではなく<strong>データの形を自分で設計できること</strong>です。形を指定できるのは、その形を知っている人だけです。</p>
+
+    <h3>到達目標</h3>
+    <p>プログラミングの基本概念を学ぶだけではなく、多くのコードを書くことで、プログラミングの実践的な応用力を修得することを目標とします。</p>
+
+    <h3>成績評価の方法及び基準</h3>
+    <p>毎回の課題（40%）、総合制作課題（35%）、小テスト（25%）で評価します。</p>
+    <ul>
+      <li>課題の提出はCodeSandboxの作品URLをmanabaレポートで提出することで行います</li>
+      <li>課題の配点は課題によって異なります</li>
+      <li>出席はスマホ版Responアプリを使用します（位置情報をONに）</li>
+      <li>技術の習得は積み重ねが必要なので欠席しないこと。出席が不足するとＥ判定になります</li>
+      <li>未提出の課題が多いときはＤ判定になります。<strong>プログラムが動かない場合は未提出と同じです</strong></li>
+      <li>欠席した場合にも、次週の木曜日のお昼までは課題を提出しましょう</li>
+    </ul>
+
+    <h3>出席確認</h3>
+    <p>スマホ版Responアプリを使用します。以下をサーバとして設定してください。<strong>アプリのインストールでは位置情報を許可</strong>してください。</p>
+    <div class="code">
+      <div class="code-bar"><span class="code-name">Respon 全科目共通サーバ</span></div>
+      <pre><code>otsuma.respon.jp</code></pre>
+    </div>
+    <p><strong>通常は9:20以降は遅刻扱い</strong>となります。遅延証メールで講義名、学籍番号、名前を記載して提出してください。Responの出席管理システムのデータベースは教員が更新できないため、遅延証や欠席届を提出いただいても学生側からは反映を確認できませんが、それらのデータを確認して成績に反映しますので安心してください。</p>
+
+    <h3>質問等の受付</h3>
+    <p>授業中はいつでも気軽に声をかけてください。授業時間外は <a data-mail href="mailto:"></a> にメールでも構いません。時間がかかりそうな質問の場合にはアポイントをお願いします。Zoomでも対応します。</p>
+
+    <h3>授業の進め方</h3>
+    <ul>
+      <li>３時間の講義は非常に長いですが、プログラミングには意外と短いです。進行に合わせて途中で休憩を入れます</li>
+      <li>プログラミングやWebデザインは慣れや経験で、効率や完成度が変わります</li>
+      <li>余裕がある人は、課題に自分のアイデア、工夫、芸術性を入れてください。教えてあげることで自分のスキルも磨けます。お互いに教え合って、楽しく、積極的にコミュニケーションを</li>
+    </ul>
+
+    <h3>AIの使用について</h3>
+    <p>現在、ソフトウェア開発ではAIが不可欠なツールとして利用されています。人間がコードを書く時代は終わりました。AIによって生産性が高まったことにより、これまで以上に生活のあらゆる場面でアプリ化・ロボット化が進んでいくでしょう。これにより、作成されるプログラムの量は爆発的に増加します。</p>
+    <p>人間はAIが生成する膨大なプログラムコードを<strong>責任をもってチェックし、使用するかどうかを判断する役割</strong>を担うことになると思います。このためには、プログラムを読んで理解する能力が、これまで以上に求められるでしょう。そのためには基礎的な概念の理解が必要です。この授業もその一環として学んでください。</p>
+    <p>AIはプログラミング教育でも重要な役割を果たします。プログラムや組み込み関数の説明をしてもらうなどの個別指導のツールとして、AIはとても有用ですので積極的に活用してください。</p>
+    <div class="note mark">AIが作成したコードの一部を本授業の課題に使用することは禁止しませんが、使用する場合には、そのコードの<strong>各行の意味を完全に理解</strong>した上で使用してください。</div>
+  </section>
+
+  <section class="week" id="w1">
+    <div class="week-head">
+      <span class="week-num">第１回</span>
+      <h2>プログラミング言語の歴史とJavaScript</h2>
+    </div>
+
+    <p>本授業ではJavaScriptのコーディング方法を学びますが、JavaScriptはプログラミング言語の歴史の中でどのような位置づけの言語であり、どのような特徴をもつのか理解しておくことが重要です。ここでは、コンピュータの初期段階から現代までの<a href="https://ja.wikipedia.org/wiki/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0%E8%A8%80%E8%AA%9E%E5%B9%B4%E8%A1%A8">主なプログラミング言語の変遷</a>を解説します。</p>
+
+    <h3>1950年代以前：機械語からアセンブリ言語、高級言語へ</h3>
+    <p>プログラミング言語の起源は19世紀に遡ります。特に注目すべきは<a href="https://ja.wikipedia.org/wiki/%E3%83%81%E3%83%A3%E3%83%BC%E3%83%AB%E3%82%BA%E3%83%BB%E3%83%90%E3%83%99%E3%83%83%E3%82%B8">チャールズ・バベッジ</a>の階差機関と<a href="https://ja.wikipedia.org/wiki/%E3%82%A8%E3%82%A4%E3%83%80%E3%83%BB%E3%83%A9%E3%83%96%E3%83%AC%E3%82%B9">エイダ・ラブレス</a>の貢献です。エイダ・ラブレスは階差機関のためのアルゴリズムを記述し、これが世界初のプログラムと見なされています。なお機械式計算機は戦後も1970年頃まで使われており、日本でも<a href="https://nikomat.org/priv/unplugged/tiger/index.html">タイガー計算機</a>が有名です。</p>
+    <p>世界初の電子式計算機である<a href="https://ja.wikipedia.org/wiki/ENIAC">ENIAC</a>は、米国ペンシルベニア大学で "Project PX" の名で秘密裏に設計が開始され、1946年2月14日に公開されました。</p>
+    <p>1950年代に入ると最初の高級言語が登場します。<strong>FORTRAN</strong>（1957年）は科学技術計算のために、<strong>COBOL</strong>（1959年）はビジネス用途に特化して開発されました。これらはアセンブリ言語のような低級言語に比べて人間が理解しやすい形式を持ち、プログラムの記述が大幅に容易になりました。</p>
+
+    <h3>1960年代から1980年代：構造化プログラミングとオブジェクト指向</h3>
+    <p>1960年代には<strong>ALGOL</strong>が登場し、構造化アプローチの基礎が築かれました。構造化プログラミングは、コードの可読性と保守性を向上させるために、ループや条件分岐を明確に記述する手法です。この考え方は<strong>Pascal</strong>（1970年）や<strong>C</strong>（1972年）に引き継がれました。この頃のハードウェアとしては<a href="https://ja.wikipedia.org/wiki/System/360">IBM System/360</a>や<a href="https://www.fujitsu.com/jp/about/plus/museum/products/computer/mainframe/facom230-25.html">富士通FACOM</a>などのメインフレームが普及しました。</p>
+    <p>1980年代には<a href="https://ja.wikipedia.org/wiki/PC-9801%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA">NEC PC-9801</a>などのPCが販売されるようになり、オブジェクト指向プログラミング（OOP）が注目され始めます。OOPはデータとそれに関連する操作を「オブジェクト」としてまとめる考え方で、プログラムのモジュール化と再利用性を高めました。Smalltalkや<strong>C++</strong>が代表的で、後に<strong>Java</strong>（1995年）や<strong>Python</strong>（1991年）にも影響を与えました。</p>
+
+    <h3>インターネットの普及とJavaScriptの誕生</h3>
+    <p>1990年代はインターネットの爆発的な普及の時代でした。この時期、Webページに動的なコンテンツを提供するために開発されたのが<strong>JavaScript</strong>です。1995年にNetscape（Firefoxの前身）によって開発され、当初はクライアントサイドでのインタラクティブな動作を実現するための言語として設計されました。HTMLとCSSと組み合わせてWebページに動的な機能を追加できる点が強みで、これによりWebは静的な情報提供の場から、ユーザーとの対話を重視するインタラクティブなプラットフォームへと進化しました。</p>
+
+    <h3>21世紀：PythonとAI、JavaScriptとモバイルアプリ</h3>
+    <p><strong>Python</strong>は1991年にリリースされましたが、真価が発揮され始めたのは21世紀に入ってからです。シンプルで読みやすい文法がデータサイエンスや機械学習、AIの分野で大きな支持を得ました。GoogleのTensorFlowやMetaのPyTorchなど主要なAIフレームワークはPythonで書かれており、AI開発のデファクトスタンダードとしての地位を確立しています。</p>
+    <p>一方<strong>JavaScript</strong>はWeb開発の中心的な存在から、モバイルアプリ開発へと領域を広げました。React.jsやVue.js、<a href="https://reactnative.dev/">React Native</a>の登場により、単一のコードベースでiOS、Android、Webの各プラットフォーム向けのアプリを効率的に開発できるようになりました。</p>
+    <p>さらにNode.jsはJavaScriptをサーバーサイドで動作させることを可能にし、フルスタック開発を容易にしました。WebAssembly（Wasm）の登場により、ブラウザ上でネイティブコードに近いパフォーマンスを実現し、C、C++、Rustなどとのシームレスな統合も可能になりつつあります。</p>
+
+    <h3>将来のプログラミング言語</h3>
+    <p>数年先にはAIがコーディングするようになり、人間は一切コードを読まない時代が来るかもしれません。そのときは人間の可読性が必要ないので、これまでとは全く異なる言語が出現するでしょう。このテーマに関してAIと相談した結果は<a href="https://chatgpt.com/share/68cc94b3-badc-8004-bb89-bae8288b1549">こちら</a>。</p>
+
+    <h3>開発環境：CodeSandbox</h3>
+    <p>この授業ではJavaScriptのプログラミングにWeb上のIDEである<strong>CodeSandbox</strong>を使用します。Web IDEはWebブラウザさえあればプログラミングが可能で環境構築が不要というメリットがあります。また大学のPC、個人のPCの状態がクラウドで保存されるので、様々なPCで開発する人にとって便利です。</p>
+    <p>CodeSandboxは<strong>Googleアカウント又はGitHubアカウント又はApple ID</strong>で認証します。この授業では<strong>大妻Googleアカウントの使用を推奨します。</strong>出席確認（Respon）やmanabaと同じアカウントなので、ログインの取り違えが起きません。</p>
+
+    <div class="note">大妻Googleアカウントは<strong>卒業後にアクセスできなくなります</strong>。残しておきたい作品は、卒業までに手元にダウンロードしておいてください。やり方は第１４回で説明します。</div>
+
+    <p>いずれのアカウントを選ぶ場合でも、授業で作成したコードはそのアカウントに関連づけられてクラウド上に蓄積されますので、<strong>どのアカウントを使用したか決して忘れないようにしてください。</strong></p>
+    <p>サインイン：<a href="https://codesandbox.io/signin">https://codesandbox.io/signin</a>　　本授業では必ずChromeブラウザを使用してください。</p>
+
+    <h4>無料プランの制限</h4>
+    <ul>
+      <li>クラウド上のストレージ：20G</li>
+      <li>プライベートSandboxの数：5個</li>
+      <li>パブリックSandboxの数：無制限</li>
+    </ul>
+    <p>基本的に課題の提出はパブリックなSandboxを使用しますので、この授業で使用する上では問題になりません。</p>
+    <div class="note mark">パブリックなSandboxには<strong>固有のURLが割り当てられ公開されます</strong>。したがって、芸能人やキャラクター画像など<strong>著作権</strong>のある画像は絶対に使用しないでください。自分の撮影した写真はOKですが、他人の<strong>肖像権</strong>や<strong>プライバシー</strong>を侵害しないように注意してください。</div>
+
+    <h4>使い方</h4>
+    <p>アカウントを作成しサインインするとダッシュボードが表示されます。右上の黄色の「+ Create」ボタンをクリックし、Create Sandbox から HTML5 アイコンの <strong>"HTML + CSS"</strong> を選びます。Nameを適当に入力し、アクセス制限は <strong>Unlisted</strong> を選んで Create Sandbox を押してください。</p>
+    <p>CodeSandboxではライブビュー機能により、実行結果が右ペインに表示されます。実行結果画面の上に表示されているURLがこのSandboxの公開URLです。スマホやシークレットウィンドウでアクセスすると、認証なしで公開されていることがわかります。</p>
+    <p>左側のファイル一覧から <code>index.html</code> を選択し、<code>h1</code> タグの中味や <code>title</code> を修正してみましょう。保存するタイミングでプレビュー画面がリロードされます。</p>
+    <div class="box">
+      <h4>授業内の練習</h4>
+      <ol>
+        <li><code>&lt;script&gt;</code> タグを <code>&lt;body&gt;</code> の中に作り、<code>console.log("Hello World");</code> と書いてコンソールに出力してみましょう</li>
+        <li>ファイル一覧の上を右クリックしてコンテキストメニューを出し、画像ファイルをアップロードしてみましょう。<code>&lt;img&gt;</code> タグを使って画像付きのWebサイトを作ってください</li>
+        <li>左上隅のメニューアイコンから File → "Save as…" で <code>sample.html</code> として保存し、ブラウザで表示してください</li>
+      </ol>
+      <p><code>index.html</code> 以外のファイルをプレビュー画面に表示するには、プレビュー画面のURLにファイル名を追加する必要があります。</p>
+    </div>
+    <p>CodeSandboxを開いた際にChromeの翻訳メニューが表示される場合は、詳細メニューから「このサイトは翻訳しない」を選択してください。詳しい資料は<a href="https://codesandbox.io/docs/">こちら</a>。</p>
+
+    <h3>デベロッパーツール</h3>
+    <p>JavaScriptの開発の主な実行環境はブラウザです。問題のあるコードはブラウザで実行するとエラーが発生します。このエラーを確認しながらコードを修正するために、Chromeのデベロッパーツール（DevTools）を使用します。これはJavaScript開発者にとって非常に重要なツールです。</p>
+
+    <h4>開き方</h4>
+    <ul>
+      <li>ページ上の要素を<strong>右クリック</strong>して「<strong>検証</strong>」をクリック</li>
+      <li>Windows/Linux: <code>Ctrl + Shift + I</code> または <code>F12</code>　／　Mac: <code>Cmd + Option + I</code></li>
+      <li>Chromeのメニューから「その他のツール」→「デベロッパーツール」</li>
+    </ul>
+
+    <h4>主なタブ</h4>
+    <ul>
+      <li><strong>Elements</strong>：HTMLとCSSをリアルタイムで確認・編集できます。要素を選択するとその要素のCSSが表示され、直接編集すると即座にページに反映されます</li>
+      <li><strong>Console</strong>：<code>console.log()</code> の出力やエラーメッセージを表示します。エラーメッセージをクリックすると問題のあるコード行にジャンプできます。任意のJavaScriptコードを入力して即座に実行することもできます</li>
+      <li><strong>Sources</strong>：行番号をクリックしてブレークポイントを設定し、コードをステップ実行しながら変数の値を確認できます</li>
+      <li><strong>Network</strong>：ページが行うすべてのネットワークリクエストを監視します。リクエストの内容、応答、所要時間が確認できます（第８回で使います）</li>
+      <li><strong>Application</strong>：ローカルストレージやクッキーの中身を確認します（第６回で使います）</li>
+    </ul>
+    <p>初心者のうちから積極的にDevToolsを活用し、コードの問題を早期に発見・修正する習慣をつけましょう。</p>
+
+    <div class="task">
+      <h3>第１回課題　「私の夏休み」<span class="pts">3点</span></h3>
+      <p>夏休み明けということで、久しぶりにHTMLとCSSに触れるという方も多いと思います。最初の課題は、CodeSandboxの練習とリハビリを兼ねて、これまでに学んだWeb技術を使って「私の夏休み」というテーマで簡単なWebページを作成してください。</p>
+      <h4>制作条件（以下をすべて充足して3点）</h4>
+      <ol>
+        <li>写真を含むこと</li>
+        <li>異なるサイズ（又は色）の文字を含むこと</li>
+        <li>幅960px・高さ540px（FullHDの半分程度）に美しく収まること</li>
+      </ol>
+      <h4>提出方法</h4>
+      <p>CodeSandboxのプレビュー画面のURL（<code>https://xxxxx.csb.app</code>）をmanabaのレポート機能で提出してください。URLのみで結構です。説明が必要であればWebページ自体に書いてください。<code>index.html</code> 以外をトップ画面とした場合は <code>https://xxxxx.csb.app/summer.html</code> のようにファイル名を <code>/</code> の後に書いてください。</p>
+      <p class="deadline">提出締切：来週木曜日 13:00</p>
+      <div class="note mark"><strong>提出するURLはシークレットウィンドウなどで開き、ログインなしの状態で正しく表示されるか確認してください。</strong>（リンクを知っている人は誰でも開ける認証モードにする必要があります）</div>
+    </div>
+
+    <h3>FAQ</h3>
+    <details>
+      <summary>Q　画像が表示されません</summary>
+      <p>画像を置いたフォルダの場所とHTMLの指定が合っているか確認してください。また、ファイル名やフォルダには全角文字は使用できません。</p>
+    </details>
+    <details>
+      <summary>Q　何も表示されません</summary>
+      <p>デベロッパーツールでエラーを確認して、エラーをよく読んでください。エラーが表示されていない場合は、どの部分を加えると表示されなくなるかをコメントアウトして探してください（エラー箇所の特定）。また、変数の値を <code>console.log()</code> で確認して正しい値になっているか調べてください。</p>
+    </details>
+  </section>
+
+  <section class="week" id="w2">
+    <div class="week-head">
+      <span class="week-num">第２回</span>
+      <h2>JavaScript言語入門（１）<br>条件分岐、日付処理</h2>
+    </div>
+
+    <h3>JavaScriptの概要</h3>
+    <p>JavaScriptは、Webブラウザ上で動作し、主にWebページの動的な操作やインタラクティブな機能を実現するために使用されるプログラミング言語です。</p>
+    <ul>
+      <li><strong>インタープリター言語</strong>：実行時に逐次解釈されるため、事前にコンパイルを行う必要がありません</li>
+      <li><strong>動的型付け</strong>：変数の型（char, int, floatなど）を明示的に宣言する必要がなく、型は自動的に決定されます</li>
+      <li><strong>イベントドリブン</strong>：ユーザーの操作に応じてプログラムが動作します</li>
+      <li><strong>ブラウザベース</strong>：HTMLやCSSと連携して、ユーザーの操作に対するリアクションを実現します</li>
+    </ul>
+
+    <h4>各言語の役割</h4>
+    <ul>
+      <li><strong>HTML</strong>：ページの構造と内容を定義します</li>
+      <li><strong>CSS</strong>：ページのデザインやレイアウトを担当します</li>
+      <li><strong>JavaScript</strong>：ユーザーの操作やイベント発生に基づくインタラクティブな動きを担当します</li>
+    </ul>
+
+    <h3>HTML内でのJavaScriptの配置</h3>
+    <p>JavaScriptは <code>&lt;head&gt;</code> あるいは <code>&lt;body&gt;</code> タグ内に <code>&lt;script&gt;</code> タグを用いて記述します。ただしDOM操作を伴うスクリプトはHTMLの構造を読み込んだ後に処理する必要があるため、<strong><code>&lt;/body&gt;</code> タグの直前に配置</strong>する方がパフォーマンスやエラー回避の観点から推奨されます。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">sample01.html</span></div>
+      <pre><code>&lt;!doctype html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8"&gt;
+  &lt;title&gt;Sample01&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Sample01&lt;/h1&gt;
+
+  &lt;script&gt;
+    "use strict";
+    <span class="cmt">// ここにJavaScriptコードを記述</span>
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+    </div>
+
+    <div class="note"><code>"use strict";</code> を記述すると、エラー検出が強化されバグを発見しやすくなります。<strong>この授業のコードには必ず先頭に書いてください。</strong></div>
+
+    <h4>コメント</h4>
+    <ul>
+      <li>複数行コメント：<code>/* コメント */</code></li>
+      <li>一行コメント：<code>// コメント</code></li>
+    </ul>
+
+    <h4>基本的な命令</h4>
+    <div class="code">
+      <div class="code-bar"><span class="code-name">JavaScript</span></div>
+      <pre><code>alert("Hello, world");        <span class="cmt">// アラートボックスを表示</span>
+console.log("Hello, world");  <span class="cmt">// コンソールに表示</span></code></pre>
+    </div>
+
+    <h3>変数とデータ型</h3>
+    <p>JavaScriptでは変数を <code>let</code> または <code>const</code> で宣言します。<code>let</code> は再代入可能な変数、<code>const</code> は再代入できない定数です。</p>
+    <div class="note"><strong>この授業のルール：まず <code>const</code> で書き、再代入が必要になったものだけ <code>let</code> に変えてください。</strong>後から値が変わらないことが一目でわかるので、コードが読みやすくなります。</div>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">JavaScript</span></div>
+      <pre><code>"use strict";
+
+const age = 25;        <span class="cmt">// 変わらない値は const</span>
+let count = 0;         <span class="cmt">// 後で count++ するので let</span></code></pre>
+    </div>
+
+    <h4>データ型</h4>
+    <ul>
+      <li><strong>string</strong>：文字列（<code>'str'</code>, <code>"str"</code>）</li>
+      <li><strong>number</strong>：数値（<code>1</code>, <code>2</code>, <code>3.14</code>）</li>
+      <li><strong>boolean</strong>：真偽値（<code>true</code>, <code>false</code>）</li>
+      <li><strong>object</strong>：複数のデータを含む複雑なデータ型（<strong>来週詳しく学びます</strong>）</li>
+      <li><strong>undefined</strong>：値が未定義である状態</li>
+    </ul>
+    <p>最初に文字列が入っていた変数に途中から数値を代入することもできますが、そのようなデータ型の混合はコードが読みにくくなるので避けてください。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">JavaScript</span></div>
+      <pre><code>const isTrue = true;
+const number = 10;
+const greeting = "こんにちは";
+const doublequote = '"';       <span class="cmt">// " を扱うときは ' で囲う</span></code></pre>
+    </div>
+
+    <p>文字列はシングルクォーテーション（<code>'</code>）又はダブルクォーテーション（<code>"</code>）で囲います。これらはペアで使用します。シングルクォーテーションで始まってダブルクォーテーションで終わることはできません（エラーになります）。</p>
+    <p>さらに<strong>バッククォート</strong>（<code>`</code>）で囲った場合も文字列となります。バッククォートで囲った場合、<code>${ }</code> で囲まれた部分は変数名として解釈され、その変数に格納された値が文字列として埋め込まれます。これを<strong>テンプレートリテラル</strong>と呼びます。</p>
+
+    <h3>演算子と制御構造</h3>
+    <p>算術演算子：<code>+</code>（足し算／文字列結合）、<code>-</code>、<code>*</code>、<code>/</code>、<code>%</code>（余り）</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">JavaScript</span></div>
+      <pre><code>const sum        = 5 + 3;
+const difference = 10 - 7;
+const product    = 4 * 2;
+const quotient   = 8 / 4;
+const remainder  = 10 % 3;    <span class="cmt">// 1</span></code></pre>
+    </div>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">条件分岐と繰り返し</span></div>
+      <pre><code>"use strict";
+
+const value = 10;
+
+if (value &gt; 5) {
+  console.log("5より大きい");
+} else {
+  console.log("5以下");
+}
+
+for (let i = 0; i &lt; 10; i++) {
+  console.log(i);
+}
+
+const day = "月曜日";
+switch (day) {
+  case "月曜日":
+    console.log("今日は月曜日です");
+    break;
+  case "火曜日":
+    console.log("今日は火曜日です");
+    break;
+  default:
+    console.log("今日は他の日です");
+}</code></pre>
+    </div>
+
+    <h4>比較演算子と論理演算子</h4>
+    <ul>
+      <li>比較演算子：<code>===</code>, <code>!==</code>, <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code></li>
+      <li>論理演算子：<code>&amp;&amp;</code>（AND）、<code>||</code>（OR）、<code>!</code>（NOT）</li>
+    </ul>
+    <div class="note mark"><strong>比較は必ず <code>===</code> を使ってください。</strong><code>==</code> は型が違っても自動変換して比較してしまうため、思わぬバグの原因になります。たとえば <code>"1" == 1</code> は <code>true</code> ですが、<code>"1" === 1</code> は <code>false</code> です。型が違う値を比べたいときは、<code>Number()</code> で明示的に変換してから <code>===</code> で比較します（第６回で実際に使います）。</div>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">JavaScript</span></div>
+      <pre><code>const value = 10;
+if (value &gt;= 5 &amp;&amp; value &lt;= 15) {
+  console.log("値は5から15の間です");
+}</code></pre>
+    </div>
+
+    <h3>Dateオブジェクト</h3>
+    <p>Dateオブジェクトは、日付や時間の操作を行うために使用されます。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">JavaScript</span></div>
+      <pre><code>"use strict";
+
+const now     = new Date();
+const year    = now.getFullYear();
+const month   = now.getMonth() + 1;   <span class="cmt">// 月は0から始まるため +1 が必要</span>
+const date    = now.getDate();
+const hours   = now.getHours();
+const minutes = now.getMinutes();
+const seconds = now.getSeconds();
+
+console.log(`現在時刻: ${year}-${month}-${date} ${hours}:${minutes}:${seconds}`);</code></pre>
+    </div>
+
+    <h3>DOMに時刻を表示する</h3>
+    <p>DOMを使用してWebページに時間を表示する<a href="https://codesandbox.io/p/sandbox/grj7zs">サンプル</a>です。<code>document.querySelector()</code> でHTMLの要素を取得し、<code>textContent</code> で中身を書き換えます（DOMの詳細は来週学びます）。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">clock.html</span></div>
+      <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8" /&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;
+    &lt;title&gt;現在時刻&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;プログラミング論（２）&lt;/h1&gt;
+    &lt;div id="clock"&gt;&lt;/div&gt;
+
+    &lt;script&gt;
+      "use strict";
+
+      const clockEl = document.querySelector("#clock");
+
+      function showTime() {
+        const now     = new Date();
+        const year    = now.getFullYear();
+        const month   = now.getMonth() + 1;
+        const date    = now.getDate();
+        const hours   = now.getHours();
+        const minutes = now.getMinutes();
+        const seconds = now.getSeconds();
+
+        clockEl.textContent =
+          `${year}年${month}月${date}日 ${hours}時${minutes}分${seconds}秒`;
+      }
+
+      showTime();                 <span class="cmt">// 最初に一度表示する</span>
+      setInterval(showTime, 1000); <span class="cmt">// 1秒ごとに showTime を呼ぶ</span>
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+    </div>
+
+    <div class="note"><strong>関数の外に書くか、中に書くか。</strong>上のコードで <code>new Date()</code> は <code>showTime()</code> の<em>中</em>にあります。もし外に書いてしまうと時刻が最初の一度しか取得されず、1秒ごとに呼んでも表示が変わりません。<strong>毎回計算し直したいものは関数の中に書く</strong>——これは来週のおみくじでも同じ話が出てきます。</div>
+
+    <p><a href="https://chatgpt.com/share/68d5f315-aed4-8004-bea1-66ced8691ffa">setInterval関数についてのChatGPTによる解説</a></p>
+
+    <div class="task">
+      <h3>第２回課題　日付を表示するWebサイト<span class="pts">3点</span></h3>
+      <p>Dateオブジェクトを使用して、現在の日時を表示するWebサイトを作成してください。</p>
+      <h4>提出基準</h4>
+      <ul>
+        <li>「◯◯年◯◯月◯◯日 ◯◯時◯◯分◯◯秒」をWebページに表示する</li>
+        <li>さらに <code>if</code> 文を使い、時間ごとに表示されるメッセージを変更する（例：0〜12時は「午前」、13〜17時は「午後」、18〜23時は「夜」など）</li>
+      </ul>
+      <h4>発展課題</h4>
+      <p>1秒ごとに更新するデジタル時計を作る。さらにデザインを工夫する。</p>
+      <h4>提出方法</h4>
+      <p>プレビュー画面のURLをmanabaのレポート機能で提出してください。<code>index.html</code> 以外をトップ画面とした場合は <code>https://xxxxx.csb.app/date.html</code> のように書いてください。</p>
+      <p class="deadline">提出締切：来週木曜日 13:00</p>
+    </div>
+  </section>
+
+  <section class="week" id="w3">
+    <div class="week-head">
+      <span class="week-num">第３回</span>
+      <h2>JavaScript言語入門（２）<br>配列、オブジェクト、JSON、DOM</h2>
+    </div>
+
+    <p>前回は基本的なデータ型や制御構造について学びました。今回は<strong>配列</strong>と<strong>オブジェクト</strong>、そして<strong>JSON</strong>を学びます。ここが<em>この授業で最も重要な回</em>です。今日学ぶデータの形が、第１０回でAIにデータを作らせるところまでずっと続きます。</p>
+
+    <h3>配列（Array）</h3>
+    <p>複数の値に順番をつけてまとめて扱う方法が「配列」です。配列の順番を識別する番号を<strong>インデックス</strong>と呼び、<strong>インデックスは0から始まります</strong>。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">JavaScript</span></div>
+      <pre><code>"use strict";
+
+const list = ["大吉", "中吉", "小吉", "吉", "凶"];
+
+console.log(list[0]);      <span class="cmt">// "大吉"</span>
+console.log(list.length);  <span class="cmt">// 5（要素の個数）</span></code></pre>
+    </div>
+
+    <div class="note mark"><strong>0から始まることを、この場で必ず覚えてください。</strong>「1番目の要素」は <code>list[0]</code> です。この授業では、選択肢の番号も正解の番号も、すべて0始まりで統一します。</div>
+
+    <h3>オブジェクト（Object）</h3>
+    <p>配列と異なり、オブジェクト（連想配列とも呼びます）は「インデックス」ではなく<strong>プロパティ</strong>で値を管理します。プロパティは「名前: 値」のペアです。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">JavaScript</span></div>
+      <pre><code>"use strict";
+
+const book = {
+  title:  "こころ",
+  author: "夏目漱石",
+  year:   1914
+};
+
+console.log(book.title);      <span class="cmt">// "こころ"（ドットで取り出す）</span>
+console.log(book["title"]);   <span class="cmt">// "こころ"（角括弧でも同じ）</span></code></pre>
+    </div>
+
+    <p><a href="https://chatgpt.com/share/68d5fa1e-e9a0-8004-a33d-35769f853c2e">Pythonの辞書型との比較についてのChatGPTによる説明</a></p>
+
+    <h3>この授業の基本形：オブジェクトの配列</h3>
+    <p>配列とオブジェクトを組み合わせた<strong>「同じ形のオブジェクトが並んだ配列」</strong>が、この授業で扱うデータの基本形です。表計算ソフトの表と同じで、1行が1つのオブジェクト、列がプロパティにあたります。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">オブジェクトの配列</span></div>
+      <pre><code>"use strict";
+
+const members = [
+  { name: "岩本照",   age: 31, bloodtype: "A",  color: "黄" },
+  { name: "深澤辰哉", age: 32, bloodtype: "B",  color: "黒" },
+  { name: "ラウール", age: 21, bloodtype: "A",  color: "白" },
+  { name: "渡辺翔太", age: 31, bloodtype: "B",  color: "青" },
+  { name: "向井康二", age: 30, bloodtype: "A",  color: "オレンジ" }
+];
+
+console.log(members[0].name);  <span class="cmt">// "岩本照"</span>
+console.log(members[2].color); <span class="cmt">// "白"</span>
+console.log(members.length);   <span class="cmt">// 5</span></code></pre>
+    </div>
+
+    <div class="note"><strong>大事な性質：すべての要素が同じプロパティを持っている。</strong>だから「何番目でも同じように扱える」＝ 繰り返し処理で一気に処理できます。この後のじゃんけん、クイズ、本の検索結果、AIが生成するデータ——すべてこの形です。</div>
+
+    <h3>JSON（JavaScript Object Notation）</h3>
+    <p>JSONはJavaScriptのオブジェクトの表記法を基にした<strong>テキストデータ</strong>のフォーマットで、他言語とのデータ連携によく使用されます。上の <code>members</code> をJSONで書くと次のようになります。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">JSON（テキスト）</span></div>
+      <pre><code>[
+  {"name":"岩本照","age":31,"bloodtype":"A","color":"黄"},
+  {"name":"深澤辰哉","age":32,"bloodtype":"B","color":"黒"},
+  {"name":"ラウール","age":21,"bloodtype":"A","color":"白"}
+]</code></pre>
+    </div>
+
+    <div class="box mark">
+      <h4>JSONとJavaScriptのオブジェクトはどう違うのか</h4>
+      <p>見た目はそっくりですが、別物です。ここを区別できると、この先がずっと分かりやすくなります。</p>
+      <ul>
+        <li><strong>JavaScriptのオブジェクト</strong>はプログラムの中の<em>データそのもの</em>。キーのクォートは省略できます（<code>{ name: "岩本照" }</code>）</li>
+        <li><strong>JSON</strong>はそれを表した<em>ただの文字列</em>。キーは<strong>必ずダブルクォートで囲む</strong>決まりです（<code>{"name":"岩本照"}</code>）。シングルクォートも末尾のカンマも許されません</li>
+      </ul>
+      <p>なぜ文字列にするのか。サーバとの通信も、ブラウザへの保存も、AIとのやりとりも、<strong>すべて文字列でしか運べない</strong>からです。だから運ぶときは文字列に変換し、使うときはオブジェクトに戻します。</p>
+    </div>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">2つの変換関数</span></div>
+      <pre><code>"use strict";
+
+<span class="cmt">// 文字列 → オブジェクト（受け取ったとき）</span>
+const data = JSON.parse('[{"name":"岩本照","age":31}]');
+console.log(data[0].name);     <span class="cmt">// "岩本照"</span>
+
+<span class="cmt">// オブジェクト → 文字列（送る・保存するとき）</span>
+const text = JSON.stringify(data);
+console.log(text);             <span class="cmt">// '[{"name":"岩本照","age":31}]'</span></code></pre>
+    </div>
+
+    <p>この2つの関数は、第６回（ブラウザへの保存）、第８回（サーバからの受信）、第１０回（AIからの受信）で繰り返し登場します。</p>
+
+    <h3>乱数（Math.random）</h3>
+    <p><code>Math.random()</code> は0以上1未満の小数を返します。配列と組み合わせるときは、<strong>配列の長さを掛けて切り捨てる</strong>のが定石です。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">JavaScript</span></div>
+      <pre><code>"use strict";
+
+const list = ["大吉", "中吉", "小吉", "吉", "凶"];
+
+<span class="cmt">// 0 以上 list.length 未満の整数 → そのまま配列のインデックスになる</span>
+const index = Math.floor(Math.random() * list.length);
+console.log(list[index]);</code></pre>
+    </div>
+
+    <h3>DOM（Document Object Model）</h3>
+    <p>DOMは、HTML文書をプログラムから利用するための標準化された仕様です。HTML文書がブラウザに読み込まれると、部品1つ1つが「DOMオブジェクト」として自動的に生成されます。DOMツリーはHTMLの構造を反映したツリー構造を持ち、親子関係や兄弟関係で要素が繋がっています。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">HTML</span></div>
+      <pre><code>&lt;body&gt;
+  &lt;div id="container"&gt;
+    &lt;div id="kiji"&gt;
+      &lt;h2 id="news1"&gt;ニュース1&lt;/h2&gt;
+      &lt;p id="content1"&gt;ニュースの内容1&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/body&gt;</code></pre>
+    </div>
+
+    <p>この構造では <code>#kiji</code> は <code>#container</code> の子要素、<code>#news1</code> は <code>#kiji</code> の子要素です。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">要素の取得と操作</span></div>
+      <pre><code>"use strict";
+
+const el = document.querySelector("#kiji");  <span class="cmt">// id="kiji" の要素を取得</span>
+
+el.textContent = "文字列を反映";   <span class="cmt">// 文字として入れる（安全・推奨）</span>
+el.innerHTML   = "&lt;b&gt;太字&lt;/b&gt;";   <span class="cmt">// HTMLとして解釈させる</span>
+el.style.color = "#f00";          <span class="cmt">// 文字色を赤に変更</span></code></pre>
+    </div>
+
+    <div class="note">文字を入れるだけなら <code>textContent</code>、HTMLタグを含めたいときだけ <code>innerHTML</code> を使ってください。</div>
+
+    <h3>イベント</h3>
+    <p>イベントは、ページの読み込みやマウスのクリックなど「何かしらの動作が起こった時」に発生します。イベントが起きたときに実行する処理を登録するには <code>addEventListener()</code> を使います。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">JavaScript</span></div>
+      <pre><code>"use strict";
+
+const btn = document.querySelector("#mybutton");
+
+btn.addEventListener("click", function () {
+  alert("Hello world");
+});</code></pre>
+    </div>
+
+    <div class="note mark"><code>btn.onclick = function () {...}</code> という書き方も見かけますが、<strong>この授業では <code>addEventListener</code> に統一します。</strong>同じ要素に複数の処理を登録できる、<code>click</code> 以外の多様なイベントを同じ書き方で扱える、という利点があるためです。覚える書き方は一つで十分です。</div>
+
+    <h4>主なイベントの種類</h4>
+    <ul>
+      <li><strong>マウス</strong>：<code>click</code>, <code>dblclick</code>, <code>mousedown</code>, <code>mouseup</code>, <code>mousemove</code>, <code>mouseenter</code>, <code>mouseleave</code>, <code>contextmenu</code></li>
+      <li><strong>キーボード</strong>：<code>keydown</code>, <code>keyup</code></li>
+      <li><strong>フォーム</strong>：<code>change</code>, <code>input</code>, <code>submit</code>, <code>focus</code>, <code>blur</code></li>
+      <li><strong>UI</strong>：<code>load</code>, <code>resize</code>, <code>scroll</code></li>
+      <li><strong>タッチ（モバイル）</strong>：<code>touchstart</code>, <code>touchmove</code>, <code>touchend</code></li>
+      <li><strong>その他</strong>：<code>drop</code>, <code>copy</code>, <code>paste</code>, <code>play</code>, <code>pause</code>, <code>animationend</code>, <code>transitionend</code></li>
+    </ul>
+
+    <h3>練習：おみくじアプリ</h3>
+    <p>ボタンをクリックすると「大吉」「中吉」「小吉」「吉」「凶」のいずれかがランダムで表示されるアプリを作ります。新しいファイル <code>omikuji.html</code> を作ってください。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">omikuji.html</span></div>
+      <pre><code>&lt;button id="btn"&gt;おみくじを引く&lt;/button&gt;
+&lt;div id="result"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+  "use strict";
+
+  const results   = ["大吉", "中吉", "小吉", "吉", "凶"];
+  const btn       = document.querySelector("#btn");
+  const resultEl  = document.querySelector("#result");
+
+  btn.addEventListener("click", function () {
+    <span class="cmt">// 抽選はクリックのたびに行う（ここが中にあることが重要）</span>
+    const index = Math.floor(Math.random() * results.length);
+    resultEl.textContent = results[index];
+  });
+&lt;/script&gt;</code></pre>
+    </div>
+
+    <div class="note mark"><strong>よくある間違い。</strong>抽選の2行を <code>addEventListener</code> の<em>外</em>に書くと、ページを開いた瞬間に一度だけ抽選され、<strong>何度押しても同じ結果</strong>になります。第２回の時計と同じ話です。<em>毎回変わってほしいものは、必ずイベントの中に書く。</em></div>
+
+    <h3>繰り返し処理</h3>
+    <p>反復処理とは、特定の条件が満たされている間、同じ処理を繰り返し実行することです。インクリメント（<code>i++</code>）は変数の値を1増加させ、デクリメント（<code>i--</code>）は1減少させます。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">配列を for 文で処理する</span></div>
+      <pre><code>"use strict";
+
+const ar = ["A", "B", "C", "D", "E"];
+let str = "";
+
+for (let i = 0; i &lt; ar.length; i++) {
+  str += "配列：" + ar[i] + "&lt;br&gt;";
+}
+
+document.querySelector("#view").innerHTML = str;</code></pre>
+    </div>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">HTML要素を生成する</span></div>
+      <pre><code>&lt;select id="year"&gt;&lt;/select&gt;
+
+&lt;script&gt;
+  "use strict";
+  let str = "";
+  for (let i = 2011; i &lt; 2099; i++) {
+    str += "&lt;option&gt;" + i + "&lt;/option&gt;";
+  }
+  document.querySelector("#year").innerHTML = str;
+&lt;/script&gt;</code></pre>
+    </div>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">while 文と for...in 文</span></div>
+      <pre><code>"use strict";
+
+<span class="cmt">// while：条件が真である限り繰り返す</span>
+let i = 0;
+while (i &lt; 3) {
+  i++;
+  console.log(i);        <span class="cmt">// 1, 2, 3</span>
+}
+
+<span class="cmt">// for...in：オブジェクトのプロパティを順に処理する</span>
+const obj = { a: 1, b: 2, c: 3 };
+for (const key in obj) {
+  console.log(key + ":" + obj[key]);
+}</code></pre>
+    </div>
+
+    <p>時間があれば、先ほどの <code>for</code> 文を <code>while</code> 文に置き換えて同じ結果を得る練習をしてみましょう。</p>
+
+    <h3>じゃんけんアプリ ── ルールをデータで表す</h3>
+    <p>いよいよ今日の課題です。ここで<strong>この授業の一番大事な考え方</strong>を扱います。</p>
+    <p>じゃんけんの勝敗は <code>if</code> 文をたくさん並べても書けます。しかしそれでは、手を増やしたくなったときにコードを書き直すことになります。そこで<strong>勝敗のルールそのものをデータとして書きます</strong>。</p>
+
+    <div class="cmp">
+      <div>
+        <h5>ルールをコードで書いた場合</h5>
+        <div class="code">
+          <div class="code-bar"><span class="code-name">条件式が長い</span></div>
+          <pre><code>if (my === cpu) {
+  result = "引き分け";
+} else if ((my === 0 &amp;&amp; cpu === 1) ||
+           (my === 1 &amp;&amp; cpu === 2) ||
+           (my === 2 &amp;&amp; cpu === 0)) {
+  result = "勝ち";
+} else {
+  result = "負け";
+}</code></pre>
+        </div>
+      </div>
+      <div>
+        <h5>ルールをデータで書いた場合</h5>
+        <div class="code">
+          <div class="code-bar"><span class="code-name">判定は3行</span></div>
+          <pre><code>const hands = [
+  { name: "グー",   emoji: "✊", beats: 1 },
+  { name: "チョキ", emoji: "✌️", beats: 2 },
+  { name: "パー",   emoji: "✋", beats: 0 }
+];
+
+if (my === cpu)              result = "引き分け";
+else if (hands[my].beats === cpu) result = "勝ち";
+else                          result = "負け";</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <p><code>beats</code> は「自分がどのインデックスの手に勝つか」を表しています。グー（0番）はチョキ（1番）に勝つので <code>beats: 1</code> です。<strong>勝敗の知識がコードからデータに移りました。</strong></p>
+
+    <div class="note">手を5種類（グー・チョキ・パー・井戸・紙）に増やしたくなったとき、左のコードは条件式を書き直す必要がありますが、右は配列に行を足すだけです。<em>データを変えれば挙動が変わる</em>——この感覚が、今日いちばん持ち帰ってほしいものです。</div>
+
+    <h4>全体のコード</h4>
+    <div class="code">
+      <div class="code-bar"><span class="code-name">janken.html</span></div>
+      <pre><code>&lt;div id="buttons"&gt;&lt;/div&gt;
+&lt;p id="result"&gt;&lt;/p&gt;
+
+&lt;script&gt;
+  "use strict";
+
+  const hands = [
+    { name: "グー",   emoji: "✊", beats: 1 },
+    { name: "チョキ", emoji: "✌️", beats: 2 },
+    { name: "パー",   emoji: "✋", beats: 0 }
+  ];
+
+  const buttonsEl = document.querySelector("#buttons");
+  const resultEl  = document.querySelector("#result");
+
+  <span class="cmt">// ボタンもデータから作る（手が増えても書き換え不要）</span>
+  for (let i = 0; i &lt; hands.length; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = hands[i].emoji + " " + hands[i].name;
+    btn.addEventListener("click", function () {
+      play(i);
+    });
+    buttonsEl.appendChild(btn);
+  }
+
+  function play(my) {
+    const cpu = Math.floor(Math.random() * hands.length);
+    resultEl.textContent =
+      `自分：${hands[my].emoji}　相手：${hands[cpu].emoji}　→　${judge(my, cpu)}`;
+  }
+
+  function judge(my, cpu) {
+    if (my === cpu) return "引き分け";
+    if (hands[my].beats === cpu) return "勝ち";
+    return "負け";
+  }
+&lt;/script&gt;</code></pre>
+    </div>
+
+    <div class="task">
+      <h3>第３回課題　じゃんけんアプリ<span class="pts">5点</span></h3>
+      <p>上のコードをもとに、じゃんけんアプリを完成させてください。ユーザーがボタンをクリックすると、「自分の手」「相手の手」「勝ち・負け・引き分け」が表示されるようにします。</p>
+      <h4>必須条件</h4>
+      <ul>
+        <li><strong>勝敗のルールを <code>hands</code> のようなデータとして書くこと。</strong><code>if</code> 文を並べて判定してはいけません</li>
+        <li>ボタンをクリックするたびに、相手の手が変わること</li>
+      </ul>
+      <h4>発展課題（どこまで実装するかは自由。評価対象です）</h4>
+      <ul>
+        <li><strong>画像表示</strong>：<code>hands</code> に <code>image</code> プロパティを足して、絵文字ではなく画像で表示する</li>
+        <li><strong>スコア表示</strong>：勝利数・敗北数をカウントして表示する</li>
+        <li><strong>あいこ処理</strong>：引き分けのとき、もう一度押すよう促す</li>
+        <li><strong>手を増やす</strong>：<code>hands</code> に行を足して5種類じゃんけんにする（<code>beats</code> を配列にする必要があります）</li>
+      </ul>
+      <h4>提出方法</h4>
+      <p>プレビュー画面のURLをmanabaのレポート機能で提出してください。<code>https://xxxxx.csb.app/janken.html</code> のように書いてください。</p>
+      <p class="deadline">提出締切：来週木曜日 13:00</p>
+    </div>
+
+    <h3>補足資料</h3>
+    <ul>
+      <li><a href="https://docs.google.com/document/d/1V3QZkZun13dctGJgLerMrsBjJSsCCDnPgxDb9MfAee4/edit?usp=sharing">window.onloadについて</a></li>
+      <li><a href="https://docs.google.com/document/d/1qxkt07D-gPKyqK2hIdD35PSKP84rORgNzWN0KMJkVFM/edit?usp=sharing">JavaScriptのローカル変数とグローバル変数</a>　／　<a href="https://drive.google.com/file/d/13rpJr1hcku8JkzPZ_HGzoTZ1JkrqrMZU/view?usp=sharing">JSスコープ：ローカル vs グローバル（動画）</a></li>
+    </ul>
+  </section>
+
+  <section class="week" id="w4">
+    <div class="week-head">
+      <span class="week-num">第４回</span>
+      <h2>p5.jsでアルゴリズム（１）<br>規則性を見つけて手順にする</h2>
+    </div>
+
+    <p>今回からJavaScriptのライブラリである<strong>p5.js</strong>を使います。ただし目的は描画の習得ではありません。<em>複雑に見えるものの中に規則を見つけ、それを手順に分解する</em>——この訓練が今回と次回のテーマです。</p>
+    <p>これはAIにコードを書かせる時代にこそ重要になります。<strong>手順を正確に言語化できない人は、AIに正しい指示を出せません。</strong>今日の課題では、そのことを実際に確かめてもらいます。</p>
+
+    <h3>p5.jsの概要</h3>
+    <p>p5.jsは<a href="https://processing.org/">Processing</a>のJavaScript版ライブラリです。「プログラミング入門」で詳しく学びましたので、ここでは概要を復習します。</p>
+    <ul>
+      <li><strong>描画や音声、ゲーム制作が容易</strong>：Webブラウザ上で簡単に実装できます</li>
+      <li><strong>HTML5 APIの知識が不要</strong>：CanvasやWebAudioの知識がなくても制作できます</li>
+      <li><strong>Web公開が容易</strong>：ブラウザで動作するため、作品を簡単に公開できます</li>
+      <li><strong>フリーライセンス</strong>：自由に使用できます</li>
+    </ul>
+
+    <h3>CodeSandboxでの準備</h3>
+    <p>「プログラミング入門」ではp5.js Web Editorを使っていましたが、p5.jsはJavaScriptのライブラリの一つなので、どの開発環境でも使えます。CodeSandboxで使うには、CDN（Content Delivery Network）からライブラリを読み込みます。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">head内に記述</span></div>
+      <pre><code>&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.10.0/p5.js"&gt;&lt;/script&gt;
+&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.10.0/addons/p5.sound.min.js"&gt;&lt;/script&gt;</code></pre>
+    </div>
+
+    <ul>
+      <li><strong>メリット</strong>：ローカルに保存する必要がなく、常に最新バージョンを利用できる</li>
+      <li><strong>デメリット</strong>：ネットに接続していないと動作しない</li>
+    </ul>
+    <p>テンプレート：<a href="https://codesandbox.io/p/sandbox/p5-js-sample-97x2kk">p5.js sample on CodeSandbox</a></p>
+
+    <h3>基本構造</h3>
+    <div class="code">
+      <div class="code-bar"><span class="code-name">p5.js</span></div>
+      <pre><code>function preload() {
+  <span class="cmt">// 画像の読み込みなど、setup の前に1回だけ実行される</span>
+}
+
+function setup() {
+  createCanvas(800, 500);   <span class="cmt">// 横800px、縦500pxのキャンバス</span>
+  background(200);          <span class="cmt">// 背景をグレーに</span>
+}
+
+function draw() {
+  <span class="cmt">// 繰り返し実行される（アニメーション用）</span>
+}</code></pre>
+    </div>
+
+    <p><code>background()</code> は引数が1つなら白黒（0〜255、大きいほど明るい）、3つならRGBを指定します。</p>
+
+    <h3>主な描画命令</h3>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th scope="col">命令</th><th scope="col">意味</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="mono">createCanvas(w, h)</td><td>キャンバスのサイズを指定します</td></tr>
+          <tr><td class="mono">background(r, g, b)</td><td>背景色を設定します</td></tr>
+          <tr><td class="mono">line(x1, y1, x2, y2)</td><td>2点を結ぶ線を描きます</td></tr>
+          <tr><td class="mono">rect(x, y, w, h)</td><td>左上の座標と幅・高さで四角形を描きます</td></tr>
+          <tr><td class="mono">ellipse(x, y, w, h)</td><td>中心の座標と幅・高さで楕円を描きます</td></tr>
+          <tr><td class="mono">circle(x, y, d)</td><td>中心の座標と直径で円を描きます</td></tr>
+          <tr><td class="mono">point(x, y)</td><td>点を描きます</td></tr>
+          <tr><td class="mono">strokeWeight(w)</td><td>線の太さを設定します</td></tr>
+          <tr><td class="mono">stroke(r, g, b)</td><td>線の色を指定します</td></tr>
+          <tr><td class="mono">noStroke()</td><td>線を描かないように設定します</td></tr>
+          <tr><td class="mono">fill(r, g, b)</td><td>塗りの色を設定します</td></tr>
+          <tr><td class="mono">noFill()</td><td>塗りをしないように設定します</td></tr>
+          <tr><td class="mono">random(max)</td><td>0以上max未満のランダムな数を返します</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">アニメーションと乱数</span></div>
+      <pre><code>let x = 0;
+
+function draw() {
+  background(200);
+  ellipse(x, 100, 50, 50);
+  x += 10;                    <span class="cmt">// 毎フレーム10ずつ右へ</span>
+}
+
+<span class="cmt">// ランダムな位置に円を描く</span>
+function draw() {
+  ellipse(random(width), random(height), 80, 80);
+}</code></pre>
+    </div>
+
+    <h3>練習：規則性を見つける</h3>
+    <p>授業で示す模様をp5.jsで描いてみましょう。<strong>コードを書く前に、まず規則性を発見します。次にどのような手順でそれを描くか考えます。</strong>この順番が重要です。（<a href="https://docs.google.com/document/d/1yNz0ZMe-MqZX6Z82GRsUvL-pG5MyuSoql9o_XQrG7nw/edit?usp=sharing">練習２のGeminiによるコード例</a>）</p>
+
+    <div class="task">
+      <h3>第４回課題　草間彌生風の模様<span class="pts">5点</span></h3>
+      <p>この課題は<strong>「規則性の記述」「実装」「検証」の三段階</strong>で提出します。評価するのは絵の華やかさではなく、<em>模様の規則をどれだけ正確に言葉にできたか</em>です。</p>
+
+      <h4>第１段階　規則性の記述（CodeSandboxを開く前に行う）</h4>
+      <p><a href="https://www.google.com/search?q=%E8%8D%89%E9%96%93%E5%BD%8C%E7%94%9F">「草間彌生」で画像検索</a>して、再現したい模様を一つ選んでください。そして、コードを書く前に次の4点を<strong>日本語だけで</strong>書き出します。</p>
+      <ol>
+        <li><strong>描画の最小単位</strong>：この模様は何の繰り返しでできているか（円、線、点など）</li>
+        <li><strong>固定されているもの</strong>：どの部分でも変わらない要素は何か</li>
+        <li><strong>変化しているもの</strong>：位置、大きさ、色のうち、何がどう変わっているか</li>
+        <li><strong>描画手順</strong>：上から順に実行すれば模様が完成する手順を、番号をつけて書く</li>
+      </ol>
+
+      <div class="code">
+        <div class="code-bar"><span class="code-name">手順書の例（これがゴールの形）</span></div>
+        <pre><code>1. 800×500pxのキャンバスを用意する
+2. 背景を赤（R=200, G=30, B=30）で塗る
+3. 画面を縦横40px間隔の格子に分ける
+4. 各格子の中心に白い円を描く
+5. ただし円の直径は、格子ごとに20〜40の範囲でランダムに決める
+6. 画面の右にいくほど直径の最大値を小さくする</code></pre>
+      </div>
+
+      <div class="code">
+        <div class="code-bar"><span class="code-name">これでは手順書になりません</span></div>
+        <pre><code><span class="bad-line">赤い背景に、白い水玉をいい感じにたくさん散らす。</span>
+<span class="bad-line">だんだん小さくなるようにする。</span></code></pre>
+      </div>
+      <p>「いい感じ」「たくさん」「だんだん」は、読む人によって違う絵になります。<strong>数値と順序で書けているか</strong>を基準にしてください。</p>
+
+      <div class="note mark"><strong>重要なルール：</strong>手順書には <code>ellipse()</code> や <code>for</code> などのコードや関数名を書かないでください。日本語だけで、誰が読んでも同じ絵になるように書くことが、この段階の訓練です。</div>
+
+      <h4>第２段階　実装</h4>
+      <p>第１段階で書いた手順書に従って、p5.jsで実装してください。キャンバスは<strong>幅800px、高さ500px</strong>とします。</p>
+      <p>実装している最中に、<strong>手順書に書いていなかったことに必ず気づきます。</strong>「円が画面からはみ出したときどうするか」「ランダムの範囲に小数を許すか」など、書いたときには意識していなかった点です。気づいたらその都度メモしてください。<em>このメモが第３段階の材料になります。</em></p>
+      <p>ただし、第１段階で書いた手順書そのものは書き直さず、最初のまま残しておいてください。模様としての完成度も評価しますので、手順書を守りつつ色や密度を調整して、できるだけ本物に近づけてください。</p>
+
+      <h4>第３段階　検証（AIに同じ手順書を渡す）</h4>
+      <p>自分の実装が終わったら、第１段階で書いた<strong>修正前の手順書</strong>を、そのままAI（ChatGPT、Geminiなど）に渡して実装させます。</p>
+
+      <div class="code">
+        <div class="code-bar"><span class="code-name">AIに渡すプロンプト</span></div>
+        <pre><code>以下の手順に従って、p5.jsのコードを書いてください。
+手順に書かれていないことは、補ったり工夫したりしないでください。
+
+（ここに第１段階の手順書をそのまま貼る）</code></pre>
+      </div>
+
+      <p>「補わないでください」が重要です。AIに気を利かせないことで、<strong>手順書に書かれていることだけが絵になります</strong>。</p>
+
+      <div class="note mark">AIは<strong>作品を作らせるために使うのではありません。</strong>自分の手順書がどれだけ正確だったかを測るための道具として使います。AIの出した絵が意図と違ったなら、それはAIの失敗ではなく、<em>手順書の記述が曖昧だった</em>ということです。</div>
+
+      <h4>考察として書くこと（400字程度）</h4>
+      <ul>
+        <li>自分の実装とAIの実装は、どこが一致し、どこがずれたか</li>
+        <li>ずれた原因は、手順書のどの記述が曖昧だったからか</li>
+        <li>その部分は、どう書き直せば一意に伝わるか</li>
+        <li>自分で実装したときに、手順書に書かず無意識に補っていたことは何か</li>
+      </ul>
+      <p>「ずれなかった」場合も、なぜずれなかったのかを書いてください。</p>
+
+      <h4>提出方法</h4>
+      <p>提出するURLは<strong>１つ</strong>です。そのWebページに以下の三つをすべて載せてください。</p>
+      <ol>
+        <li><strong>作品</strong>（幅800px×高さ500pxのキャンバス）</li>
+        <li><strong>手順書</strong>（第１段階で書いたもの。修正しないこと）</li>
+        <li><strong>検証と考察</strong>（AIの実装との比較）</li>
+      </ol>
+      <p>複数の模様にチャレンジして複数のURLを提出しても構いません。その場合は一番上を自信作としてください（手順書と考察は自信作のものだけで結構です）。</p>
+      <p class="deadline">提出締切：来週木曜日 13:00</p>
+
+      <h4>評価</h4>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th scope="col">項目</th><th scope="col" class="c">配点</th><th scope="col">観点</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">手順書の精度</th><td class="c">2点</td><td>模様の規則を正しく見抜けているか。番号どおりに実行すれば同じ絵になる程度に、数値と順序で一意に書けているか。コードや関数名に頼らず日本語で書けているか</td></tr>
+            <tr><th scope="row">実装</th><td class="c">2点</td><td>手順書のとおりに動作しているか。エラーなく動くか。模様としての完成度</td></tr>
+            <tr><th scope="row">検証と考察</th><td class="c">1点</td><td>自分の実装とAIの実装の差を具体的に指摘できているか。ずれの原因を手順書の記述に立ち返って説明できているか</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>絵の華やかさだけでは点数は伸びません。逆に模様が簡素でも、手順書が正確で考察が鋭ければ高く評価します。</p>
+
+      <div class="note">CodeSandboxで作成したページは公開されますので、草間彌生の作品画像そのものを貼り付けることは<strong>絶対にしないでください</strong>（著作権）。あくまで自分のコードで描いたものを提出します。</div>
+    </div>
+  </section>
+
+  <section class="week" id="w5">
+    <div class="week-head">
+      <span class="week-num">第５回</span>
+      <h2>p5.jsでアルゴリズム（２）<br>再帰関数と3Dグラフィックス</h2>
+    </div>
+
+    <p>前回は「規則性を手順に分解する」練習をしました。今回は、その手順が<strong>自分自身を呼び出す</strong>場合を扱います。これを<strong>再帰</strong>と呼びます。</p>
+
+    <h3>再帰関数</h3>
+    <p>まず、次の手順書を読んでください。前回と同じ形式で書いてあります。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">手順書</span></div>
+      <pre><code>1. 500×500pxのキャンバスを用意する
+2. 線の長さの初期値を10にセットする
+3. 中心座標からスタートし、右方向に指定された長さの線を引く
+4. 座標系を線の右端に移動する
+5. 座標系を90度回転する
+6. 線の長さを1.2倍して、手順3に戻る
+   ただし、線の長さがキャンバスの1/2を超えたら終了する</code></pre>
+    </div>
+
+    <p>「手順3に戻る」を、関数が自分自身を呼び出すことで実現します。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">turtle.html</span></div>
+      <pre><code>"use strict";
+
+let theta;
+let maxLength;
+
+function setup() {
+  createCanvas(500, 500);
+  background(220);
+  strokeWeight(3);
+  theta = (90 / 180) * PI;
+  maxLength = width / 2;
+  translate(width / 2, height / 2);
+  branch(10);                 <span class="cmt">// 初期値は10</span>
+}
+
+function branch(len) {
+  if (len &gt; maxLength) return;  <span class="cmt">// 終了条件（これがないと無限に続く）</span>
+  line(0, 0, len, 0);
+  translate(len, 0);
+  rotate(theta);
+  branch(len * 1.2);            <span class="cmt">// 再帰呼び出し</span>
+}</code></pre>
+    </div>
+
+    <div class="note mark"><strong>再帰で最も重要なのは終了条件です。</strong><code>if (len &gt; maxLength) return;</code> を消すと、ブラウザが固まります。「どうなったら止まるか」を必ず先に決めてください。</div>
+
+    <h4>パターンを作る</h4>
+    <ul>
+      <li><strong>パターンA</strong>：回転角度と拡大率を変えたもの</li>
+      <li><strong>パターンB</strong>：パターンAを元に、回転角度をさらに小さくしたもの</li>
+      <li><strong>パターンC</strong>：パターンAを元に、線の太さが変化するもの</li>
+    </ul>
+    <p>さらに色が変化するものや、<code>line()</code> ではなく <code>rect()</code>, <code>image()</code>, <code>text()</code> を使用するなど、各自で工夫してください。</p>
+
+    <h3>アニメーションと再帰</h3>
+    <p>次のコードは、<code>draw()</code> を使って再帰模様をアニメーションさせます。前のコードと違い、<strong>終了条件を繰り返し回数で指定している</strong>点に注目してください。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">box00.html（2D）</span></div>
+      <pre><code>"use strict";
+
+const maxTheta  = 5;                        <span class="cmt">// 最大回転角度</span>
+const delta     = (0.1 / 180) * Math.PI;    <span class="cmt">// 毎フレーム0.1度ずつ追加</span>
+const boxHeight = 24;
+const boxWidth  = 20;
+const boxRepeat = 25;
+
+function setup() {
+  createCanvas(500, 500);
+}
+
+let theta = 0;
+
+function draw() {
+  background(220);
+  theta += delta;
+  if (theta &gt; (maxTheta / 180) * PI) theta = 0;
+  translate(0, height / 2);
+  branch(boxRepeat);
+}
+
+function branch(count) {
+  if (count &lt;= 0) return;       <span class="cmt">// 終了条件は「回数」</span>
+  rect(0, 0, boxWidth, boxHeight);
+  translate(boxWidth, 0);
+  rotate(theta);
+  branch(count - 1);            <span class="cmt">// 再帰呼び出し</span>
+}</code></pre>
+    </div>
+
+    <div class="note"><strong>2つの終了条件を見比べてください。</strong>前のコードは「線の長さがある値を超えたら」、こちらは「あと何回残っているか」で止めています。どちらも正しい再帰ですが、<em>止め方の設計が違います</em>。自分の作りたい模様にどちらが向いているか考えてみましょう。</div>
+
+    <h3>3Dグラフィックス</h3>
+    <p>JavaScriptで本格的な3Dを扱うには<a href="https://threejs.org/">three.js</a>を使いますが、この授業ではp5.jsで基本を学びます。<code>createCanvas()</code> の第3引数に <code>WEBGL</code> を指定すると3D空間になります。</p>
+    <ul>
+      <li><a href="https://p5js.org/tutorials/coordinates-and-transformations/">3Dグラフィックスの座標系について</a></li>
+      <li><a href="https://p5js.org/tutorials/lights-camera-materials/">ライト、カメラ、マテリアルについて</a></li>
+    </ul>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">balls00.html</span></div>
+      <pre><code>"use strict";
+
+let x = 0;      <span class="cmt">// 初期x座標</span>
+const r = 30;   <span class="cmt">// 球体の半径</span>
+
+function setup() {
+  createCanvas(500, 500, WEBGL);   <span class="cmt">// 3D空間を設定</span>
+  noStroke();
+}
+
+function draw() {
+  ambientLight(125, 125, 125);              <span class="cmt">// 環境光</span>
+  directionalLight(80, 60, 60, -1, -1, -1); <span class="cmt">// 指向性ライト</span>
+  pointLight(60, 60, 60, 0, 0, 800);        <span class="cmt">// 点光源</span>
+  background(0);
+  orbitControl();                           <span class="cmt">// マウスで視点を回転できる</span>
+
+  push();                     <span class="cmt">// 座標変換を保存</span>
+  translate(0, 0, -50);
+  box(500, 500, 30);          <span class="cmt">// 床にあたる箱</span>
+  pop();                      <span class="cmt">// 座標変換を元に戻す</span>
+
+  push();
+  specularMaterial(200, 200, 200);   <span class="cmt">// 材質の反射特性</span>
+  translate(x, 0, 0);
+  sphere(r);
+  x += 2;
+  if (x &gt; width / 2 + r) x = -width / 2 - r;   <span class="cmt">// 画面外に出たら戻す</span>
+  pop();
+}</code></pre>
+    </div>
+
+    <div class="note"><code>push()</code> と <code>pop()</code> は必ずペアで使います。<code>push()</code> で今の座標系を覚えておき、<code>pop()</code> で元に戻します。これがないと、移動や回転が次の描画にも影響してしまいます。</div>
+
+    <h4>練習</h4>
+    <ol>
+      <li><strong>balls01.html</strong>：<code>balls00.html</code> の様々なパラメータを変化させ、仕組みをよく理解しましょう</li>
+      <li><strong>2Dアニメーションの3D化</strong>：上の <code>box00.html</code> を3Dにしてみましょう</li>
+    </ol>
+
+    <details>
+      <summary>3D化の解答例</summary>
+      <div class="code">
+        <div class="code-bar"><span class="code-name">box01.html（3D）</span></div>
+        <pre><code>"use strict";
+
+const maxTheta  = 20;
+const delta     = (0.1 / 180) * Math.PI;
+const boxWidth  = 20;
+const boxHeight = 24;
+const boxRepeat = 25;
+
+function setup() {
+  createCanvas(500, 500, WEBGL);
+  noStroke();
+}
+
+let theta = 0;
+
+function draw() {
+  background(0);
+  orbitControl();
+  ambientLight(125, 125, 125);
+  directionalLight(80, 60, 60, -1, -1, -1);
+  pointLight(255, 10, 10, 0, 0, 100);
+
+  push();
+  translate(0, 0, -25);
+  box(500, 500, 30);
+  pop();
+
+  theta += delta;
+  if (theta &gt; (maxTheta / 180) * PI) theta = 0;
+
+  push();
+  translate(0, 0, 0);
+  branch(boxRepeat);
+  pop();
+}
+
+function branch(count) {
+  if (count &lt;= 0) return;
+  box(boxWidth, boxWidth, boxHeight);
+  translate(boxWidth, 0);
+  rotate(theta);
+  branch(count - 1);
+}</code></pre>
+      </div>
+    </details>
+
+    <div class="task">
+      <h3>第５回課題　再帰呼び出しを使った3Dアニメーション<span class="pts">5点</span></h3>
+      <h4>基本課題</h4>
+      <p>練習2をさらに工夫して、複数の球体や立方体を3D空間に配置し、規則的またはランダムに並べてアニメーションを作ります。<strong>再帰呼び出しを使ったオブジェクトを一つ以上含んでいること</strong>を条件とします。</p>
+      <h4>発展課題</h4>
+      <ul>
+        <li><strong>別の物体の追加</strong>：多数の3Dオブジェクトを追加し、より複雑な模様を作る（現実世界の何かを表現したものが望ましい）</li>
+        <li><strong>色や光の効果</strong>：オブジェクトの色や光の反射、陰影を工夫し、リアリティを追求する</li>
+        <li><strong>動きの効果</strong>：動きを工夫する</li>
+      </ul>
+      <h4>提出方法</h4>
+      <p>プレビュー画面のURLをmanabaのレポート機能で提出してください。<code>https://xxxxx.csb.app/box02.html</code> のように書いてください。</p>
+      <p class="deadline">提出締切：来週木曜日 13:00</p>
+    </div>
+  </section>
+
+  <section class="week" id="w6">
+    <div class="week-head">
+      <span class="week-num">第６回</span>
+      <h2>DOMの操作とイベント処理（１）<br>ローカルストレージとクイズ</h2>
+    </div>
+
+    <p>第３回で <code>JSON.parse()</code> と <code>JSON.stringify()</code> を紹介しました。今日はそれが<strong>実際に必要になる場面</strong>を扱います。</p>
+
+    <h3>ローカルストレージとは</h3>
+    <p>ローカルストレージは、ブラウザ内にデータを永続的に保存するための機能です。<code>localStorage</code> は「オリジン」（ドメイン名とポート番号の組み合わせ）単位でデータを保存し、ブラウザを閉じてもデータが保持されます。</p>
+    <ul>
+      <li><strong>保存容量</strong>：オリジンごとに5MB（Cookieは4KB）</li>
+      <li><strong>保存期間</strong>：ユーザーが明示的に削除しない限り永続的に残ります</li>
+    </ul>
+    <p>類似したストレージとして <code>sessionStorage</code> もあります。こちらはタブが開いている間のみ有効です。</p>
+    <p><a href="https://docs.google.com/document/d/1NBDASN054LuKcCjk1_tLfhTY_D6FhbSpbbmw4yUxek8/edit?usp=sharing">localStorage / sessionStorage の解説（Gemini）</a>　／　<a href="https://drive.google.com/file/d/1jSWEzAvVkgDOMk9lyjVIyrYlovAZ_bBo/view?usp=sharing">Webストレージ：ブラウザの記憶術（動画）</a></p>
+
+    <h4>基本操作</h4>
+    <div class="code">
+      <div class="code-bar"><span class="code-name">localStorage の4つのメソッド</span></div>
+      <pre><code>localStorage.setItem("key", "value");   <span class="cmt">// 保存</span>
+localStorage.getItem("key");            <span class="cmt">// 取得（無ければ null）</span>
+localStorage.removeItem("key");         <span class="cmt">// 削除</span>
+localStorage.clear();                   <span class="cmt">// 全削除</span></code></pre>
+    </div>
+
+    <p>保存されている中身は、デベロッパーツールの <strong>Application タブ</strong> → Local Storage で確認できます。実際に見ながら進めましょう。</p>
+
+    <h3>ローカルストレージは文字列しか保存できない</h3>
+    <p>ここが今日の山場です。<code>localStorage</code> に保存できるのは<strong>文字列だけ</strong>です。オブジェクトや配列をそのまま渡すと、中身が消えてしまいます。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">やってはいけない例</span></div>
+      <pre><code>"use strict";
+
+const score = { name: "大妻花子", point: 8 };
+
+localStorage.setItem("score", score);
+<span class="bad-line">console.log(localStorage.getItem("score"));  // "[object Object]" ← 中身が消えた</span></code></pre>
+    </div>
+
+    <p>そこで、<strong>保存するときは文字列に変換し、読み出すときはオブジェクトに戻します</strong>。第３回で学んだ2つの関数の出番です。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">JSONを使った正しい保存と読み出し</span></div>
+      <pre><code>"use strict";
+
+<span class="cmt">// ── 保存する ──────────────────────────────</span>
+const log = [
+  { date: "2026-10-30", score: 8, total: 10 }
+];
+localStorage.setItem("log", JSON.stringify(log));   <span class="cmt">// オブジェクト → 文字列</span>
+
+<span class="cmt">// ── 読み出す ──────────────────────────────</span>
+<span class="cmt">// 何も保存されていないときは null が返るので、"[]" を代わりに使う</span>
+const saved = JSON.parse(localStorage.getItem("log") ?? "[]");   <span class="cmt">// 文字列 → オブジェクト</span>
+
+<span class="cmt">// ── 追記する ──────────────────────────────</span>
+saved.push({ date: "2026-11-06", score: 9, total: 10 });
+localStorage.setItem("log", JSON.stringify(saved));</code></pre>
+    </div>
+
+    <div class="note"><code>??</code> は「左が <code>null</code> か <code>undefined</code> なら右を使う」という意味です。1回目の実行では何も保存されていないので、<code>JSON.parse(null)</code> でエラーにならないよう空の配列の文字列 <code>"[]"</code> を渡しています。</div>
+
+    <div class="note mark"><strong>これがJSONの本当の役割です。</strong>第３回では「他言語とのデータ連携に使う」と説明しましたが、実際には<em>自分のアプリの中ですぐ必要になります</em>。サーバとの通信も、ブラウザへの保存も、AIとのやりとりも、すべて文字列でしか運べない。だから <code>stringify</code> と <code>parse</code> で往復するのです。</div>
+
+    <h3>練習：メモ帳アプリ</h3>
+    <p>ローカルストレージを活用したメモ帳を作ります。コードは<a href="https://codesandbox.io/p/sandbox/localstoragememo-phtwvk">こちら</a>にあります。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">memo.html</span></div>
+      <pre><code>&lt;h1&gt;MemoPad&lt;/h1&gt;
+&lt;input id="title" placeholder="タイトル"&gt;
+&lt;textarea id="body"&gt;&lt;/textarea&gt;
+&lt;button id="save"&gt;保存&lt;/button&gt;
+&lt;button id="clear"&gt;消去&lt;/button&gt;
+&lt;ul id="list"&gt;&lt;/ul&gt;
+
+&lt;script&gt;
+  "use strict";
+
+  const titleEl = document.querySelector("#title");
+  const bodyEl  = document.querySelector("#body");
+  const listEl  = document.querySelector("#list");
+
+  <span class="cmt">// 保存されているメモを読み出す（配列の形で扱う）</span>
+  let memos = JSON.parse(localStorage.getItem("memos") ?? "[]");
+
+  function show() {
+    listEl.innerHTML = memos
+      .map(m =&gt; `&lt;li&gt;&lt;strong&gt;${m.title}&lt;/strong&gt;（${m.date}）&lt;br&gt;${m.body}&lt;/li&gt;`)
+      .join("");
+  }
+
+  document.querySelector("#save").addEventListener("click", function () {
+    memos.push({
+      title: titleEl.value,
+      body:  bodyEl.value,
+      date:  new Date().toLocaleString("ja-JP")   <span class="cmt">// 日時は自動で記録</span>
+    });
+    localStorage.setItem("memos", JSON.stringify(memos));
+    titleEl.value = "";
+    bodyEl.value  = "";
+    show();
+  });
+
+  document.querySelector("#clear").addEventListener("click", function () {
+    localStorage.removeItem("memos");
+    memos = [];
+    show();
+  });
+
+  show();   <span class="cmt">// ページを開いたときに一覧を表示</span>
+&lt;/script&gt;</code></pre>
+    </div>
+
+    <div class="box">
+      <h4>授業内の練習</h4>
+      <p>上のメモ帳に、さらに項目を追加してください。たとえば重要度、カテゴリ、締切日などです。汎用的なメモ帳ではなく、<strong>特定の趣味や目的に特化したメモ</strong>にして固有の属性を複数用意すると面白くなります（読書記録、レシピ帳、練習日誌など）。</p>
+      <p>ポイントは、<code>memos.push({...})</code> に渡すオブジェクトにプロパティを足すだけで済むことです。<em>データの形を変えれば、アプリの機能が変わります。</em></p>
+    </div>
+
+    <h3>クイズアプリ</h3>
+    <p>サンプルコードは<a href="https://codesandbox.io/p/sandbox/p83vrc">こちら</a>にあります。クイズのデータも、第３回のじゃんけんと同じ<strong>「同じ形のオブジェクトが並んだ配列」</strong>です。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">クイズのデータ構造</span></div>
+      <pre><code>"use strict";
+
+const quizData = [
+  {
+    question: "通るときには閉まって、通らないときには開いているものは何？",
+    choices:  ["踏み切り", "洗濯機", "冷蔵庫"],
+    answer:   0                <span class="cmt">// choices[0] が正解 ＝ 0から数える</span>
+  },
+  {
+    question: "話すことがとても好きな道具は何？",
+    choices:  ["スプーン", "シャベル", "しゃもじ"],
+    answer:   2
+  },
+  {
+    question: "世界の真ん中にいる虫は何？",
+    choices:  ["てんとう虫", "カマキリ", "蚊"],
+    answer:   2
+  }
+];</code></pre>
+    </div>
+
+    <div class="note mark"><strong><code>answer</code> は0から数えます。</strong>配列のインデックスと完全に一致させるためです。1問目の正解「踏み切り」は <code>choices[0]</code> なので <code>answer: 0</code> です。<em>第１０回でAIにクイズを作らせるときも、まったく同じ形式を使います。</em></div>
+
+    <h3>選択肢の数をデータに決めさせる</h3>
+    <p>選択肢を表示するとき、<code>option1</code>, <code>option2</code>, <code>option3</code> と3つ書いてしまうと、<strong>選択肢が4つのクイズを作れなくなります</strong>。そこで <code>map()</code> と <code>join()</code> を使って、<em>データの長さに応じて</em>選択肢を作ります。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">map と join</span></div>
+      <pre><code>"use strict";
+
+const choices = ["踏み切り", "洗濯機", "冷蔵庫"];
+
+<span class="cmt">// map：配列の各要素を、別の形に変換した新しい配列を作る</span>
+const parts = choices.map(function (text, i) {
+  return `&lt;label&gt;&lt;input type="radio" name="answer" value="${i}"&gt;${text}&lt;/label&gt;`;
+});
+<span class="cmt">// parts は3個の文字列が入った配列</span>
+
+<span class="cmt">// join：配列を1つの文字列につなげる</span>
+const html = parts.join("");</code></pre>
+    </div>
+
+    <p><code>map()</code> の2番目の引数 <code>i</code> がインデックス（0, 1, 2…）です。これをそのまま <code>value</code> にしているので、<strong>選ばれた値がそのまま <code>answer</code> と比較できます</strong>。</p>
+
+    <h4>クイズ全体のコード</h4>
+    <div class="code">
+      <div class="code-bar"><span class="code-name">quiz.html</span></div>
+      <pre><code>&lt;div id="progress"&gt;&lt;/div&gt;
+&lt;h2 id="question"&gt;&lt;/h2&gt;
+&lt;div id="choices"&gt;&lt;/div&gt;
+&lt;button id="next"&gt;回答する&lt;/button&gt;
+&lt;p id="feedback"&gt;&lt;/p&gt;
+
+&lt;script&gt;
+  "use strict";
+
+  const quizData = [ <span class="cmt">/* 上のデータ */</span> ];
+
+  const progressEl = document.querySelector("#progress");
+  const questionEl = document.querySelector("#question");
+  const choicesEl  = document.querySelector("#choices");
+  const feedbackEl = document.querySelector("#feedback");
+  const nextBtn    = document.querySelector("#next");
+
+  let count = 0;   <span class="cmt">// 今何問目か（0から数える）</span>
+  let score = 0;   <span class="cmt">// 正解数</span>
+
+  function showQuestion() {
+    const quiz = quizData[count];
+
+    progressEl.textContent = `問題 ${count + 1} / ${quizData.length}`;
+    questionEl.textContent = quiz.question;
+    feedbackEl.textContent = "";
+
+    <span class="cmt">// 選択肢の数はデータが決める</span>
+    choicesEl.innerHTML = quiz.choices
+      .map(function (text, i) {
+        return `&lt;label&gt;&lt;input type="radio" name="answer" value="${i}"&gt;${text}&lt;/label&gt;`;
+      })
+      .join("");
+  }
+
+  nextBtn.addEventListener("click", function () {
+    const picked = document.querySelector('input[name="answer"]:checked');
+
+    if (!picked) {
+      feedbackEl.textContent = "選択肢を選んでください";
+      return;
+    }
+
+    <span class="cmt">// picked.value は文字列なので、Number() で数値に変換してから === で比較</span>
+    if (Number(picked.value) === quizData[count].answer) {
+      feedbackEl.textContent = "正解！";
+      score++;
+    } else {
+      feedbackEl.textContent = "不正解";
+    }
+
+    count++;
+    if (count &lt; quizData.length) {
+      setTimeout(showQuestion, 800);   <span class="cmt">// 少し待ってから次の問題へ</span>
+    } else {
+      showResult();
+    }
+  });
+
+  function showResult() {
+    questionEl.textContent = "クイズ終了";
+    choicesEl.innerHTML    = "";
+    progressEl.textContent = "";
+    feedbackEl.textContent = `${quizData.length}問中 ${score}問正解`;
+  }
+
+  showQuestion();
+&lt;/script&gt;</code></pre>
+    </div>
+
+    <div class="note"><strong><code>Number(picked.value)</code> はなぜ必要か。</strong>HTMLから取り出した値は、数字に見えても<em>文字列</em>です。<code>"0" === 0</code> は <code>false</code> になってしまうため、明示的に数値へ変換してから比較します。第２回で「<code>===</code> を使う」と決めたのは、こういう場面で型の違いに気づけるようにするためです。</div>
+
+    <div class="task">
+      <h3>第６回課題　クイズアプリ<span class="pts">5点</span></h3>
+      <p>上のコードをもとに、クイズアプリを発展させてください。</p>
+
+      <h4>必須条件</h4>
+      <ul>
+        <li>問題文を自分で作り替えること（クイズでなくても構いません）</li>
+        <li><strong>成績履歴をローカルストレージに保存すること。</strong><code>JSON.stringify()</code> と <code>JSON.parse()</code> を使い、次のような配列で「いつ・何問中・何問正解したか」を残し、過去の記録を一覧表示してください</li>
+      </ul>
+
+      <div class="code">
+        <div class="code-bar"><span class="code-name">保存するデータの形</span></div>
+        <pre><code>[
+  { "date": "2026/10/30 10:23", "score": 2, "total": 3 },
+  { "date": "2026/11/06 09:15", "score": 3, "total": 3 }
+]</code></pre>
+      </div>
+
+      <h4>発展課題（どこまで実装するかは自由。評価対象です）</h4>
+      <ul>
+        <li><strong>「回答」と「次へ」の分離</strong>：回答を選んでから次へ進むボタンを分け、操作性を上げる</li>
+        <li><strong>正解の表示</strong>：不正解のとき、正しい選択肢を表示する</li>
+        <li><strong>最高得点</strong>：保存した履歴から最高得点を計算して表示する</li>
+        <li><strong>選択肢を4つ以上に</strong>：<code>choices</code> に要素を足すだけで動くことを確認する</li>
+        <li><strong>解説の追加</strong>：データに <code>explanation</code> プロパティを足して、回答後に解説を出す</li>
+        <li><a href="https://docs.google.com/document/d/1vqXITRKQa9Tqpqtu-tgJve3e8wlLtYG8WvZkj-FFeYY/edit?usp=sharing">クイズではなく別のアプリ</a>にする</li>
+      </ul>
+
+      <h4>提出方法</h4>
+      <p>プレビュー画面のURLをmanabaのレポート機能で提出してください。<code>https://xxxxx.csb.app/quiz.html</code> のように書いてください。</p>
+      <p class="deadline">提出締切：来週木曜日 13:00</p>
+    </div>
+  </section>
+
+  <section class="week" id="w7">
+    <div class="week-head">
+      <span class="week-num">第７回</span>
+      <h2>DOMの操作とイベント処理（２）<br>状態推移モデル</h2>
+    </div>
+
+    <p>前回のクイズは、問題を先頭から順に処理するシンプルな構造でした。しかし実際のアプリでは、<strong>ユーザーの選択によって次の画面が変わる</strong>ことがあります。このような「現在の状態によって処理が異なる」プログラミングは、<strong>状態推移モデル</strong>という方法で管理できます。</p>
+
+    <h3>状態推移モデルとは</h3>
+    <p>プログラムの進行を「状態」と「遷移」によって管理する手法です。</p>
+    <ul>
+      <li><strong>状態（State）</strong>：プログラムが現在どの段階にあるかを示す</li>
+      <li><strong>遷移（Transition）</strong>：条件が満たされたときに次の状態へ移ること</li>
+      <li><strong>入力（Input）</strong>：ユーザーの操作や外部からの情報。これによって遷移が決まる</li>
+    </ul>
+
+    <h3>配列とオブジェクト、どちらを使うか</h3>
+    <p>ここで、第３回で学んだ2つのデータ構造の<strong>使い分け</strong>を考えます。</p>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th scope="col"></th><th scope="col">配列 <code>[ ]</code></th><th scope="col">オブジェクト <code>{ }</code></th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">取り出し方</th><td>番号で取り出す <code>data[0]</code></td><td>名前で取り出す <code>data.q1</code></td></tr>
+          <tr><th scope="row">向いている処理</th><td>先頭から順に処理する</td><td>IDを指定して飛ぶ</td></tr>
+          <tr><th scope="row">この授業の例</th><td>クイズ（1問目→2問目→…）</td><td>診断チャート（q1→q3→t2）</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>診断チャートは「次はq3へ」のように<strong>IDで飛び先を指定する</strong>ので、オブジェクトが向いています。順番に並んでいないからです。</p>
+
+    <h3>診断チャートの例</h3>
+    <p>サンプルコードは<a href="https://codesandbox.io/p/sandbox/hcv27r">こちら</a>。次の質問に基づいてユーザーのタイプを診断します。</p>
+    <ul>
+      <li><strong>Q1</strong>：デザインよりプログラミングが好きですか？　YES → Q2　／　NO → Q3</li>
+      <li><strong>Q2</strong>：データの分析にも興味がありますか？　YES → タイプF　／　NO → Q4</li>
+      <li><strong>Q3</strong>：3DCGより動画を制作したいですか？　YES → Q4　／　NO → タイプN</li>
+      <li><strong>Q4</strong>：ロボットの開発に興味がありますか？　YES → タイプM　／　NO → タイプT</li>
+    </ul>
+    <p>タイプF：データサイエンティスト志向　／　タイプM：機械工学志向　／　タイプT：映像制作志向　／　タイプN：グラフィックデザイン志向</p>
+
+    <h3>データ構造</h3>
+    <p>選択肢は最初から <code>choices</code> の配列で持ちます。Yes/Noは「選択肢が2つの場合」にすぎません。こうしておけば、後から選択肢を3つに増やしても<strong>データを書き換えるだけ</strong>で済みます。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">chart のデータ構造</span></div>
+      <pre><code>"use strict";
+
+const chart = {
+  q1: {
+    question: "デザインよりプログラミングが好き",
+    choices: [
+      { text: "はい",   next: "q2" },
+      { text: "いいえ", next: "q3" }
+    ]
+  },
+  q2: {
+    question: "データ分析にも興味がある",
+    choices: [
+      { text: "はい",   next: "t3" },
+      { text: "いいえ", next: "q4" }
+    ]
+  },
+  q3: {
+    question: "3DCGより動画を制作したい",
+    choices: [
+      { text: "はい",   next: "q4" },
+      { text: "いいえ", next: "t1" }
+    ]
+  },
+  q4: {
+    question: "ロボット開発に興味がある",
+    choices: [
+      { text: "はい",   next: "t4" },
+      { text: "いいえ", next: "t2" }
+    ]
+  },
+
+  <span class="cmt">// 終端（結果）。すべて同じ形にそろえておく</span>
+  t1: { result: "あなたはタイプN（グラフィックデザイン志向）です",   image: null },
+  t2: { result: "あなたはタイプT（映像制作志向）です",             image: null },
+  t3: { result: "あなたはタイプF（データサイエンティスト志向）です", image: null },
+  t4: { result: "あなたはタイプM（機械工学志向）です",             image: "robot.png" }
+};</code></pre>
+    </div>
+
+    <div class="note">終端のノードにも、画像を使わない場合は <code>image: null</code> を必ず書いてください。<strong>すべてのレコードが同じプロパティを持っている</strong>ことで、「このノードだけ特別扱い」というコードを書かずに済みます。第３回の <code>members</code> と同じ考え方です。</div>
+
+    <h3>実装</h3>
+    <p>質問ノードには <code>choices</code> があり、終端ノードには <code>result</code> があります。この違いで画面を切り替えます。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">chart.html</span></div>
+      <pre><code>&lt;h2 id="question"&gt;&lt;/h2&gt;
+&lt;div id="choices"&gt;&lt;/div&gt;
+&lt;div id="result"&gt;&lt;/div&gt;
+&lt;button id="back"&gt;一つ前に戻る&lt;/button&gt;
+
+&lt;script&gt;
+  "use strict";
+
+  const chart = { <span class="cmt">/* 上のデータ */</span> };
+
+  const questionEl = document.querySelector("#question");
+  const choicesEl  = document.querySelector("#choices");
+  const resultEl   = document.querySelector("#result");
+
+  let state   = "q1";   <span class="cmt">// 現在の状態</span>
+  let history = [];     <span class="cmt">// 通ってきた状態を覚えておく（戻る機能用）</span>
+
+  function show() {
+    const node = chart[state];
+    resultEl.textContent = "";
+    choicesEl.innerHTML  = "";
+
+    if (node.choices) {
+      <span class="cmt">// 質問ノード：選択肢のボタンをデータから作る</span>
+      questionEl.textContent = node.question;
+
+      node.choices.forEach(function (choice) {
+        const btn = document.createElement("button");
+        btn.textContent = choice.text;
+        btn.addEventListener("click", function () {
+          history.push(state);      <span class="cmt">// 今の状態を記録してから</span>
+          state = choice.next;      <span class="cmt">// 次の状態へ移る</span>
+          show();
+        });
+        choicesEl.appendChild(btn);
+      });
+
+    } else {
+      <span class="cmt">// 終端ノード：結果を表示する</span>
+      questionEl.textContent = "お疲れさまでした";
+      resultEl.textContent   = node.result;
+      if (node.image) {
+        resultEl.innerHTML += `&lt;br&gt;&lt;img src="${node.image}" width="200"&gt;`;
+      }
+    }
+  }
+
+  document.querySelector("#back").addEventListener("click", function () {
+    if (history.length &gt; 0) {
+      state = history.pop();   <span class="cmt">// 最後に記録した状態を取り出す</span>
+      show();
+    }
+  });
+
+  show();
+&lt;/script&gt;</code></pre>
+    </div>
+
+    <div class="note mark"><strong>「戻る」の仕組み。</strong>ブラウザの戻るボタンでは最初に戻ってしまいます。そこで通ってきた状態を <code>history</code> という配列に <code>push()</code> で積んでいき、戻るときは <code>pop()</code> で最後の1つを取り出します。この「積んで、取り出す」構造をスタックと呼びます。</div>
+
+    <h3>この構造の応用例</h3>
+    <ul>
+      <li><strong>ストーリーブック・ゲーム</strong>：選択肢を選びながら物語を進める。選択によって異なる展開やエンディングに到達する</li>
+      <li><strong>キャリア診断</strong>：興味やスキルに基づいて選択し、適した職業の提案を受ける</li>
+      <li><strong>RPGのイベント選択</strong>：「村人を助けますか？」→「助ける」とアイテムをもらう、など</li>
+      <li><strong>チャットボット</strong>：問い合わせ内容を絞り込みながら回答にたどり着く</li>
+    </ul>
+
+    <div class="task">
+      <h3>第７回課題　状態推移モデルを活用したアプリ<span class="pts">5点</span></h3>
+      <p>診断チャートの構造を活かした<strong>別の</strong>Webアプリを作成してください。上の応用例を参考にテーマを決め、少なくとも次の（１）〜（３）のどれか一つを実現してください。</p>
+
+      <h4>発展課題</h4>
+      <ol>
+        <li><strong>リッチな表現</strong>：結果や途中の質問で画像を表示する<br>
+          <span style="color:var(--ink-soft)">ヒント：<code>chart</code> のデータに <code>image</code> の情報を追加する</span></li>
+        <li><strong>選択肢を3つ以上に</strong>：Yes/Noではなく「家でゆっくりしたい」「アクティブに動きたい」「友達と会いたい」のような行動の選択肢にする<br>
+          <span style="color:var(--ink-soft)">ヒント：<code>choices</code> の配列に要素を足すだけです。コードの変更は不要です</span></li>
+        <li><strong>結果の保存</strong>：診断結果をローカルストレージに履歴として保存し、過去の結果を表示する<br>
+          <span style="color:var(--ink-soft)">ヒント：第６回の <code>JSON.stringify()</code> / <code>JSON.parse()</code> を使います</span></li>
+      </ol>
+
+      <h4>提出方法</h4>
+      <p>プレビュー画面のURLをmanabaのレポート機能で提出してください。<code>https://xxxxx.csb.app/story.html</code> のように書いてください。</p>
+      <p class="deadline">提出締切：来週木曜日 13:00</p>
+    </div>
+  </section>
+
+  <section class="week" id="w8">
+    <div class="week-head">
+      <span class="week-num">第８回</span>
+      <h2>サーバとの通信・非同期通信</h2>
+    </div>
+
+    <p>ここまで、データはすべて自分でコードに書いてきました。今日からは<strong>データを外から取ってきます</strong>。形は今までと同じ「同じ形のオブジェクトが並んだ配列」です。</p>
+
+    <h3>非同期処理とは</h3>
+    <p><strong>非同期処理</strong>とは、ある処理が完了するのを待たずに次の処理を実行できる仕組みです。ネットワークリクエストやファイルの読み書き、タイマーなどで利用します。これによりブラウザが他の作業をブロックせず、UIをスムーズに動作させ続けられます。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">コールバック関数</span></div>
+      <pre><code>"use strict";
+
+console.log("開始");
+
+setTimeout(function () {
+  console.log("1秒後に実行される");
+}, 1000);
+
+console.log("終了");
+
+<span class="cmt">// 出力順： 開始 → 終了 → 1秒後に実行される</span></code></pre>
+    </div>
+
+    <p>しかし複雑な非同期処理が連続すると、コールバック関数がネストしてコードが非常に読みにくくなります。これを<strong>コールバック地獄</strong>と呼びます。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">コールバック地獄</span></div>
+      <pre><code>setTimeout(function () {
+  console.log("1つ目の処理完了");
+  setTimeout(function () {
+    console.log("2つ目の処理完了");
+    setTimeout(function () {
+      console.log("3つ目の処理完了");
+    }, 1000);
+  }, 1000);
+}, 1000);</code></pre>
+    </div>
+
+    <h3>Promise</h3>
+    <p>Promiseは、非同期処理の結果を将来受け取るためのオブジェクトです。3つの状態があります。</p>
+    <ul>
+      <li><strong>Pending（保留中）</strong>：初期状態。処理が完了していない</li>
+      <li><strong>Fulfilled（完了）</strong>：処理が成功した。<code>resolve</code> が呼ばれる</li>
+      <li><strong>Rejected（失敗）</strong>：処理が失敗した。<code>reject</code> が呼ばれる</li>
+    </ul>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">Promiseチェーン</span></div>
+      <pre><code>"use strict";
+
+function delay(ms) {
+  return new Promise(resolve =&gt; setTimeout(resolve, ms));
+}
+
+delay(1000)
+  .then(function () {
+    console.log("1つ目の処理完了");
+    return delay(1000);
+  })
+  .then(function () {
+    console.log("2つ目の処理完了");
+  });</code></pre>
+    </div>
+
+    <p>ネストはなくなりましたが、依然として読みにくいと思います。</p>
+
+    <h3>async / await</h3>
+    <p><code>async</code>/<code>await</code> は、Promiseをより直感的に扱うための構文です。<code>await</code> を使うと、非同期処理を<strong>同期処理のように上から順に</strong>書けます。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">同じ処理を async/await で書く</span></div>
+      <pre><code>"use strict";
+
+function delay(ms) {
+  return new Promise(resolve =&gt; setTimeout(resolve, ms));
+}
+
+async function process() {          <span class="cmt">// async をつける</span>
+  await delay(1000);                <span class="cmt">// 完了を待つ</span>
+  console.log("1つ目の処理完了");
+
+  await delay(1000);
+  console.log("2つ目の処理完了");
+
+  await delay(1000);
+  console.log("3つ目の処理完了");
+}
+
+process();</code></pre>
+    </div>
+
+    <div class="note"><code>await</code> は <code>async</code> をつけた関数の中でしか使えません。ここは間違えやすいので注意してください。</div>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">エラー処理（try / catch）</span></div>
+      <pre><code>"use strict";
+
+async function fetchData() {
+  try {
+    const response = await fetch("https://api.example.com/data");
+    const data     = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error("データ取得中にエラーが発生しました:", error);
+  }
+}
+
+fetchData();</code></pre>
+    </div>
+
+    <p><a href="https://drive.google.com/file/d/1in-0pVjIy5Lw5e3mjK__zutfQGYsffAn/view?usp=sharing">非同期JSの解明（NotebookLMによる解説動画）</a></p>
+
+    <h3>Google Books API</h3>
+    <p>Google Booksに記録されている本をキーワードで検索し、結果をJSONで返すAPIです。<a href="https://developers.google.com/books/docs/v1/using?hl=ja">公式仕様</a>　／　<a href="https://qiita.com/stella0270/items/8fdd2efcdd9db96a5c4d">わかりやすい解説</a>　／　<a href="https://codesandbox.io/p/sandbox/4jrztk">サンプルコード</a></p>
+
+    <div class="note mark">APIキーなしでも1つのIPアドレスで1日1000回呼び出せますが、<strong>大妻学院からのリクエストは合算されます</strong>。3クラスで呼び出すと簡単に制限に達する可能性があります。制限に達すると一時的にアクセスできなくなるため、以下の3つのうちいずれかの方法で開発してください。</div>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">3つの呼び出し方</span></div>
+      <pre><code><span class="cmt">// （１）直接呼ぶ（一時的に使えなくなる可能性あり）</span>
+fetch("https://www.googleapis.com/books/v1/volumes?q=検索語")
+
+<span class="cmt">// （２）授業用のproxyサーバを経由する（予備用・藤村のAPIキーが付与される）</span>
+fetch("https://google-books-proxy-746164391621.us-west1.run.app?q=検索語")
+
+<span class="cmt">// （３）事前に検索した結果をファイルとして置いておく（CSS調整などに便利）</span>
+fetch("result.json")</code></pre>
+    </div>
+
+    <p>便利な検索オプション：件数を増やすには <code>&amp;maxResults=40</code>（デフォルトは10件）、新着順にするには <code>&amp;orderBy=newest</code> をURLに追加します。</p>
+
+    <h3>外の形を、自分の形に変換する</h3>
+    <p>今日いちばん大事な考え方です。<strong>外部APIの応答の形は、自分では選べません。</strong>Google Booksの応答は次のような深い構造をしています。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">Google Books の応答（一部）</span></div>
+      <pre><code>{
+  "totalItems": １２３,
+  "items": [
+    {
+      "volumeInfo": {
+        "title": "ディープラーニング入門",
+        "authors": ["山田太郎"],
+        "imageLinks": { "thumbnail": "https://..." }
+      }
+    }
+  ]
+}</code></pre>
+    </div>
+
+    <p>このまま使うと、コードのあちこちに <code>item.volumeInfo.imageLinks.thumbnail</code> のような<em>外部の都合</em>が散らばります。そこで<strong>受け取った直後に、自分のアプリの形に変換します</strong>。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">books.html</span></div>
+      <pre><code>"use strict";
+
+async function search(word) {
+  const url = "https://www.googleapis.com/books/v1/volumes?q=" + encodeURIComponent(word);
+
+  try {
+    const res  = await fetch(url);
+    const data = await res.json();
+
+    <span class="cmt">// ここで自分の形に変換する</span>
+    const books = (data.items ?? []).map(function (item) {
+      const info = item.volumeInfo;
+      return {
+        title:   info.title ?? "タイトル不明",
+        authors: info.authors ?? ["著者不明"],
+        cover:   info.imageLinks?.thumbnail ?? "noimage.png"
+      };
+    });
+
+    <span class="cmt">// ここから先は、第３回からずっと同じ [{ }, { }] の世界</span>
+    show(books);
+
+  } catch (error) {
+    console.error("取得に失敗しました:", error);
+  }
+}
+
+function show(books) {
+  document.querySelector("#list").innerHTML = books
+    .map(b =&gt; `&lt;div&gt;&lt;img src="${b.cover}"&gt;&lt;p&gt;${b.title}&lt;/p&gt;
+               &lt;p&gt;${b.authors.join("、")}&lt;/p&gt;&lt;/div&gt;`)
+    .join("");
+}</code></pre>
+    </div>
+
+    <div class="note mark"><strong><code>?.</code> と <code>??</code> はなぜ必要か。</strong>APIの応答には<em>欠けているフィールドが普通にあります</em>。Google Booksには表紙画像のない本、著者情報のない本が実際に多く含まれています。<code>info.imageLinks.thumbnail</code> と書くと、<code>imageLinks</code> がない本でエラーになりアプリ全体が止まります。<code>?.</code>（あれば取り出す）と <code>??</code>（無ければこの値を使う）で、欠けていても動くようにします。配布している <code>result.json</code> で実際に確認してみてください。</div>
+
+    <div class="task">
+      <h3>第８回課題　Google Books APIを使ったサイト<span class="pts">5点</span></h3>
+      <p><code>fetch</code> を使用してGoogle Booksからデータを取得するWebアプリを作成してください。サンプルと同じ単なる検索サイトではなく、工夫したものが望ましいです。</p>
+      <h4>アイデア</h4>
+      <ul>
+        <li><strong>新着本表示</strong>：特定のジャンル（キーワード）で検索される最新の本を表示する</li>
+        <li><strong>読書メモアプリ</strong>：ローカルストレージに感想を記録し、検索機能で表紙を表示する（第６回との組み合わせ）</li>
+        <li><strong>表紙画像ギャラリー</strong>：特定のジャンルで検索される表紙を美しく並べる</li>
+      </ul>
+      <h4>必須条件</h4>
+      <ul>
+        <li>取得したデータを、上のように<strong>自分のアプリの形に変換してから</strong>使うこと</li>
+        <li>表紙画像や著者名が無い本でもエラーにならないこと</li>
+      </ul>
+      <h4>提出方法</h4>
+      <p>プレビュー画面のURLをmanabaのレポート機能で提出してください。<code>https://xxxxx.csb.app/books.html</code> のように書いてください。</p>
+      <p class="deadline">提出締切：来週木曜日 13:00</p>
+    </div>
+  </section>
+
+  <section class="week" id="w9">
+    <div class="week-head">
+      <span class="week-num">第９回</span>
+      <h2>LLM APIの活用（１）<br>プロンプトとAPIキー</h2>
+    </div>
+
+    <p>今回はLLM APIを活用したサンプル <a href="https://codesandbox.io/p/sandbox/yqnxrn">Simple AI Chat</a> を使ってAIモデルを活用したアプリケーションの作り方を学びます。HTMLファイル1つで動作し、サーバーを必要としないクライアントサイドアプリケーションです。</p>
+    <p>学ぶ概念：プロンプトの種類と役割／会話履歴の構造／APIキーの扱い方／異なるAI APIの違い。</p>
+
+    <h3>Gemini API Keyの取得（無料枠）</h3>
+    <p><strong>個人のGoogleアカウント推奨で</strong>、<a href="https://aistudio.google.com/api-keys">https://aistudio.google.com/api-keys</a> にアクセスして「Get API key」→「APIキーを作成」でキーを取得します。はじめて取得する場合はプロジェクトの作成が求められますので、適当な名前（Gemini API Test など）を設定してください。</p>
+    <p>無料枠をどれくらい使用しているかは<a href="https://aistudio.google.com/app/usage?timeRange=last-28-days">こちら</a>からときどき確認してください。<strong>使用できなくなった場合の対処方法は第１０回に記載しています。</strong></p>
+    <p>CodeSandboxのプレビュー画面で <code>index.html</code> を実行し、右上の歯車アイコンから設定画面を開いてAPIキーを貼り付けます。ブラウザのlocalStorageに保存されるので、リロードしても再入力は不要です。</p>
+
+    <h3>プロンプトの種類と役割</h3>
+    <ul>
+      <li><strong>システムプロンプト（System Prompt）</strong>：AIの基本的な振る舞いや役割を定義します。例「あなたは親切なプログラミングアシスタントです」。会話全体に影響し、会話の最初に1度だけ設定します</li>
+      <li><strong>ユーザープロンプト（User Prompt）</strong>：ユーザーからAIへの質問や指示です。会話の中で複数回送信されます</li>
+      <li><strong>アシスタントプロンプト（Assistant Prompt）</strong>：AIからの応答です。会話履歴として保存され、次の質問のコンテキストになります</li>
+    </ul>
+
+    <h3>会話履歴の構造</h3>
+    <p>AIモデルは<strong>ステートレス（状態を持たない）</strong>です。前回の会話を覚えていません。会話の文脈を理解させるには、<strong>過去のやり取りを毎回送信</strong>する必要があります。</p>
+    <div class="note">ユーザー「Pythonとは？」→ AI「Pythonはプログラミング言語です」→ ユーザー「それの特徴は？」<br>この「それ」＝Python と理解させるには、履歴を一緒に送る必要があります。</div>
+
+    <p>会話履歴も、これまでと同じ<strong>「同じ形のオブジェクトが並んだ配列」</strong>です。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">会話履歴のデータ構造</span></div>
+      <pre><code>"use strict";
+
+let conversationHistory = [
+  { role: "user",      content: "こんにちは" },
+  { role: "assistant", content: "こんにちは！何かお手伝いできますか？" },
+  { role: "user",      content: "Pythonを教えて" },
+  { role: "assistant", content: "はい、Pythonは..." }
+];
+
+<span class="cmt">// 新しいメッセージを追加</span>
+conversationHistory.push({ role: "user",      content: message });
+conversationHistory.push({ role: "assistant", content: aiResponse });
+
+<span class="cmt">// 最新10件のみ取得（トークン数制限への対策）</span>
+const recent = conversationHistory.slice(-10);</code></pre>
+    </div>
+
+    <p>各メッセージは <code>role</code>（<code>"user"</code> または <code>"assistant"</code>）と <code>content</code>（メッセージの内容）の2つのプロパティを持ちます。<code>slice(-10)</code> は配列の<strong>最後から10個</strong>の要素を取得します。</p>
+
+    <h3>APIキーについて</h3>
+    <p><strong>APIキー</strong>はWebサービスを利用するための認証情報です。3つの目的があります。</p>
+    <ol>
+      <li><strong>認証</strong>：正規の利用者であることを証明する</li>
+      <li><strong>課金管理</strong>：利用量を追跡し、課金を行う</li>
+      <li><strong>アクセス制御</strong>：不正利用や乱用を防ぐ</li>
+    </ol>
+    <div class="note mark">
+      <strong>セキュリティ上の注意</strong>
+      <ul>
+        <li>APIキーは<strong>パスワードと同じ</strong>扱いです</li>
+        <li>GitHubなどのWebサイトには公開しないでください</li>
+        <li>多くのアプリでは<strong>サーバー側で管理</strong>し、サーバ側からAIモデルにアクセスします</li>
+        <li>このアプリはユーザ自身が使用するクライアントサイドのみなので、localStorageで管理します</li>
+      </ul>
+    </div>
+
+    <h3>プロンプトの生成</h3>
+    <p>Geminiにはフラットなテキストとしてプロンプトを送ります。次の構造の文字列を組み立てます。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">送信するプロンプトの形</span></div>
+      <pre><code>あなたは役立つアシスタントです。
+
+Conversation:
+user: 今日の天気は？
+assistant: 東京は晴れです。
+user: ありがとう
+
+assistant:</code></pre>
+    </div>
+
+    <p>この文字列を作っているのが次のコードです。第６回で使った <code>map()</code> と <code>join()</code> がここでも登場します。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">プロンプトの組み立て</span></div>
+      <pre><code>"use strict";
+
+const prompt =
+  `${settings.systemPrompt}\n\nConversation:\n` +
+  conversationHistory
+    .map(msg =&gt; `${msg.role}: ${msg.content}`)   <span class="cmt">// 各メッセージを1行の文字列に</span>
+    .join("\n") +                                 <span class="cmt">// 改行でつなぐ</span>
+  `\n\nassistant:`;</code></pre>
+    </div>
+
+    <div class="note"><strong>最後の <code>assistant:</code> が非常に重要です。</strong>AIモデルは「次に続くテキスト」を予測するように訓練されています。プロンプトの最後を <code>assistant:</code> で止めることで、「さあ、assistantとしてのあなたの発言をここから続けてください」と応答を強く促す役割を果たします。</div>
+
+    <h3>Gemini APIの呼び出し</h3>
+    <div class="code">
+      <div class="code-bar"><span class="code-name">fetch でAPIを呼ぶ</span></div>
+      <pre><code>"use strict";
+
+const response = await fetch(
+  `https://generativelanguage.googleapis.com/v1beta/models/${settings.model}:generateContent?key=${settings.apiKey}`,
+  {
+    method: "POST",                                  <span class="cmt">// データを送信する</span>
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({                            <span class="cmt">// オブジェクト → JSON文字列</span>
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: settings.temperature,
+        maxOutputTokens: 1000
+      }
+    })
+  }
+);
+
+const data = await response.json();                   <span class="cmt">// JSON文字列 → オブジェクト</span>
+const aiResponse = data.candidates[0].content.parts[0].text;</code></pre>
+    </div>
+
+    <p>ここでも <code>JSON.stringify()</code> と <code>JSON.parse()</code>（<code>response.json()</code> が内部で行っています）の往復が使われています。<strong>ネットワークを通るものは、すべて文字列です。</strong></p>
+
+    <h3>OpenAI APIとの違い</h3>
+    <p>Geminiではフラットな<strong>テキスト</strong>でプロンプトを作りますが、OpenAIでは<strong>JSON形式の配列</strong>として会話を受け取ります。</p>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th scope="col">項目</th><th scope="col">OpenAI API</th><th scope="col">Gemini API</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">会話形式</th><td>構造化された配列</td><td>単一テキスト</td></tr>
+          <tr><th scope="row">認証方法</th><td>Authorizationヘッダー</td><td>URLパラメータ</td></tr>
+          <tr><th scope="row">システムプロンプト</th><td>独立した <code>role: "system"</code></td><td>プロンプトの先頭に含める</td></tr>
+          <tr><th scope="row">応答の取り出し</th><td class="mono">data.choices[0].message.content</td><td class="mono">data.candidates[0].content.parts[0].text</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Temperature（温度）</h3>
+    <p>モデルが次に生成する単語を選ぶとき、内部では「単語の候補リスト」と「それぞれが選ばれる確率」を持っています。Temperatureはその確率分布の鋭さを調整します。</p>
+    <ul>
+      <li><strong>低い温度（0.2）</strong>：確率が最も高い単語が「鋭く」強調され、ほぼその単語が選ばれます。決定的で一貫性のある回答になります。<em>事実に基づくQA、分類・抽出、コード生成、要約</em>に向いています</li>
+      <li><strong>高い温度（0.9）</strong>：確率の差が「平坦」になり、確率の低い単語も選ばれるチャンスが増えます。多様で創造的な回答になります。<em>ブレインストーミング、詩や物語、キャッチコピー</em>に向いています</li>
+    </ul>
+    <p>まずはデフォルト値（0.7〜0.9付近）で試し、期待する出力に合わせて調整するのが一般的です。<strong>実験：</strong>Temperature値を変更して回答がどのように変化するか調べてみましょう。</p>
+
+    <h3>全体の流れ</h3>
+    <div class="code">
+      <div class="code-bar"><span class="code-name">データの流れ</span></div>
+      <pre><code>1. ページ読み込み
+2. localStorage から設定を読み込み
+3. ユーザーがメッセージを入力
+4. メッセージを会話履歴（配列）に追加
+5. プロバイダーに応じて整形（配列 or テキスト）
+6. JSON.stringify() で文字列化
+7. fetch() でAPIに送信
+8. JSON.parse() でオブジェクトに戻す
+9. AI応答を会話履歴に追加して画面に表示</code></pre>
+    </div>
+
+    <div class="box">
+      <h4>参考課題（今週は来週の小テストに備えて提出課題はありません）</h4>
+      <ul>
+        <li>システムプロンプトを変更して、特定分野向けのアプリに変えてみる（例「あなたは料理人です。材料からレシピを提案します」）</li>
+        <li>特定分野向けの入力フィールドを追加し、それをプロンプトに埋め込んでAIから回答を得る</li>
+        <li>様々なシステムプロンプトをプルダウンで選べるようにする</li>
+        <li>会話履歴をlocalStorageに保存し、ページリロード後も継続する（第６回の <code>JSON.stringify()</code> がそのまま使えます）</li>
+        <li>会話をテキストファイルとしてエクスポートする</li>
+      </ul>
+    </div>
+
+    <h3>小テストについて（予告）</h3>
+    <p>来週11/28、11:30から12:00までの間に3クラス合同でmanaba小テストを実施します。JavaScriptの基本言語仕様に関わるもので、授業で学んだ範囲です。</p>
+    <div class="cmp">
+      <div>
+        <h5>出題範囲</h5>
+        <ul>
+          <li><code>let</code>, <code>const</code> などの変数宣言</li>
+          <li>基本構文：<code>for</code> 文、<code>if</code> 文、関数定義、演算子</li>
+          <li>変数の有効範囲（ローカル変数、グローバル変数）</li>
+          <li>配列とオブジェクトの定義と参照</li>
+          <li><code>document.querySelector()</code> とDOMの操作</li>
+          <li>Dateオブジェクト</li>
+          <li>ローカルストレージ</li>
+          <li>非同期通信 <code>async</code>/<code>await</code>/<code>fetch</code></li>
+        </ul>
+      </div>
+      <div>
+        <h5>範囲外</h5>
+        <ul>
+          <li>p5.js</li>
+          <li>jQuery</li>
+          <li>Gemini API</li>
+        </ul>
+      </div>
+    </div>
+    <p><strong>持ち込み禁止</strong>ですが、4択問題ですので、これまで多くのJavaScriptコードを書いてきた皆様はうろ覚えでも対応できる問題です。</p>
+    <p><a href="https://chatgpt.com/g/g-691f3c61d1548191b028c2054199bd1d-hurokuraminkulun-ji-hiyan-xi-noshi-yan-dui-ce">試験対策用GPTs</a>　（<a href="https://hitobo.io/blog/chatbot-chatgpt_gpts/">ChatGPT GPTsとは</a>）</p>
+  </section>
+
+  <section class="week" id="w10">
+    <div class="week-head">
+      <span class="week-num">第１０回</span>
+      <h2>LLM APIの活用（２）<br>AIにデータを作らせる</h2>
+    </div>
+
+    <p>今日は大規模言語モデル（LLM）を単なるチャットボットとしてではなく、<strong>アプリケーションが必要とするデータそのものを生成させる「データ供給源」</strong>として活用する方法を学びます。</p>
+
+    <div class="note"><strong>今日の一行：</strong>第６回で自分の手で書いたクイズのデータを、今日はAIに書かせます。<em>データの形は、第６回とまったく同じです。</em></div>
+
+    <h3>サンプルコードの配布</h3>
+    <p>本日配布するサンプルは <code>quiz.html</code> と <code>quiz.css</code> です。前回の <code>style.css</code> も必要なので、前回のSandboxの <code>public</code> フォルダ配下に以下の2つを追加してください。</p>
+    <ul>
+      <li><a href="https://codesandbox.io/p/sandbox/simple-ai-chat-yqnxrn?file=%2Fquiz.html">quiz.html</a></li>
+      <li><a href="https://codesandbox.io/p/sandbox/simple-ai-chat-yqnxrn?file=%2Fquiz.css">quiz.css</a></li>
+    </ul>
+    <p>前回配布した <code>index.html</code> もOpenAI APIに対応するため大幅に変更しましたので、<a href="https://codesandbox.io/p/sandbox/simple-ai-chat-yqnxrn?file=%2Findex.html">更新版</a>を再配布します。<strong>前回のコードをもとに更新するのではなく、この新しいコードをベースとして今後の開発をしてください。</strong></p>
+
+    <div class="note mark">個人のアカウントでも使用量超過でAPIキーが使えなくなる可能性がありますので、私のゼミで契約している<strong>OpenAI APIのproxyサーバ</strong>を用意しました。エンドポイントは <code>quiz.html</code> のスクリプト先頭に書いてあります。<strong>APIキーの指定方法は授業で説明します。</strong></div>
+
+    <div class="note mark"><strong>【注意】</strong>APIキーはソースコードには載せないでください。ユーザが自分のキーを入力してサービスを使う形態を <strong>Bring Your Own Key（BYOK）</strong> と呼びます。また、CodeSandboxのアクセスは必ず <strong>Unlisted</strong>（URLを知っている人のみ参照可）にしてください。Publicにすると授業用のAPI URLが漏れてしまいます。</div>
+
+    <p>使用できるOpenAI Modelは<a href="https://docs.google.com/document/d/11CXS89JGlwIMifToVYvj6Y0Twh3qDIkNRSqzexu6IkY/edit?usp=sharing">こちら</a>にまとめてあります。最新モデルである gpt-5.2 を使っていただいて構いません。</p>
+
+    <h3>新しいAPIの利用モデル</h3>
+    <p>第８回のGoogle Books APIのような従来のWebAPIは、<strong>事前に用意されたデータベース</strong>からデータを取得するものでした。しかし生成AIを使えば、アプリケーションの要求に応じて<strong>動的に、かつ構造化されたデータ</strong>をAI自身に生成させることができます。</p>
+    <p>この方式により、開発者は独自のコンテンツを事前に作成する必要がなくなり、ユーザーが指定したテーマ（例「ITパスポート対策」）に応じて即座にカスタムコンテンツを提供できます。</p>
+
+    <h3>AIに決められた形式で答えさせる</h3>
+    <p>最も重要なのは「AIに決められた形式（JSON）で応答させる」ことです。2つの技術を組み合わせます。</p>
+
+    <h4>（１）システムプロンプトによる形式指示</h4>
+    <p>AIに渡すプロンプトで、出力形式を<strong>具体例つきで</strong>厳密に指定します。ここに書く形式は、第６回で自分で書いた <code>quizData</code> と<strong>完全に同じ</strong>です。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">AIに渡すシステムプロンプト</span></div>
+      <pre><code>"use strict";
+
+const systemPrompt = `あなたは${theme}に関するクイズを作成するAIです。
+${count}問のクイズを作成してください。
+
+必ず以下の形式のJSON配列だけを返してください。説明文は不要です。
+
+[
+  {
+    "question": "問題文",
+    "choices": ["選択肢1", "選択肢2", "選択肢3"],
+    "answer": 0
+  }
+]
+
+条件：
+- choices は必ず3つ
+- answer は正解の選択肢のインデックス（0, 1, 2 のいずれか）
+- answer は0から数える（最初の選択肢が正解なら 0）`;</code></pre>
+    </div>
+
+    <h4>（２）API設定によるJSON応答の強制</h4>
+    <p>プロンプトの指示に加えて、リクエストの <code>generationConfig</code> で応答のMIMEタイプを指定し、AIの応答をJSON形式に限定します。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">JSON形式を強制する</span></div>
+      <pre><code>generationConfig: {
+  temperature: 0.7,
+  response_mime_type: "application/json"    <span class="cmt">// JSON形式を強制</span>
+}</code></pre>
+    </div>
+
+    <p>AIからの応答はJSON<strong>文字列</strong>として返ってくるので、<code>JSON.parse()</code> で配列に変換します。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">受け取って変換する</span></div>
+      <pre><code>"use strict";
+
+const responseText = data.candidates[0].content.parts[0].text;
+
+let quizData;
+try {
+  quizData = JSON.parse(responseText);
+} catch (error) {
+  <span class="cmt">// AIが指示に従わずJSON以外を返すこともある。必ず備えておく</span>
+  console.error("JSONとして読めませんでした:", responseText);
+  alert("問題の生成に失敗しました。もう一度お試しください。");
+  return;
+}
+
+<span class="cmt">// ここから先は第６回のクイズとまったく同じコードで動く</span>
+showQuestion();</code></pre>
+    </div>
+
+    <div class="note mark"><strong>AIは必ず指示に従うとは限りません。</strong>JSONの前後に説明文をつけたり、形式を微妙に変えたりすることがあります。<code>try</code>/<code>catch</code> で失敗に備えるのは、AIを使うアプリでは必須です。<em>これがシラバスに書いた「AIが生成したものを責任をもってチェックする」ということの、最も具体的な形です。</em></div>
+
+    <h3>クイズの実行ロジック</h3>
+    <p>生成されたデータは第６回とまったく同じ形なので、<strong>表示や採点のコードはそのまま使えます</strong>。</p>
+    <ul>
+      <li><strong>問題表示</strong>：<code>showQuestion()</code> が問題番号（問題 1 / 5）と問題文・選択肢を描画します</li>
+      <li><strong>採点</strong>：選んだインデックスと <code>answer</code> を比較し、正解なら <code>score</code> を増やします</li>
+      <li><strong>終了処理</strong>：すべての問題を終えると正解数・問題数・正答率を表示します</li>
+    </ul>
+
+    <div class="task">
+      <h3>第９回課題　AIによるデータ生成を活用したアプリ<span class="pts">5点</span></h3>
+      <p><code>quiz.html</code> で学んだ「AIに構造化データ（JSON）を生成させる」仕組みを応用し、<strong>別の用途</strong>のWebアプリケーションを開発してください。</p>
+
+      <h4>要求事項</h4>
+      <ol>
+        <li><strong>LLM API（Gemini または OpenAI）</strong>を使用すること</li>
+        <li>AIに対し、特定の形式の<strong>JSONデータを出力するよう厳密に指示</strong>すること（具体例をプロンプトに含めること）</li>
+        <li>AIが生成したJSONデータを <code>JSON.parse()</code> で処理し、そのデータを元に動作するUIを構築すること</li>
+        <li><code>try</code>/<code>catch</code> でパース失敗に備えること</li>
+      </ol>
+
+      <h4>アイデア</h4>
+      <ul>
+        <li><strong>献立ジェネレーター</strong>：材料を入力すると、AIがレシピ（料理名、手順、分量）をJSONで生成してリスト表示する</li>
+        <li><strong>単語帳アプリ</strong>：テーマを入力すると、AIが「単語」と「意味」のペアをJSONで生成して単語帳形式で表示する</li>
+        <li><strong>診断チャートメーカー</strong>：AIが指定テーマの診断チャートのデータ構造（第７回の <code>chart</code> と同じ形）を生成し、そのデータで診断チャートを実行する</li>
+        <li><strong>旅程プランナー</strong>：行き先と日数を入力すると、日ごとの予定をJSONで生成する</li>
+      </ul>
+
+      <h4>提出方法</h4>
+      <p>プレビュー画面のURLをmanabaのレポート機能で提出してください。<code>https://xxxxx.csb.app/ai.html</code> のように書いてください。</p>
+      <p class="deadline">提出締切：来週木曜日 13:00</p>
+      <p><a href="https://script.google.com/a/macros/otsuma.ac.jp/s/AKfycby1HBmxgaBgUyL6rYziZy6zn8RMFs7a3Vh5AMqusWEgbrHOh1LmOzlbCsxEHQnWMiBH4w/exec">LLMの活用の作品一覧</a></p>
+    </div>
+
+    <div class="note"><strong>本日は小テストを実施します。</strong>出題範囲はJavaScriptの基本言語仕様、<code>for</code> 文、<code>if</code> 文、関数定義、配列とオブジェクト、DOMの操作、ローカルストレージ、非同期通信（<code>async</code>/<code>await</code>/<code>fetch</code>）です。</div>
+  </section>
+
+  <section class="week" id="w11">
+    <div class="week-head">
+      <span class="week-num">第１１回</span>
+      <h2>他のAPIの活用</h2>
+    </div>
+
+    <p>来週以降の総合制作では、自由な作品制作に取り組みます。これまでGoogle Books APIやLLM APIを学んできました。LLM APIを使えばAIの知識をJSON形式で取得できるので、様々なアプリが開発できます。</p>
+    <p>とはいえ、LLM APIには<strong>リアルタイムのデータ取得には向かない</strong>という欠点があります。LLMにはカットオフ日（学習データを取得した日）が設定されており、その日までに収集したテキストの知識しかありません。そこで本日は他のAPIについて学びます。</p>
+
+    <p>APIはよく利用されるものだけでも<a href="https://primenumber.com/blog/api_list">この一覧</a>のように様々なものがありますが、一般に次のタイプに分類され、<strong>登録不要で無料なものは非常に少ない</strong>のが現状です。</p>
+    <ul>
+      <li>無料（登録不要）</li>
+      <li>無料（登録必要）</li>
+      <li>有料（登録必要）</li>
+    </ul>
+    <p>また、APIキーで認証するWebAPIの多くはサーバ側でのみ使用可能で、ブラウザからは利用を許していないなどの制約がある場合も少なくありません。</p>
+
+    <div class="box mark">
+      <h4>考えてみよう</h4>
+      <ol>
+        <li>なぜ、無料で登録不要なものが少ないのか？</li>
+        <li>なぜ、無料でも登録が必要なのか？</li>
+        <li>なぜ、ブラウザから直接使用できないAPIが多いのか？</li>
+      </ol>
+    </div>
+
+    <h3>登録不要で使えるAPIの例</h3>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th scope="col">カテゴリ</th><th scope="col">API名</th><th scope="col">試す</th><th scope="col">取得できる内容</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">仮想通貨</th><td>CoinGecko</td><td><a href="https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=jpy">ビットコイン価格</a></td><td>現在の価格</td></tr>
+          <tr><th scope="row">天気</th><td>Open-Meteo</td><td><a href="https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m">気象データ</a></td><td>気温、風速、天気コード</td></tr>
+          <tr><th scope="row">宇宙</th><td>WhereTheISS</td><td><a href="https://api.wheretheiss.at/v1/satellites/25544">ISSの位置</a></td><td>緯度、経度、高度、速度</td></tr>
+          <tr><th scope="row">為替</th><td>Frankfurter</td><td><a href="https://api.frankfurter.dev/v1/latest?base=USD">最新レート</a></td><td>為替レート</td></tr>
+          <tr><th scope="row">住所</th><td>ZipCloud</td><td><a href="https://zipcloud.ibsnet.co.jp/api/search?zipcode=1000001">郵便番号検索</a></td><td>都道府県、市区町村</td></tr>
+          <tr><th scope="row">IP確認</th><td>ipify</td><td><a href="https://api.ipify.org?format=json">自分のIP</a></td><td>IPアドレス</td></tr>
+          <tr><th scope="row">犬画像</th><td>Dog CEO</td><td><a href="https://dog.ceo/api/breeds/image/random">ランダムな犬</a></td><td>画像URL</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>リンクをクリックして <code>{ "bitcoin": { "jpy": 4300000 } }</code> のような文字が表示されれば成功です。データが崩れて見にくい場合は、Chromeの拡張機能（<strong>JSON Viewer</strong> など）を入れると色分けされて綺麗に見えます。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">ビットコインの価格を取得する</span></div>
+      <pre><code>"use strict";
+
+async function getPrice() {
+  const res  = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&amp;vs_currencies=jpy");
+  const data = await res.json();
+  console.log(`現在のビットコイン価格: ${data.bitcoin.jpy} 円`);
+}
+
+getPrice();</code></pre>
+    </div>
+
+    <p>その他、無料で容易に使えそうなもの：</p>
+    <ul>
+      <li><a href="https://geoapi.heartrails.com/api.html">GeoAPI by Heart Rails</a></li>
+      <li><a href="https://anko.education/webapi/jma">気象庁APIの使い方</a></li>
+      <li><a href="https://api-catalog.e-gov.go.jp/info/ja">行政APIカタログ</a>　／　<a href="https://www.e-stat.go.jp/">e-Stat</a></li>
+    </ul>
+    <p>多くの行政機関もAPIを提供していますが、実際にはメンテされていなかったりデータが取得できないことも多いです。使えない場合は他のAPIを探してください。大手IT企業（Yahoo, 楽天, LINE, Amazon, Google, ぐるなび, ホットペッパーなど）も提供していますが、利用申請やクレジットカードの登録が必要なことが多いです。</p>
+
+    <h3>Google Sheet API（授業用Proxy版）</h3>
+    <p>どうしても使いたいデータが見つからない場合や、エクセルデータで提供されている場合は、Googleスプレッドシートからデータを取り出す方法があります。</p>
+    <p>例として<a href="https://docs.google.com/spreadsheets/d/16ReKNOFwLk6Qeq5rOfHJkh55dGbFvcRZ2jHNMgV9QfE/edit?usp=sharing">このスプレッドシート</a>を使います。以下のURLで指定範囲のデータを二次元配列として取得できます。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">エンドポイント（本授業用のProxy API）</span></div>
+      <pre><code>https://google-sheet-read-api-746164391621.us-central1.run.app/get
+  ?sheetId=16ReKNOFwLk6Qeq5rOfHJkh55dGbFvcRZ2jHNMgV9QfE
+  &amp;sheetName=s13YYXXX
+  &amp;range=A2:C8</code></pre>
+    </div>
+
+    <p>JavaScriptからは <code>fetch</code> で取得できます（<a href="https://codesandbox.io/p/sandbox/xzzk6r">サンプルコード</a>）。スプレッドシートの共有URLの <code>/d/</code> と <code>/edit</code> の間の部分が <code>sheetId</code> です。</p>
+
+    <div class="note"><strong>個人のGoogleアカウント</strong>でスプレッドシートを作り、「<strong>誰でも閲覧可能</strong>」に共有設定して、その <code>sheetId</code> を指定すれば、自分が作成したシートのデータを取得できます。基本的には<strong>自分で作ったシートを使用してください</strong>。新しくシートを作るとデフォルトのシート名が「シート1」になっていますので、名前を英数字に変更してから指定してください。</div>
+
+    <p>このAPIはGoogleが提供する公式のSheet APIではなく、<strong>本授業用に用意されたproxyサーバ</strong>です。本来はGoogleのエンドポイントを使いますが、APIキーとクレジットカードの登録が必要で授業には不便なため用意しました。裏で自動的にAPIキーが付与されてGoogleのSheet APIを呼び出しています。</p>
+
+    <div class="task">
+      <h3>第１１回課題　APIを見つけて使ってみよう<span class="pts">3点</span></h3>
+      <p>今日紹介した様々なAPI、Sheet API、又は自分で見つけたAPIを使った簡単なサンプルプログラムを作成してください。</p>
+      <h4>提出方法</h4>
+      <p>プレビュー画面のURLをmanabaのレポート機能で提出してください。<code>https://xxxxx.csb.app/foods.html</code> のように書いてください。</p>
+      <p class="deadline">提出締切：来週木曜日 13:00</p>
+    </div>
+
+    <p>ご案内：<a href="https://drive.google.com/file/d/1_3WtKa8mrBVs9uRPwqwPtmZ_hCUpf1kp/view?usp=sharing">大妻データサイエンスセミナーポスター</a>（来週月曜5限開催）</p>
+  </section>
+
+  <section class="week" id="w12">
+    <div class="week-head">
+      <span class="week-num">第１２回</span>
+      <h2>総合課題の制作（企画と設計）</h2>
+    </div>
+
+    <h3>今日のアジェンダ</h3>
+    <ol>
+      <li>前回の課題の振り返り（お互いにどのようなAPIを試したか紹介しあい、何ができそうか議論する）</li>
+      <li>アイデアのブレインストーミング</li>
+      <li>企画と設計</li>
+      <li>授業評価アンケート（<a href="https://drive.google.com/file/d/1zGbNfvi66AzAqTmwl9-GCVrAkkmvSCIH/view?usp=sharing">UNIPA操作説明（学生用）</a>）</li>
+    </ol>
+
+    <h3>総合課題について</h3>
+    <p><strong>テーマ：「LLMの活用」</strong>（LLM APIを使用すること）</p>
+    <p>これまでの授業で学んだWebアプリ開発技術やWebAPI、統計データを駆使して、以下のいずれかの分野で作品を作成してください。複数のカテゴリに当てはまる場合は、最も当てはまるものを一つ選んでエントリします。</p>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th scope="col">分野</th><th scope="col">説明</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">美しい／<br>オリジナリティ</th><td>過去に例のない、新しい体験をもたらすサイト、アート作品など。p5.js 3Dなどを利用して新しいインタラクションを実現する美しいサイト、統計データを美しく表現するなど。インフォグラフィック的なサイトはこの分野</td></tr>
+          <tr><th scope="row">便利・役に立つ</th><td>自分（あるいは他人）にとって本当に役に立つサイトを作る。類似したサイトが既にあってもよいが、既存のものよりも良い点が一つでもあればベター</td></tr>
+          <tr><th scope="row">楽しい</th><td>音楽や画像などを駆使して、楽しさを追求するサイト</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box">
+      <h4>設計のヒント：まずデータの形を決める</h4>
+      <p>この授業でずっとやってきたことを、そのまま使ってください。作りたいものが決まったら、<strong>コードを書く前に「どんな形のデータが必要か」を書き出します</strong>。第４回の手順書と同じ考え方です。</p>
+      <ul>
+        <li>アプリが扱う<strong>1件のデータ</strong>は、どんなプロパティを持つか</li>
+        <li>そのデータは<strong>どこから来るか</strong>（自分で書く／AIに生成させる／APIから取る／ユーザーが入力する）</li>
+        <li>保存する必要はあるか（あるなら <code>JSON.stringify()</code> でローカルストレージへ）</li>
+      </ul>
+      <p>データの形が決まれば、AIに「この形のJSONを作って」と正確に指示できます。<strong>形を指定できるのは、その形を自分で設計したからです。</strong></p>
+    </div>
+
+    <p>制作した作品のURLは学生の間で共有します。さらに学生の皆様で投票を行い、よい作品として選ばれたものを専攻のWebサイトで公開します（公開の許諾が得られた作品のみ）。</p>
+    <div class="note mark"><strong>著作権侵害のないように注意してください。</strong>他人の画像、音楽、キャラクターは使用しないでください。</div>
+    <p>作品の発表会は第１５回の授業で、一人2分以内で作品の説明を行っていただきます。最後に学生からの投票を行い、授業終了時に各ジャンルの1名を発表します。</p>
+
+    <h3>評価基準</h3>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th scope="col">評価項目</th><th scope="col" class="c">配点</th><th scope="col">評価の観点</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">I. LLMの活用と独創性</th><td class="c">10点</td>
+            <td>LLM APIが適切に使用されているか（最低限の確認）。LLMの機能を単なるチャットボットに留めず、課題分野に合わせていかにユニークかつ効果的に活用しているか。Web APIや統計データなどを効果的に組み合わせて作品の価値を高めているか</td>
+          </tr>
+          <tr>
+            <th scope="row">II. 技術的な完成度と品質</th><td class="c">10点</td>
+            <td>目標とする機能が安定して動作し、エラーやバグがないか。使いやすく目的を達成しやすい設計になっているか。見た目の美しさや操作性はどうか。授業で学んだ技術が効果的に使われているか</td>
+          </tr>
+          <tr>
+            <th scope="row">III. 作品の価値（分野別）</th><td class="c">10点</td>
+            <td><strong>美しい／オリジナリティ</strong>：新規性や芸術性が高く、新しい体験や感動、データの美しい表現を提供しているか<br><strong>便利・役に立つ</strong>：対象ユーザーにとっての実用性が高く、既存の類似サービスと比較して優位性があるか<br><strong>楽しい</strong>：ユーザーが感情的に楽しめる要素が工夫されているか</td>
+          </tr>
+          <tr>
+            <th scope="row">IV. 発表・説明の質</th><td class="c">5点</td>
+            <td>2分以内の時間制限を守っているか。作品の概要、特徴、LLMの活用ポイントを分かりやすく簡潔に説明しているか。聴衆に関心を持たせ、投票を促すだけのプレゼンテーション能力があるか</td>
+          </tr>
+          <tr class="off"><th scope="row">合計</th><td class="c">35点</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note"><a href="https://docs.google.com/document/d/11CXS89JGlwIMifToVYvj6Y0Twh3qDIkNRSqzexu6IkY/edit?usp=sharing"><strong>OpenAI Models 一覧</strong></a>　gpt-5.2 を使用する場合は <code>temperature</code> を <strong>1</strong> にしてください。gpt-5.2 は temperature パラメータをサポートしていないため、1以外だとエラーになります。</div>
+  </section>
+
+  <section class="week" id="w13">
+    <div class="week-head">
+      <span class="week-num">第１３回</span>
+      <h2>総合課題（制作）</h2>
+    </div>
+
+    <h3>今日のアジェンダ</h3>
+    <p><strong>１限は総合課題の制作</strong>（質問に答えます）　／　<strong>２限はゼミ配属説明会 ＠H113</strong></p>
+
+    <h3>第２回小テストについて</h3>
+    <ul>
+      <li>1回目と類似した問題です（<code>for</code> 文の繰り返し回数や演算子など、パラメータは微妙に変更する予定）</li>
+      <li><strong>1回目の点数が悪かった人の救済手段：</strong>2回目の点数を0.8倍して、1回目の点数より高ければ、その得点とします</li>
+    </ul>
+
+    <div class="box">
+      <h4>制作でつまずいたときのチェックリスト</h4>
+      <ol>
+        <li>デベロッパーツールの <strong>Console</strong> にエラーが出ていないか。出ていたら、まずエラーメッセージをよく読む</li>
+        <li>エラーが出ていない場合は、<code>console.log()</code> で変数の中身を確認する。<strong>期待した形のデータが入っているか</strong></li>
+        <li>APIから取得したデータは <strong>Network</strong> タブで実際の応答を確認する。欠けているフィールドはないか</li>
+        <li>AIが生成したJSONは、<code>console.log()</code> で生の文字列を確認する。余計な説明文がついていないか</li>
+        <li>それでも分からなければ、エラーメッセージと該当箇所のコードをAIに貼って聞く。<strong>ただし返ってきたコードは、各行の意味を理解してから使うこと</strong></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="week" id="w14">
+    <div class="week-head">
+      <span class="week-num">第１４回</span>
+      <h2>総合課題（制作）</h2>
+    </div>
+
+    <div class="note mark"><strong>第２回小テスト 9:05-9:30</strong>　受験しない人は9:30に入室してください（遅刻して受験する人は入室OK）。1回目80点以上の人、又は1回目の点数に満足の人は9:30に来ても構いません。<strong>Responは9:30から開始します。</strong></div>
+
+    <h3>総合課題の制作（３）・ブラッシュアップ</h3>
+    <p>発表会は来週です。残り時間で以下を確認してください。</p>
+    <ul>
+      <li><strong>動作確認</strong>：シークレットウィンドウで開き、ログインなしで正しく動くか</li>
+      <li><strong>エラー処理</strong>：APIが失敗したとき、AIが変な応答を返したとき、アプリが止まらずメッセージを出せるか</li>
+      <li><strong>操作方法の説明</strong>：<strong>アプリの操作方法はアプリ自体（Web画面）に書いてください</strong></li>
+      <li><strong>APIキー</strong>：ソースコードに書いていないか。Sandboxのアクセスは Unlisted か</li>
+      <li><strong>著作権</strong>：他人の画像や音楽を使っていないか</li>
+      <li><strong>発表の準備</strong>：2分で「何ができるアプリか」「LLMをどう活用したか」「工夫した点」を言えるか</li>
+      <li><strong>手元への保存</strong>：作品一式をダウンロードして自分のPCに保存しておく（下記）</li>
+    </ul>
+
+    <div class="box mark">
+      <h4>作品を手元に保存しておきましょう</h4>
+      <p>この授業で作ったものは、素のHTML・CSS・JavaScriptだけでできています。フレームワークもビルドツールも使っていません。つまり<strong>ファイル一式さえ手元にあれば、どこに置いても動きます</strong>。CodeSandboxのメニューから作品をダウンロードして、自分のPCに保存しておいてください。</p>
+      <p>ダウンロードしたフォルダの <code>index.html</code> をダブルクリックしてみてください。CodeSandboxを開かなくても、そのままブラウザで動きます。<em>外部のサービスに依存しないものを作った、ということです。</em></p>
+      <ul>
+        <li>大妻Googleアカウントは卒業後に使えなくなります。<strong>卒業までに必要な作品を書き出しておけば、それで済みます</strong></li>
+        <li>優秀作は専攻のWebサイトで公開しますので、そのときにも必要になります</li>
+      </ul>
+      <div class="note"><strong>作品集として公開したくなったら。</strong>この授業ではCodeSandboxを開発と提出のために使っていますが、<code>xxxxx.csb.app</code> のURLは作品集の置き場所としては適していません。3年次にGitHubを学びますので、そこで<strong>GitHub Pages</strong>に置くと、自分のURLで作品を公開できます。<em>置き場所を移すだけで、コードは1行も書き換える必要がありません。</em>今日ダウンロードしたフォルダが、そのまま使えます。</div>
+    </div>
+
+    <h3>春休み期間の学習について</h3>
+    <ul>
+      <li>YouTubeでAIの使い方と最新動向を勉強しよう（OpenAI, Gemini などで検索）</li>
+      <li>AI自体にAIを教えてもらおう（Gemini, ChatGPT）</li>
+      <li>プログラミングだけでなく、幅広くAIから学ぼう（特に英会話が有用）</li>
+      <li><a href="https://paiza.jp/works">Paizaラーニング</a>（JavaScriptに関してはコンテンツが少なめ）</li>
+      <li><a href="https://prog-8.com/">Progate</a>（JavaScript入門）</li>
+      <li><a href="https://dotinstall.com/">ドットインストール</a>（JavaScript全般）</li>
+      <li><a href="https://developer.mozilla.org/ja/docs/Learn/Getting_started_with_the_web/JavaScript_basics">JavaScriptの基本</a>（MDN・マニュアル）</li>
+      <li><a href="https://www.youtube.com/watch?v=DRvjnolIP1s">山崎先生の動画</a>（プログラミングの学び方、PCの選び方、AIの動向）</li>
+    </ul>
+  </section>
+
+  <section class="week" id="w15">
+    <div class="week-head">
+      <span class="week-num">第１５回</span>
+      <h2>総合課題（発表）</h2>
+    </div>
+
+    <p>作品の発表会です。<strong>一人2分以内</strong>で作品の説明を行っていただきます。最後に学生からの投票を行い、授業終了時に各ジャンルの1名を発表します。</p>
+
+    <div class="note mark"><strong>今回はシートにURLを入力しますので、manabaへのURLの提出は不要です。</strong><br>当日の朝<strong>9:10まで</strong>に、以下のシートに作品の概要とURLを入力してください。<br><strong>アプリの操作方法はアプリ自体（Web画面）に書いてください。</strong></div>
+
+    <ul>
+      <li><a href="https://docs.google.com/spreadsheets/d/1Bxusp-UQm2-4vT3jMteO7h_Csu1YqFEyluRsUx5MBko/edit?usp=sharing"><strong>プログラミング論総合制作課題一覧 2025</strong></a></li>
+      <li><a href="https://forms.gle/UxmCHjywhPt99PE26">オーディエンス賞の投票フォーム</a>（送信後でも編集できますが、全作品を見てから入力してください）</li>
+      <li><a href="https://docs.google.com/document/d/14aHtYDUyqK3s-2NDoylKOy1TzrXnHbkXoI4yxmk9wqk/edit?usp=sharing">AIコーディング支援ツールの紹介</a></li>
+    </ul>
+
+    <h3>発表のポイント（2分）</h3>
+    <ol>
+      <li><strong>何ができるアプリか</strong>（20秒）：一言で言うと何か。誰のためのものか</li>
+      <li><strong>実演</strong>（60秒）：実際に動かして見せる。一番の見せ場から始める</li>
+      <li><strong>LLMをどう活用したか</strong>（30秒）：どんなデータをAIに生成させたか。なぜその形にしたか</li>
+      <li><strong>工夫した点・苦労した点</strong>（10秒）</li>
+    </ol>
+
+    <div class="box">
+      <h4>最後に</h4>
+      <p>この授業では、じゃんけんからAIによるデータ生成まで、毎回違うアプリを作ってきました。しかし扱ってきたデータの形は、ずっと同じでした。</p>
+      <p>これから皆さんが使う言語もツールも、おそらく変わっていきます。AIが書くコードの量も増え続けるでしょう。それでも<strong>「どんな形のデータが必要か」を決めるのは人間の仕事です。</strong>その形を自分で設計できる人だけが、AIに正しい指示を出し、返ってきたものが正しいかを判断できます。</p>
+      <p>半年間おつかれさまでした。</p>
+    </div>
+  </section>
+
+
+
+  <footer>
+    <p>プログラミング論及び演習（2026）　大妻女子大学　社会情報学部</p>
+    <p><span data-f="instructor.name"></span>　<a data-mail href="mailto:"></a></p>
+  </footer>
+
+</div>
+
+<script>
+  // ---- 授業データ（#course-data）をページに反映する ----
+  (function () {
+    "use strict";
+
+    var el = document.getElementById("course-data");
+    if (!el) return;
+
+    var data;
+    try {
+      data = JSON.parse(el.textContent);
+    } catch (e) {
+      console.error("course-data のJSONが壊れています:", e);
+      return;
+    }
+
+    function pick(path) {
+      return path.split(".").reduce(function (o, k) {
+        return o == null ? null : o[k];
+      }, data);
+    }
+
+    // 氏名などの差し込み
+    document.querySelectorAll("[data-f]").forEach(function (node) {
+      var v = pick(node.dataset.f);
+      if (v != null) node.textContent = v;
+    });
+
+    // メールアドレス
+    var mail = pick("instructor.email");
+    document.querySelectorAll("a[data-mail]").forEach(function (a) {
+      a.href = "mailto:" + mail;
+      a.textContent = mail;
+    });
+
+    // スケジュール表
+    var tbody = document.getElementById("schedule-body");
+    if (tbody && Array.isArray(data.schedule)) {
+      tbody.innerHTML = data.schedule.map(function (row) {
+        var off = row.n == null;
+        return '<tr' + (off ? ' class="off"' : '') + '>'
+          + '<td class="c">' + (off ? "—" : row.n) + "</td>"
+          + '<td class="c">' + (row.date || "") + "</td>"
+          + "<td>" + (row.topic || "") + "</td>"
+          + "<td>" + (row.task || "—") + "</td>"
+          + "</tr>";
+      }).join("");
+    }
+  })();
+
+  // ---- コードブロックのコピーボタン ----
+  (function () {
+    "use strict";
+    document.querySelectorAll(".code").forEach(function (block) {
+      var pre = block.querySelector("pre");
+      var bar = block.querySelector(".code-bar");
+      if (!pre || !bar || bar.querySelector(".copy")) return;
+      var btn = document.createElement("button");
+      btn.className = "copy";
+      btn.type = "button";
+      btn.textContent = "COPY";
+      btn.addEventListener("click", function () {
+        navigator.clipboard.writeText(pre.innerText).then(function () {
+          btn.textContent = "COPIED";
+          btn.dataset.done = "1";
+          setTimeout(function () {
+            btn.textContent = "COPY";
+            delete btn.dataset.done;
+          }, 1400);
+        });
+      });
+      bar.appendChild(btn);
+    });
+  })();
+</script>
