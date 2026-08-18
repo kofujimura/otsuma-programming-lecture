@@ -22,7 +22,7 @@
     { "n": null, "date": "10/2",  "topic": "臨時休業（スポーツフェスティバル）" },
     { "n": 4,    "date": "10/9",  "topic": "<a href=\"#w4\">p5.jsでアルゴリズム（１）</a>・規則性の発見と手順化", "task": "草間模様（5）" },
     { "n": null, "date": "10/16", "topic": "臨時休業（大妻祭・千代田）" },
-    { "n": 5,    "date": "10/23", "topic": "<a href=\"#w5\">p5.jsでアルゴリズム（２）</a>・模様をデータで記述する", "task": "作品シリーズ（5）" },
+    { "n": 5,    "date": "10/23", "topic": "<a href=\"#w5\">p5.jsでアルゴリズム（２）</a>・重ならないように置く", "task": "作品シリーズ（5）" },
     { "n": 6,    "date": "10/30", "topic": "<a href=\"#w6\">DOMとイベント（１）</a>・ローカルストレージ・JSONの保存・クイズ", "task": "クイズ（5）" },
     { "n": 7,    "date": "11/6",  "topic": "<a href=\"#w7\">DOMとイベント（２）</a>・状態推移モデル・診断チャート", "task": "診断チャート（5）" },
     { "n": 8,    "date": "11/13", "topic": "<a href=\"#w8\">サーバとの通信</a>・非同期処理・Google Books API", "task": "Google Books（5）" },
@@ -599,7 +599,7 @@
       <li><a href="#w2"><span class="n">02</span>条件分岐、日付処理</a></li>
       <li><a href="#w3"><span class="n">03</span>配列、オブジェクト、JSON、DOM</a></li>
       <li><a href="#w4"><span class="n">04</span>p5.jsでアルゴリズム（１）</a></li>
-      <li><a href="#w5"><span class="n">05</span>模様をデータで記述する</a></li>
+      <li><a href="#w5"><span class="n">05</span>重ならないように置く</a></li>
       <li><a href="#w6"><span class="n">06</span>ローカルストレージとクイズ</a></li>
       <li><a href="#w7"><span class="n">07</span>状態推移モデル</a></li>
       <li><a href="#w8"><span class="n">08</span>サーバとの通信</a></li>
@@ -1549,28 +1549,193 @@ function draw() {
   <section class="week" id="w5">
     <div class="week-head">
       <span class="week-num">第５回</span>
-      <h2>p5.jsでアルゴリズム（２）<br>模様をデータで記述する</h2>
+      <h2>p5.jsでアルゴリズム（２）<br>重ならないように置く</h2>
     </div>
 
-    <p>前回は、模様の規則を見つけて<strong>手順書</strong>に書き、その手順書どおりに実装しました。今回はその続きです。手順書の中に埋まっている<strong>数値を外に取り出して、模様そのものをデータで表します</strong>。</p>
+    <p>前回は模様の規則を見つけて手順書に書きました。今回はその手順書に<strong>本当に草間彌生の模様が書けていたか</strong>を疑うところから始めます。そして、書けていなかった部分を実装するために、少し骨のあるアルゴリズムを考えます。</p>
 
-    <p>そうすると何が起きるか。<em>コードを一行も書き換えずに、数値を変えるだけで別の作品が生まれます。</em>第３回のじゃんけんで <code>hands</code> の表を書き換えると挙動が変わったのと、まったく同じことです。</p>
-
-    <h3>手順書には数値が埋まっている</h3>
-    <p>前回書いた手順書を見返してください。たとえばこういうものだったはずです。</p>
+    <h3>格子に並べた水玉は、草間模様だろうか</h3>
+    <p>前回、多くの人がこう書いたはずです。</p>
 
     <div class="code">
-      <div class="code-bar"><span class="code-name">前回の手順書</span></div>
-      <pre><code>1. 800×500pxのキャンバスを用意する
-2. 背景を赤（R=200, G=30, B=30）で塗る
-3. 画面を縦20×横12の格子に分ける
+      <div class="code-bar"><span class="code-name">前回の手順書（よくある形）</span></div>
+      <pre><code>3. 画面を縦20×横12の格子に分ける
 4. 各格子の中心に白い円を描く
 5. ただし円の直径は、格子ごとに20〜40の範囲でランダムに決める</code></pre>
     </div>
 
-    <p>太字にできる数値がいくつあるでしょうか。<strong>背景の色、格子の数、円の色、直径の範囲</strong>——これらは全部「変えられるもの」です。手順の<em>骨格</em>は変わらないまま、数値だけが作品ごとに変わります。</p>
+    <p>これは実装しやすい手順です。しかし出てくる絵は、<strong>水玉がきれいに整列した規則的な模様</strong>になります。もう一度<a href="https://www.google.com/search?q=%E8%8D%89%E9%96%93%E5%BD%8C%E7%94%9F">草間彌生の作品</a>を見てください。水玉は<em>格子に並んでいません</em>。大きさもばらばらで、位置も不規則です。それでいて、<strong>水玉同士は重なっていません</strong>。</p>
 
-    <p>そこで、変わる部分だけを一箇所に集めます。</p>
+    <div class="note mark">ここが今日の出発点です。<strong>「ランダムに置く」と「重ならない」は、同時に成り立たせるのが難しい。</strong>格子に並べれば重なりませんが、それは草間模様ではありません。ランダムに置けば草間模様に近づきますが、重なってしまいます。<em>さあ、どうしますか。</em></div>
+
+    <h3>まず、素直にランダムに置いてみる</h3>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">random00.html</span></div>
+      <pre><code>"use strict";
+
+function setup() {
+  createCanvas(800, 500);
+  background(200, 30, 30);
+  noStroke();
+  fill(255);
+
+  for (let i = 0; i &lt; 150; i++) {
+    const d = random(14, 54);              <span class="cmt">// 直径をランダムに</span>
+    circle(random(width), random(height), d);
+  }
+}</code></pre>
+    </div>
+
+    <p>実行すると、水玉が<strong>あちこちで重なり、めり込んだ塊</strong>ができます。位置の不規則さは出ましたが、作品には見えません。重なりを消す必要があります。</p>
+
+    <h3>重なりをどう判定するか</h3>
+    <p>２つの円が重なっているかどうかは、<strong>中心間の距離</strong>で判定できます。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">重なりの条件</span></div>
+      <pre><code>中心間の距離 &lt; 半径A + 半径B     → 重なっている
+中心間の距離 ≧ 半径A + 半径B     → 重なっていない</code></pre>
+    </div>
+
+    <p>２つの円がちょうど接するとき、中心間の距離は半径の和にぴったり等しくなります。それより近ければ食い込んでいる、というだけの話です。p5.jsには距離を求める <code>dist()</code> があります。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">2つの円の判定</span></div>
+      <pre><code>const d = dist(x1, y1, x2, y2);
+if (d &lt; r1 + r2) {
+  <span class="cmt">// 重なっている</span>
+}</code></pre>
+    </div>
+
+    <h3>置けるまで、場所を変えて試す</h3>
+    <p>判定できるようになったので、方針はこうなります。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">考え方</span></div>
+      <pre><code>1. ランダムな位置と大きさの円を、候補として1つ作る
+2. すでに置いてある水玉すべてと、重なっていないか調べる
+3. どれとも重なっていなければ、そこに置いて確定する
+4. どれかと重なっていたら、その候補は捨てて、1に戻る</code></pre>
+    </div>
+
+    <p>「だめならもう一度引き直す」というこのやり方を<strong>棄却法</strong>と呼びます。単純ですが、確実に重なりのない配置が作れます。</p>
+
+    <div class="note">大事なのは <strong>2 の「すでに置いてある水玉<em>すべて</em>と」</strong> という部分です。1つでも重なっていたらその候補は使えないので、全部調べ終わるまで安心できません。ここが後で効いてきます。</div>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">packing.html</span></div>
+      <pre><code>"use strict";
+
+const dots = [];        <span class="cmt">// 置き終わった水玉（第３回で学んだ「オブジェクトの配列」）</span>
+let checkCount = 0;     <span class="cmt">// 距離を計算した回数を数える</span>
+
+function setup() {
+  createCanvas(800, 500);
+  noStroke();
+  placeAll();
+  drawAll();
+}
+
+<span class="cmt">// 目標の個数まで置いていく</span>
+function placeAll() {
+  for (let i = 0; i &lt; 150; i++) {
+    const spot = findSpot();
+    if (spot === null) break;     <span class="cmt">// もう置ける場所がなかった</span>
+    dots.push(spot);
+  }
+  console.log("置けた数:" + dots.length + " / 距離の計算:" + checkCount + "回");
+}
+
+<span class="cmt">// 空いている場所が見つかるまで、候補を作っては試す</span>
+function findSpot() {
+  for (let t = 0; t &lt; 800; t++) {          <span class="cmt">// 800回試してだめなら諦める</span>
+    const r = random(14, 54) / 2;
+    const c = {
+      x: random(r, width - r),             <span class="cmt">// 画面からはみ出さない位置</span>
+      y: random(r, height - r),
+      r: r
+    };
+    if (overlaps(c) === false) return c;   <span class="cmt">// 空いていた</span>
+  }
+  return null;                             <span class="cmt">// 何度試してもだめだった</span>
+}
+
+<span class="cmt">// 候補が、すでに置いた水玉のどれかと重なるか</span>
+function overlaps(c) {
+  for (let i = 0; i &lt; dots.length; i++) {
+    checkCount++;
+    const d = dist(c.x, c.y, dots[i].x, dots[i].y);
+    if (d &lt; c.r + dots[i].r + 3) return true;   <span class="cmt">// +3 は水玉どうしの隙間</span>
+  }
+  return false;
+}
+
+function drawAll() {
+  background(200, 30, 30);
+  fill(255);
+  for (let i = 0; i &lt; dots.length; i++) {
+    circle(dots[i].x, dots[i].y, dots[i].r * 2);
+  }
+}</code></pre>
+    </div>
+
+    <p>実行すると、<strong>不規則なのに一つも重なっていない水玉</strong>が並びます。これが草間模様に近い配置です。</p>
+
+    <h3>その代償を、数えてみる</h3>
+    <p>コンソールを開いてください。「距離の計算：◯◯回」と出ているはずです。<strong>150個置くだけで、数万回の計算をしています。</strong></p>
+
+    <p>なぜそうなるかを考えます。<code>overlaps()</code> は、候補ひとつにつき<em>すでに置いた全部</em>と比べます。</p>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th scope="col">何個目を置くとき</th><th scope="col" class="c">1回の候補で必要な比較</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">1個目</th><td class="c">0回</td></tr>
+          <tr><th scope="row">2個目</th><td class="c">1回</td></tr>
+          <tr><th scope="row">50個目</th><td class="c">49回</td></tr>
+          <tr><th scope="row">150個目</th><td class="c">149回</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>一度も失敗しなければ、合計は <code>0+1+2+…+149</code> でおよそ<strong>11,000回</strong>で済むはずです。ところが実際の表示は<strong>3万回前後</strong>になっているはずです。差の2万回は<em>重なって捨てた候補</em>の分です。捨てる候補も、捨てると決まるまでは他の水玉と比べているのです。</p>
+
+    <p>そして、個数を増やすと事態はもっと悪くなります。実測するとこうなります。</p>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th scope="col" class="c">目標の個数</th><th scope="col" class="c">実際に置けた数</th><th scope="col" class="c">距離の計算</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="c">150</td><td class="c">150</td><td class="c">約 31,000 回</td></tr>
+          <tr><td class="c">300</td><td class="c">297</td><td class="c">約 585,000 回</td></tr>
+          <tr><td class="c">600</td><td class="c">334</td><td class="c">約 1,040,000 回</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note mark"><strong>個数を2倍にしただけで、計算は約19倍になりました。</strong>「個数×個数÷2」で増えるだけなら4倍のはずですが、それより遥かに悪い。<em>空きが減るほど失敗しやすくなり、失敗するたびに全部と比べ直す</em>という二重の効きかたをするからです。<br><br>そして600個を目標にしても、334個しか置けていません。<strong>100万回も計算した末に、目標の半分ちょっとで止まっている</strong>のです。やりたいことは同じなのに、少し欲張っただけで計算量が爆発し、しかも報われない——これがアルゴリズムを考えるときに常につきまとう問題です。</div>
+
+    <div class="box">
+      <h4>授業内の練習：限界を体験する</h4>
+      <ol>
+        <li>個数を <code>150</code> → <code>300</code> → <code>600</code> と増やして、コンソールの計算回数を記録してください</li>
+        <li>どこかで「置けた数」が目標に届かなくなります。<strong>何個くらいで頭打ちになりましたか</strong></li>
+        <li>水玉の最大サイズ <code>54</code> を <code>110</code> にすると、頭打ちは早く来ますか、遅く来ますか</li>
+        <li>個数を <code>600</code> にしたまま、<code>800</code>（諦めるまでの試行回数）を <code>50</code> に減らしてください。置けた数と計算回数はどうなりますか</li>
+      </ol>
+      <p>2 で頭打ちになるのは、バグではありません。<strong>物理的に置ける場所がもう無い</strong>のです。ランダムに置いていく方法では、<em>画面の4割ほど</em>を埋めたあたりで急激に置けなくなることが知られています。どんなに試行回数を増やしても、この壁は越えられません。</p>
+      <p>4 では、諦めが早いぶん計算は軽くなりますが、置ける数も減ります。<strong>計算量と仕上がりのどちらを取るか</strong>という取引になっていることを確認してください。</p>
+    </div>
+
+    <h3>作品を決めているものは何か</h3>
+    <p>ここまでで、模様を決めている数値がはっきりしました。<strong>背景色・水玉の色・大きさの範囲・個数・隙間・諦めるまでの試行回数</strong>です。前回の手順書と違い、<em>アルゴリズムを書いてはじめて見えてきた数値</em>もあります。</p>
+
+    <p>これらをコードに直接書くのをやめて、ひとつのオブジェクトにまとめます。</p>
 
     <div class="code">
       <div class="code-bar"><span class="code-name">design オブジェクト</span></div>
@@ -1578,259 +1743,159 @@ function draw() {
 
 const design = {
   background: [200, 30, 30],
-  grid: { cols: 20, rows: 12 },
-  dot:  { minSize: 20, maxSize: 40, color: [255, 255, 255] }
+  dot:     { minSize: 14, maxSize: 54, color: [255, 255, 255] },
+  packing: { count: 150, gap: 3, maxTries: 800 }
 };</code></pre>
     </div>
 
-    <p>これが今日の主役です。<strong>この <code>design</code> ひとつが、一枚の作品を完全に表しています。</strong></p>
-
-    <h3>design を読んで描く</h3>
-    <p>描画のコードは、<code>design</code> の中身を読むだけにします。数値を直接書きません。</p>
+    <p>あとは、さきほどのコードの数値を <code>design</code> からの読み出しに置き換えるだけです。</p>
 
     <div class="code">
-      <div class="code-bar"><span class="code-name">dots.html</span></div>
-      <pre><code>"use strict";
-
-const design = {
-  background: [200, 30, 30],
-  grid: { cols: 20, rows: 12 },
-  dot:  { minSize: 20, maxSize: 40, color: [255, 255, 255] }
-};
-
-function setup() {
-  createCanvas(800, 500);
-  noStroke();
-  noLoop();               <span class="cmt">// アニメーションではないので1回だけ描く</span>
+      <div class="code-bar"><span class="code-name">design を読むように書き換える</span></div>
+      <pre><code>function placeAll() {
+  for (let i = 0; i &lt; design.packing.count; i++) {
+    const spot = findSpot();
+    if (spot === null) break;
+    dots.push(spot);
+  }
 }
 
-function draw() {
-  <span class="cmt">// 背景の色も design から読む</span>
-  background(design.background[0], design.background[1], design.background[2]);
+function findSpot() {
+  for (let t = 0; t &lt; design.packing.maxTries; t++) {
+    const r = random(design.dot.minSize, design.dot.maxSize) / 2;
+    const c = { x: random(r, width - r), y: random(r, height - r), r: r };
+    if (overlaps(c) === false) return c;
+  }
+  return null;
+}
 
-  <span class="cmt">// 格子1マスの大きさは、格子の数から計算する</span>
-  const cellW = width  / design.grid.cols;
-  const cellH = height / design.grid.rows;
-
-  fill(design.dot.color[0], design.dot.color[1], design.dot.color[2]);
-
-  for (let row = 0; row &lt; design.grid.rows; row++) {
-    for (let col = 0; col &lt; design.grid.cols; col++) {
-      const x = cellW * col + cellW / 2;   <span class="cmt">// マスの中心</span>
-      const y = cellH * row + cellH / 2;
-      const d = random(design.dot.minSize, design.dot.maxSize);
-      circle(x, y, d);
+function overlaps(c) {
+  for (let i = 0; i &lt; dots.length; i++) {
+    checkCount++;
+    if (dist(c.x, c.y, dots[i].x, dots[i].y) &lt; c.r + dots[i].r + design.packing.gap) {
+      return true;
     }
+  }
+  return false;
+}
+
+function drawAll() {
+  background(design.background[0], design.background[1], design.background[2]);
+  fill(design.dot.color[0], design.dot.color[1], design.dot.color[2]);
+  for (let i = 0; i &lt; dots.length; i++) {
+    circle(dots[i].x, dots[i].y, dots[i].r * 2);
   }
 }</code></pre>
     </div>
 
-    <div class="note"><code>draw()</code> の中に数字が3つしか出てきません（<code>0</code>, <code>1</code>, <code>2</code> は配列の番号、<code>2</code> は「半分」の意味）。<strong>作品を決める数値は、すべて <code>design</code> の側にあります。</strong>これが「データとコードを分ける」ということです。</div>
+    <div class="note"><code>draw</code> の側に数字がほとんど残っていないことを確認してください。<strong>作品を決める数値は、すべて <code>design</code> の側にあります。</strong>第３回のじゃんけんで、勝敗のルールを <code>hands</code> という表に追い出したのと同じことをしています。</div>
 
-    <h3>データを変えると作品が変わる</h3>
-    <p><code>draw()</code> には一切触れずに、<code>design</code> だけを書き換えてみてください。</p>
+    <h3>データを変えると、作風が変わる</h3>
+    <p><code>design</code> だけを書き換えてください。関数には触りません。</p>
 
     <div class="cmp">
       <div>
-        <h5>粒を細かく、白地に黒</h5>
+        <h5>細かい粒を敷き詰める</h5>
         <div class="code">
           <div class="code-bar"><span class="code-name">design</span></div>
           <pre><code>const design = {
   background: [245, 245, 240],
-  grid: { cols: 40, rows: 25 },
-  dot:  { minSize: 4, maxSize: 14,
-          color: [20, 20, 20] }
+  dot: { minSize: 4, maxSize: 16,
+         color: [20, 20, 20] },
+  packing: { count: 900, gap: 2,
+             maxTries: 600 }
 };</code></pre>
         </div>
       </div>
       <div>
-        <h5>大きな粒をまばらに</h5>
+        <h5>大玉をゆったりと</h5>
         <div class="code">
           <div class="code-bar"><span class="code-name">design</span></div>
           <pre><code>const design = {
   background: [250, 200, 0],
-  grid: { cols: 6, rows: 4 },
-  dot:  { minSize: 40, maxSize: 110,
-          color: [10, 10, 10] }
+  dot: { minSize: 40, maxSize: 130,
+         color: [10, 10, 10] },
+  packing: { count: 25, gap: 14,
+             maxTries: 400 }
 };</code></pre>
         </div>
       </div>
     </div>
 
-    <div class="box">
-      <h4>授業内の練習</h4>
-      <p><code>design</code> だけを書き換えて、印象の違う作品を3つ作ってください。<strong><code>draw()</code> は絶対に触らないこと。</strong></p>
-      <p>触りたくなったら、それは <code>design</code> に足りない項目があるということです。何を足せばよいか考えてください（円ではなく四角にしたい、色を2色使いたい、など）。</p>
-    </div>
+    <h3>発展：速くするには</h3>
+    <p>計算量の問題には、対処法があります。<strong>遠くにある水玉とは、そもそも比べる必要がありません。</strong>画面の右上にある水玉が、左下の候補と重なることはあり得ないからです。</p>
 
-    <h3>再帰も、3つの数値で表せる</h3>
-    <p>ここからが今日のもう一つの山です。前回の授業で少し触れた<strong>再帰</strong>——関数が自分自身を呼び出す仕組み——を使うと、木のような模様が描けます。</p>
+    <p>そこで、画面をあらかじめ格子に区切っておき、<em>どのマスにどの水玉があるか</em>を記録しておきます。候補を判定するときは、その候補が入るマスと隣のマスにある水玉だけと比べます。これで比較回数は劇的に減ります。</p>
 
-    <p>驚くことに、この複雑な形も<strong>たった3つの数値で決まります</strong>。</p>
+    <div class="note">面白いことに、ここで<strong>格子が戻ってきます</strong>。ただし今度は「水玉を並べる場所」としてではなく、<em>探す範囲を狭めるための道具</em>としてです。同じ格子でも、使い道がまるで違います。余裕のある人は実装して、計算回数がどれだけ減るか比べてみてください。</div>
 
-    <div class="code">
-      <div class="code-bar"><span class="code-name">tree.html</span></div>
-      <pre><code>"use strict";
-
-const design = {
-  background: [12, 14, 24],
-  branch: {
-    length: 130,     <span class="cmt">// 最初の枝の長さ</span>
-    depth:  9,       <span class="cmt">// 何回枝分かれするか</span>
-    angle:  25,      <span class="cmt">// 左右に何度ひらくか</span>
-    scale:  0.75,    <span class="cmt">// 次の枝は何倍の長さになるか</span>
-    color:  [255, 220, 120]
-  }
-};
-
-function setup() {
-  createCanvas(800, 500);
-  noLoop();
-}
-
-function draw() {
-  background(design.background[0], design.background[1], design.background[2]);
-  stroke(design.branch.color[0], design.branch.color[1], design.branch.color[2]);
-  strokeWeight(2);
-
-  translate(width / 2, height);          <span class="cmt">// 画面の下端中央から生やす</span>
-  drawBranch(design.branch.length, design.branch.depth);
-}
-
-function drawBranch(len, depth) {
-  if (depth &lt;= 0) return;                <span class="cmt">// 終了条件</span>
-
-  line(0, 0, 0, -len);                   <span class="cmt">// 上に向かって枝を1本</span>
-  translate(0, -len);                    <span class="cmt">// 枝の先端へ移動</span>
-
-  push();                                <span class="cmt">// 今の位置と向きを覚えておく</span>
-  rotate(radians(design.branch.angle));  <span class="cmt">// 右にひらいて</span>
-  drawBranch(len * design.branch.scale, depth - 1);
-  pop();                                 <span class="cmt">// 覚えた位置に戻る</span>
-
-  push();
-  rotate(radians(-design.branch.angle)); <span class="cmt">// 左にひらいて</span>
-  drawBranch(len * design.branch.scale, depth - 1);
-  pop();
-}</code></pre>
-    </div>
-
-    <div class="note mark"><strong><code>push()</code> と <code>pop()</code> がなぜ必要か。</strong>枝は左右に分かれます。右の枝を描き終えたあと、左の枝を描くには<em>分かれる前の場所に戻らなければなりません</em>。<code>push()</code> で今の位置と向きを覚え、<code>pop()</code> でそこへ戻る。この2つがないと、右の枝の先端から左の枝が生えてしまいます。実際に <code>push()</code>／<code>pop()</code> を消して確かめてみてください。</div>
-
-    <h4>4つの数値を動かしてみる</h4>
-    <div class="table-scroll">
-      <table>
-        <thead>
-          <tr><th scope="col">項目</th><th scope="col">小さくすると</th><th scope="col">大きくすると</th></tr>
-        </thead>
-        <tbody>
-          <tr><th scope="row"><code>depth</code></th><td>幹だけの素朴な形</td><td>枝が細かく茂る（12を超えると重くなります）</td></tr>
-          <tr><th scope="row"><code>angle</code></th><td>ほうきのようにまっすぐ</td><td>大きく開いて扇のよう</td></tr>
-          <tr><th scope="row"><code>scale</code></th><td>先がすぐ縮んで小さくまとまる</td><td>先まで長さが残り、広がる（0.8以上は巨大化）</td></tr>
-          <tr><th scope="row"><code>length</code></th><td>全体が小さい</td><td>全体が大きい</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="note"><strong>これが再帰の本質です。</strong>木の形をひとつひとつ描いた人はいません。「枝を描いて、その先で同じことをする」という規則と、<em>4つの数値</em>だけがある。複雑に見えるものが、少ない情報で完全に記述できる——第４回で「規則性を見つける」と言ったのは、こういうことです。</div>
-
-    <h3>発展：同じ design を3Dで描く</h3>
-    <p><code>design</code> に項目をひとつ足すだけで、立体にできます。</p>
+    <h3>発展：3Dにする</h3>
+    <p><code>design</code> に項目をひとつ足すだけで、立体にできます。重なり判定の考え方は同じで、<strong>距離の計算に z 座標が加わるだけ</strong>です（<code>dist()</code> は引数を6つ渡すと3次元の距離を返します）。</p>
 
     <div class="code">
-      <div class="code-bar"><span class="code-name">3D モードを足す</span></div>
+      <div class="code-bar"><span class="code-name">3D にする</span></div>
       <pre><code>const design = {
-  mode: "3D",              <span class="cmt">// ← これを足す</span>
+  mode: "3D",                          <span class="cmt">// ← 足すのはこれだけ</span>
   background: [12, 14, 24],
-  dot: { size: 40, color: [200, 200, 210] },
-  grid: { cols: 8, rows: 5 }
+  dot:     { minSize: 30, maxSize: 90, color: [210, 210, 220] },
+  packing: { count: 60, gap: 6, maxTries: 600, depth: 400 }
 };
 
 function setup() {
-  <span class="cmt">// mode によってキャンバスの種類を変える</span>
   if (design.mode === "3D") {
     createCanvas(800, 500, WEBGL);
   } else {
     createCanvas(800, 500);
   }
   noStroke();
+  placeAll();
 }
 
 function draw() {
   background(design.background[0], design.background[1], design.background[2]);
   ambientLight(120, 120, 130);
   directionalLight(255, 240, 200, -0.5, -1, -0.5);
-  orbitControl();          <span class="cmt">// マウスで視点を回せる</span>
+  orbitControl();                      <span class="cmt">// マウスで視点を回せる</span>
 
-  const cellW = 90;
-  const cellH = 90;
-
-  for (let row = 0; row &lt; design.grid.rows; row++) {
-    for (let col = 0; col &lt; design.grid.cols; col++) {
-      push();
-      translate(
-        cellW * col - (cellW * (design.grid.cols - 1)) / 2,
-        cellH * row - (cellH * (design.grid.rows - 1)) / 2,
-        random(-60, 60)
-      );
-      specularMaterial(design.dot.color[0], design.dot.color[1], design.dot.color[2]);
-      sphere(design.dot.size / 2);
-      pop();
-    }
+  specularMaterial(design.dot.color[0], design.dot.color[1], design.dot.color[2]);
+  for (let i = 0; i &lt; dots.length; i++) {
+    push();
+    translate(dots[i].x, dots[i].y, dots[i].z);
+    sphere(dots[i].r);
+    pop();
   }
 }</code></pre>
     </div>
 
-    <p>3D空間では原点が画面の中央になるため、格子の位置を計算し直しています。<code>orbitControl()</code> を入れておくと、マウスドラッグで視点を回せます。</p>
+    <p>3D空間では原点が画面の中央になるので、位置を作るときは <code>random(-width/2, width/2)</code> のように中央基準で決めます。<code>push()</code> と <code>pop()</code> は、移動の効果を次の球に持ち越さないためのものです。</p>
 
     <h3>AIに design を作らせる</h3>
-    <p>ここまでで、<strong>作品は <code>design</code> というデータで完全に表せる</strong>ことがわかりました。ということは——このデータを、自分で書く必要はありません。</p>
+    <p>ここまでで、<strong>一枚の作品が <code>design</code> というデータで完全に表せる</strong>ようになりました。ということは——このデータを、自分で考える必要すらありません。</p>
 
     <div class="code">
       <div class="code-bar"><span class="code-name">AIに渡すプロンプト</span></div>
       <pre><code>以下の形式のJSON配列だけを返してください。説明文は不要です。
 
-草間彌生風の水玉模様のパラメータを5種類、作風を変えて作ってください。
+水玉模様のパラメータを5種類、作風を変えて作ってください。
 
 [
   {
     "name": "作品名",
     "background": [R, G, B],
-    "grid": { "cols": 数値, "rows": 数値 },
-    "dot": { "minSize": 数値, "maxSize": 数値, "color": [R, G, B] }
+    "dot": { "minSize": 数値, "maxSize": 数値, "color": [R, G, B] },
+    "packing": { "count": 数値, "gap": 数値, "maxTries": 800 }
   }
 ]
 
 条件：
 - R, G, B は 0〜255 の整数
-- cols は 4〜40、rows は 3〜25
-- minSize は maxSize より小さいこと</code></pre>
+- minSize は maxSize より小さいこと
+- 粒が小さいときは count を多く、大きいときは少なくすること</code></pre>
     </div>
 
-    <p>返ってきたJSONを配列として受け取れば、<strong>5枚の作品が一度に描けます</strong>。</p>
+    <p>返ってきたJSONを配列として受け取れば、<strong>5枚の作品が一度に描けます</strong>。描画の関数は、今日書いたものをそのまま使います。</p>
 
-    <div class="code">
-      <div class="code-bar"><span class="code-name">受け取って全部描く</span></div>
-      <pre><code>"use strict";
-
-<span class="cmt">// AIが返してきたJSON文字列（実際はfetchで受け取る／第9回以降）</span>
-const designs = JSON.parse(responseText);
-
-function setup() {
-  <span class="cmt">// 作品の数だけキャンバスを作る</span>
-  for (let i = 0; i &lt; designs.length; i++) {
-    const c = createCanvas(400, 250);
-    drawDesign(designs[i]);
-  }
-}
-
-function drawDesign(d) {
-  background(d.background[0], d.background[1], d.background[2]);
-  <span class="cmt">// ↑ 中身は今日書いた draw() とまったく同じ</span>
-}</code></pre>
-    </div>
-
-    <div class="note mark"><strong>今日いちばん大事なところです。</strong>AIに<em>コードを書かせた</em>のではありません。<strong>データを作らせて、自分のコードで描いた</strong>のです。この2つはまったく違います。<br><br>前者はAIの出力が正しいか読まないと分かりませんが、後者は<em>自分の書いたコードが動いている</em>ので、何が起きているか完全に把握できます。しかもデータの形は自分で決めたものです。<br><br>これが第１０回でやることの予告編です。そのときには、AIにクイズの問題データを作らせます。<em>形を指定できるのは、その形を自分で設計したからです。</em></div>
+    <div class="note mark"><strong>今日いちばん大事なところです。</strong>AIに<em>コードを書かせた</em>のではありません。<strong>データを作らせて、自分のコードで描いた</strong>のです。この２つはまったく違います。<br><br>コードを書かせた場合、それが正しいかは読まないと分かりません。データを作らせた場合、動いているのは<em>自分が書いて、計算量まで理解しているコード</em>です。何が起きているか完全に把握できます。<br><br>これは第１０回でやることの予告編です。そのときはAIにクイズの問題データを作らせます。<em>形を指定できるのは、その形を自分で設計したからです。</em></div>
 
     <div class="task">
       <h3>第５回課題　作品シリーズを作る<span class="pts">5点</span></h3>
@@ -1839,19 +1904,20 @@ function drawDesign(d) {
 
       <h4>必須条件</h4>
       <ol>
-        <li>模様のパラメータを <code>design</code> のようなオブジェクトにまとめること</li>
-        <li>描画コードは <code>design</code> を読むだけにし、<strong>数値を直接書かないこと</strong></li>
+        <li><strong>水玉（または使用する図形）が重ならないこと。</strong>格子に並べるのではなく、不規則に配置した上で重なりを回避すること</li>
+        <li>模様のパラメータを <code>design</code> のようなオブジェクトにまとめ、描画コードには数値を直接書かないこと</li>
         <li><code>design</code> だけを変えた<strong>作品を5つ</strong>並べて、1ページに表示すること</li>
         <li>5つが「同じシリーズに見える」こと。ばらばらの5枚ではなく、<em>一貫した作風の中でのバリエーション</em>にすること</li>
+        <li>Webページのどこかに、<strong>それぞれの作品で「置けた数」と「距離の計算回数」</strong>を表示すること</li>
       </ol>
 
       <h4>発展課題（どこまで実装するかは自由。評価対象です）</h4>
       <ul>
-        <li><strong>再帰模様</strong>：<code>depth</code> / <code>angle</code> / <code>scale</code> を変えたシリーズにする</li>
-        <li><strong>形を選べるようにする</strong>：<code>shape: "circle"</code> / <code>"square"</code> / <code>"star"</code> を <code>design</code> に足し、描き分ける</li>
-        <li><strong>3D化</strong>：<code>mode: "3D"</code> を足して立体で描く</li>
-        <li><strong>スライダー</strong>：<code>createSlider()</code> でパラメータを画面上から動かせるようにする</li>
-        <li><strong>AIに作らせる</strong>：上のプロンプトでAIに <code>design</code> を5つ生成させ、それを貼り付けて描く</li>
+        <li><strong>形を選べるようにする</strong>：<code>shape: "circle"</code> / <code>"square"</code> を <code>design</code> に足して描き分ける（四角の重なり判定は円より難しくなります）</li>
+        <li><strong>置く順番を変える</strong>：大きい水玉から先に置くと、置ける<em>個数</em>は減りますが、画面の<em>被覆率</em>は上がります（小さい順はその逆）。どちらが自分の作品に合うか、実際に測って比べてください</li>
+        <li><strong>高速化</strong>：画面を格子に区切って、近くの水玉とだけ比較する。計算回数がどれだけ減ったか報告すること</li>
+        <li><strong>3D化</strong>：<code>mode: "3D"</code> を足して立体で配置する</li>
+        <li><strong>AIに作らせる</strong>：上のプロンプトでAIに <code>design</code> を5つ生成させ、それを使って描く</li>
       </ul>
 
       <h4>提出方法</h4>
@@ -1865,13 +1931,13 @@ function drawDesign(d) {
             <tr><th scope="col">項目</th><th scope="col" class="c">配点</th><th scope="col">観点</th></tr>
           </thead>
           <tbody>
-            <tr><th scope="row">データとコードの分離</th><td class="c">2点</td><td>作品を決める数値がすべて <code>design</code> 側に出ているか。描画コードに数値が直接書かれていないか</td></tr>
-            <tr><th scope="row">パラメータの設計</th><td class="c">2点</td><td>何を変えられるようにしたかが適切か。5作品の違いが、そのパラメータでよく表現できているか</td></tr>
+            <tr><th scope="row">重なりの回避</th><td class="c">2点</td><td>不規則な配置でありながら重なりが生じていないか。判定が正しく実装されているか。置けなかった場合の処理があるか</td></tr>
+            <tr><th scope="row">データとコードの分離</th><td class="c">2点</td><td>作品を決める数値がすべて <code>design</code> 側に出ているか。何を変えられるようにしたかの設計が適切か</td></tr>
             <tr><th scope="row">シリーズとしての完成度</th><td class="c">1点</td><td>5つが一貫した作風の中で、それぞれ違う魅力を持っているか</td></tr>
           </tbody>
         </table>
       </div>
-      <p>一枚の絵の美しさではなく、<strong>「変えられるものを何にしたか」という設計</strong>を評価します。</p>
+      <p>一枚の絵の美しさではなく、<strong>アルゴリズムが正しく効いているか</strong>と<strong>「変えられるものを何にしたか」という設計</strong>を評価します。</p>
     </div>
   </section>
 
