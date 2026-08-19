@@ -2625,13 +2625,31 @@ function show(books) {
       <h2>LLM APIの活用（１）<br>プロンプトとAPIキー</h2>
     </div>
 
-    <p>今回はLLM APIを活用したサンプル <a href="https://codesandbox.io/p/sandbox/yqnxrn">Simple AI Chat</a> を使ってAIモデルを活用したアプリケーションの作り方を学びます。HTMLファイル1つで動作し、サーバーを必要としないクライアントサイドアプリケーションです。</p>
-    <p>学ぶ概念：プロンプトの種類と役割／会話履歴の構造／APIキーの扱い方／異なるAI APIの違い。</p>
+    <p>今回からLLM（大規模言語モデル）のAPIを使って、AIと対話するWebアプリを作ります。サンプルは <a href="https://codesandbox.io/p/sandbox/yqnxrn">Simple AI Chat</a> です。HTMLファイル1つで動作し、サーバーを必要としないクライアントサイドのアプリケーションです。</p>
+    <p>学ぶ概念：プロンプトの種類と役割／会話履歴の構造／APIキーの扱い方。</p>
 
-    <h3>Gemini API Keyの取得（無料枠）</h3>
-    <p><strong>個人のGoogleアカウント推奨で</strong>、<a href="https://aistudio.google.com/api-keys">https://aistudio.google.com/api-keys</a> にアクセスして「Get API key」→「APIキーを作成」でキーを取得します。はじめて取得する場合はプロジェクトの作成が求められますので、適当な名前（Gemini API Test など）を設定してください。</p>
-    <p>無料枠をどれくらい使用しているかは<a href="https://aistudio.google.com/app/usage?timeRange=last-28-days">こちら</a>からときどき確認してください。<strong>使用できなくなった場合の対処方法は第１０回に記載しています。</strong></p>
-    <p>CodeSandboxのプレビュー画面で <code>index.html</code> を実行し、右上の歯車アイコンから設定画面を開いてAPIキーを貼り付けます。ブラウザのlocalStorageに保存されるので、リロードしても再入力は不要です。</p>
+    <h3>トークンの取得</h3>
+    <p>この授業では、AIを呼び出すために<strong>授業用のトークン</strong>を使います。以下のページを開き、<strong>大妻Googleアカウント</strong>でログインしてください。あなた専用のトークンが表示されます。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">トークン発行ページ</span></div>
+      <pre><code>https://otsuma-llm-gateway-umber.vercel.app</code></pre>
+    </div>
+
+    <p>表示されたトークンをコピーし、CodeSandboxのプレビュー画面で右上の歯車アイコンから設定画面を開いて貼り付けてください。ブラウザの <code>localStorage</code> に保存されるので、リロードしても再入力は不要です（第６回で学んだ仕組みです）。</p>
+
+    <div class="box mark">
+      <h4>トークンの扱い方（必ず守ってください）</h4>
+      <ul>
+        <li><strong>あなた専用です。</strong>他の人に教えないでください。他人が使うと、あなたの利用回数が消費されます</li>
+        <li><strong>ソースコードに直接書かないでください。</strong>CodeSandboxは公開されます。必ず設定画面から入力してください</li>
+        <li><strong>控えを取る必要はありません。</strong>発行ページはいつでも開けます。新しいSandboxを作るたびに、そこから取り直して貼ってください</li>
+        <li><strong>漏らしたと思ったら、発行ページの「再発行する」を押してください。</strong>古いトークンはその場で使えなくなります。申告は不要です</li>
+        <li><strong>大学のPCで作業した日は、設定画面から「トークンを消す」を押してから帰ってください。</strong>次に同じPCを使う人に、あなたのトークンが残ってしまいます</li>
+      </ul>
+    </div>
+
+    <div class="note">なぜ先生が自分のAPIキーを配らないのか——この後の「APIキーについて」で説明します。<em>今みなさんが受け取ったトークンは、その答えそのものです。</em></div>
 
     <h3>プロンプトの種類と役割</h3>
     <ul>
@@ -2680,82 +2698,105 @@ const recent = conversationHistory.slice(-10);</code></pre>
         <li>APIキーは<strong>パスワードと同じ</strong>扱いです</li>
         <li>GitHubなどのWebサイトには公開しないでください</li>
         <li>多くのアプリでは<strong>サーバー側で管理</strong>し、サーバ側からAIモデルにアクセスします</li>
-        <li>このアプリはユーザ自身が使用するクライアントサイドのみなので、localStorageで管理します</li>
       </ul>
     </div>
 
-    <h3>プロンプトの生成</h3>
-    <p>Geminiにはフラットなテキストとしてプロンプトを送ります。次の構造の文字列を組み立てます。</p>
+    <h4>なぜ、みなさんが受け取ったのは「APIキー」ではないのか</h4>
+    <p>この授業でAIを呼び出す費用は、教員のOpenAIアカウントから支払われています。だからといって、<strong>そのAPIキーをみなさんに配ることはできません</strong>。上の3点がその理由です。キーが1つでも漏れれば、誰でも無制限に使えてしまい、止める方法もありません。</p>
+    <p>そこで、この授業では次のようになっています。</p>
 
     <div class="code">
-      <div class="code-bar"><span class="code-name">送信するプロンプトの形</span></div>
-      <pre><code>あなたは役立つアシスタントです。
-
-Conversation:
-user: 今日の天気は？
-assistant: 東京は晴れです。
-user: ありがとう
-
-assistant:</code></pre>
+      <div class="code-bar"><span class="code-name">実際の経路</span></div>
+      <pre><code>みなさんのアプリ ──[授業用トークン]──▶ 授業用サーバ ──[APIキー]──▶ OpenAI</code></pre>
     </div>
 
-    <p>この文字列を作っているのが次のコードです。第６回で使った <code>map()</code> と <code>join()</code> がここでも登場します。</p>
+    <p><strong>APIキーは授業用サーバの中だけに存在し、みなさんのブラウザには一度も届きません。</strong>代わりに配られているのが、一人ひとり異なるトークンです。</p>
+    <ul>
+      <li>他人のトークンは<strong>計算で作り出せません</strong>（暗号技術で保護されています）</li>
+      <li>漏れても、影響は<strong>その1人分だけ</strong>です</li>
+      <li>「再発行」を押せば、古いトークンは<strong>その場で無効</strong>になります</li>
+      <li>使いすぎを防ぐため、1人あたり1日の回数に上限があります</li>
+    </ul>
+    <p>これは実際のWebサービスがユーザーを扱う方法とほぼ同じです。<em>みなさんが総合課題で誰かに使ってもらうアプリを作るときも、同じ問題に直面します。</em></p>
+
+    <h3>会話をそのまま送る</h3>
+    <p>OpenAIのAPIは、<strong>会話履歴の配列をそのまま受け取ります</strong>。第３回から扱ってきた「同じ形のオブジェクトが並んだ配列」が、そのまま送信データになります。加工はほとんど必要ありません。</p>
 
     <div class="code">
-      <div class="code-bar"><span class="code-name">プロンプトの組み立て</span></div>
-      <pre><code>"use strict";
-
-const prompt =
-  `${settings.systemPrompt}\n\nConversation:\n` +
-  conversationHistory
-    .map(msg =&gt; `${msg.role}: ${msg.content}`)   <span class="cmt">// 各メッセージを1行の文字列に</span>
-    .join("\n") +                                 <span class="cmt">// 改行でつなぐ</span>
-  `\n\nassistant:`;</code></pre>
+      <div class="code-bar"><span class="code-name">送信するデータ</span></div>
+      <pre><code>{
+  "model": "gpt-5.6-luna",
+  "messages": [
+    { "role": "system",    "content": "あなたは親切なプログラミングアシスタントです" },
+    { "role": "user",      "content": "今日の天気は？" },
+    { "role": "assistant", "content": "東京は晴れです。" },
+    { "role": "user",      "content": "ありがとう" }
+  ]
+}</code></pre>
     </div>
 
-    <div class="note"><strong>最後の <code>assistant:</code> が非常に重要です。</strong>AIモデルは「次に続くテキスト」を予測するように訓練されています。プロンプトの最後を <code>assistant:</code> で止めることで、「さあ、assistantとしてのあなたの発言をここから続けてください」と応答を強く促す役割を果たします。</div>
+    <p>システムプロンプトは <code>role: "system"</code> として<strong>配列の先頭に置きます</strong>。あとはユーザーとAIの発言を交互に並べるだけです。</p>
 
-    <h3>Gemini APIの呼び出し</h3>
+    <h3>APIの呼び出し</h3>
+    <p>通信には第８回で学んだ <code>fetch()</code> を使います。送信先は授業用サーバです。</p>
+
     <div class="code">
-      <div class="code-bar"><span class="code-name">fetch でAPIを呼ぶ</span></div>
+      <div class="code-bar"><span class="code-name">JavaScript</span></div>
       <pre><code>"use strict";
 
-const response = await fetch(
-  `https://generativelanguage.googleapis.com/v1beta/models/${settings.model}:generateContent?key=${settings.apiKey}`,
-  {
-    method: "POST",                                  <span class="cmt">// データを送信する</span>
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({                            <span class="cmt">// オブジェクト → JSON文字列</span>
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: settings.temperature,
-        maxOutputTokens: 1000
-      }
+async function askAI(messages) {
+  const response = await fetch("https://otsuma-llm-gateway-umber.vercel.app/api/chat", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + settings.token   <span class="cmt">// 設定画面で入力したトークン</span>
+    },
+    body: JSON.stringify({                          <span class="cmt">// オブジェクト → JSON文字列</span>
+      model: "gpt-5.6-luna",
+      messages: messages
     })
-  }
-);
+  });
 
-const data = await response.json();                   <span class="cmt">// JSON文字列 → オブジェクト</span>
-const aiResponse = data.candidates[0].content.parts[0].text;</code></pre>
+  const data = await response.json();               <span class="cmt">// JSON文字列 → オブジェクト</span>
+
+  if (!response.ok) {
+    throw new Error(data.error || "AIの呼び出しに失敗しました");
+  }
+
+  return data.choices[0].message.content;           <span class="cmt">// 応答の取り出し</span>
+}</code></pre>
     </div>
 
     <p>ここでも <code>JSON.stringify()</code> と <code>JSON.parse()</code>（<code>response.json()</code> が内部で行っています）の往復が使われています。<strong>ネットワークを通るものは、すべて文字列です。</strong></p>
 
-    <h3>OpenAI APIとの違い</h3>
-    <p>Geminiではフラットな<strong>テキスト</strong>でプロンプトを作りますが、OpenAIでは<strong>JSON形式の配列</strong>として会話を受け取ります。</p>
+    <div class="note"><strong>応答の取り出し方</strong>：<code>data.choices[0].message.content</code>。<code>choices</code> が配列になっているのは、APIに頼めば複数の候補を返させることもできるからです。通常は先頭の1つだけを使います。</div>
+
+    <h4>エラーへの備え</h4>
+    <p>AIの呼び出しは失敗することがあります。<strong>必ず <code>try</code>/<code>catch</code> で囲んでください。</strong></p>
 
     <div class="table-scroll">
       <table>
         <thead>
-          <tr><th scope="col">項目</th><th scope="col">OpenAI API</th><th scope="col">Gemini API</th></tr>
+          <tr><th scope="col">エラー</th><th scope="col">意味と対処</th></tr>
         </thead>
         <tbody>
-          <tr><th scope="row">会話形式</th><td>構造化された配列</td><td>単一テキスト</td></tr>
-          <tr><th scope="row">認証方法</th><td>Authorizationヘッダー</td><td>URLパラメータ</td></tr>
-          <tr><th scope="row">システムプロンプト</th><td>独立した <code>role: "system"</code></td><td>プロンプトの先頭に含める</td></tr>
-          <tr><th scope="row">応答の取り出し</th><td class="mono">data.choices[0].message.content</td><td class="mono">data.candidates[0].content.parts[0].text</td></tr>
+          <tr><th scope="row">401</th><td>トークンが正しくない、または再発行済み。発行ページで取り直す</td></tr>
+          <tr><th scope="row">429</th><td>その日の利用上限に達した。翌日まで待つ</td></tr>
+          <tr><th scope="row">400</th><td>送ったデータの形が正しくない。<code>messages</code> の中身を確認する</td></tr>
+          <tr><th scope="row">502</th><td>AI側の一時的な不調。少し待って再試行する</td></tr>
         </tbody>
       </table>
+    </div>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">エラー処理の例</span></div>
+      <pre><code>try {
+  const answer = await askAI(conversationHistory);
+  showMessage(answer);
+} catch (error) {
+  showMessage("エラー：" + error.message);   <span class="cmt">// 画面に出す（alertは使わない）</span>
+  console.error(error);                     <span class="cmt">// 詳細はコンソールへ</span>
+}</code></pre>
     </div>
 
     <h3>Temperature（温度）</h3>
@@ -2812,7 +2853,7 @@ const aiResponse = data.candidates[0].content.parts[0].text;</code></pre>
         <ul>
           <li>p5.js</li>
           <li>jQuery</li>
-          <li>Gemini API</li>
+          <li>LLM API（授業用サーバの呼び出し）</li>
         </ul>
       </div>
     </div>
@@ -2831,18 +2872,15 @@ const aiResponse = data.candidates[0].content.parts[0].text;</code></pre>
     <div class="note"><strong>今日の一行：</strong>第６回で自分の手で書いたクイズのデータを、今日はAIに書かせます。<em>データの形は、第６回とまったく同じです。</em></div>
 
     <h3>サンプルコードの配布</h3>
-    <p>本日配布するサンプルは <code>quiz.html</code> と <code>quiz.css</code> です。前回の <code>style.css</code> も必要なので、前回のSandboxの <code>public</code> フォルダ配下に以下の2つを追加してください。</p>
+    <p>本日のサンプルは <code>quiz.html</code> と <code>quiz.css</code> です。前回のSandboxの <code>public</code> フォルダ配下に追加してください。</p>
     <ul>
       <li><a href="https://codesandbox.io/p/sandbox/simple-ai-chat-yqnxrn?file=%2Fquiz.html">quiz.html</a></li>
       <li><a href="https://codesandbox.io/p/sandbox/simple-ai-chat-yqnxrn?file=%2Fquiz.css">quiz.css</a></li>
     </ul>
-    <p>前回配布した <code>index.html</code> もOpenAI APIに対応するため大幅に変更しましたので、<a href="https://codesandbox.io/p/sandbox/simple-ai-chat-yqnxrn?file=%2Findex.html">更新版</a>を再配布します。<strong>前回のコードをもとに更新するのではなく、この新しいコードをベースとして今後の開発をしてください。</strong></p>
 
-    <div class="note mark">個人のアカウントでも使用量超過でAPIキーが使えなくなる可能性がありますので、私のゼミで契約している<strong>OpenAI APIのproxyサーバ</strong>を用意しました。エンドポイントは <code>quiz.html</code> のスクリプト先頭に書いてあります。<strong>APIキーの指定方法は授業で説明します。</strong></div>
+    <div class="note mark"><strong>【注意】</strong>トークンはソースコードに書かず、必ず設定画面から入力してください。また、CodeSandboxのアクセスは <strong>Unlisted</strong>（URLを知っている人のみ参照可）にしてください。</div>
 
-    <div class="note mark"><strong>【注意】</strong>APIキーはソースコードには載せないでください。ユーザが自分のキーを入力してサービスを使う形態を <strong>Bring Your Own Key（BYOK）</strong> と呼びます。また、CodeSandboxのアクセスは必ず <strong>Unlisted</strong>（URLを知っている人のみ参照可）にしてください。Publicにすると授業用のAPI URLが漏れてしまいます。</div>
-
-    <p>使用できるOpenAI Modelは<a href="https://docs.google.com/document/d/11CXS89JGlwIMifToVYvj6Y0Twh3qDIkNRSqzexu6IkY/edit?usp=sharing">こちら</a>にまとめてあります。最新モデルである gpt-5.2 を使っていただいて構いません。</p>
+    <p>使用するモデルは <code>gpt-5.6-luna</code> です。授業用サーバが許可しているモデル以外を指定するとエラーになります。</p>
 
     <h3>新しいAPIの利用モデル</h3>
     <p>第８回のGoogle Books APIのような従来のWebAPIは、<strong>事前に用意されたデータベース</strong>からデータを取得するものでした。しかし生成AIを使えば、アプリケーションの要求に応じて<strong>動的に、かつ構造化されたデータ</strong>をAI自身に生成させることができます。</p>
@@ -2878,14 +2916,18 @@ ${count}問のクイズを作成してください。
     </div>
 
     <h4>（２）API設定によるJSON応答の強制</h4>
-    <p>プロンプトの指示に加えて、リクエストの <code>generationConfig</code> で応答のMIMEタイプを指定し、AIの応答をJSON形式に限定します。</p>
+    <p>プロンプトの指示に加えて、リクエストに <code>response_format</code> を指定すると、<strong>AIの応答がJSON形式に限定されます</strong>。前置きや解説文が混ざらなくなるので、<code>JSON.parse()</code> がそのまま通ります。</p>
 
     <div class="code">
       <div class="code-bar"><span class="code-name">JSON形式を強制する</span></div>
-      <pre><code>generationConfig: {
-  temperature: 0.7,
-  response_mime_type: "application/json"    <span class="cmt">// JSON形式を強制</span>
-}</code></pre>
+      <pre><code>body: JSON.stringify({
+  model: "gpt-5.6-luna",
+  messages: [
+    { role: "system", content: systemPrompt },
+    { role: "user",   content: `${theme} に関するクイズを${count}問作ってください` }
+  ],
+  response_format: { type: "json_object" }     <span class="cmt">// JSON形式を強制</span>
+})</code></pre>
     </div>
 
     <p>AIからの応答はJSON<strong>文字列</strong>として返ってくるので、<code>JSON.parse()</code> で配列に変換します。</p>
@@ -2894,15 +2936,16 @@ ${count}問のクイズを作成してください。
       <div class="code-bar"><span class="code-name">受け取って変換する</span></div>
       <pre><code>"use strict";
 
-const responseText = data.candidates[0].content.parts[0].text;
+const data = await response.json();
+const responseText = data.choices[0].message.content;   <span class="cmt">// ここまでは第９回と同じ</span>
 
 let quizData;
 try {
-  quizData = JSON.parse(responseText);
+  quizData = JSON.parse(responseText);                  <span class="cmt">// 文字列 → 配列</span>
 } catch (error) {
   <span class="cmt">// AIが指示に従わずJSON以外を返すこともある。必ず備えておく</span>
   console.error("JSONとして読めませんでした:", responseText);
-  alert("問題の生成に失敗しました。もう一度お試しください。");
+  showMessage("問題の生成に失敗しました。もう一度お試しください。");
   return;
 }
 
@@ -2926,7 +2969,7 @@ showQuestion();</code></pre>
 
       <h4>要求事項</h4>
       <ol>
-        <li><strong>LLM API（Gemini または OpenAI）</strong>を使用すること</li>
+        <li><strong>授業用サーバ経由でLLM APIを使用</strong>すること</li>
         <li>AIに対し、特定の形式の<strong>JSONデータを出力するよう厳密に指示</strong>すること（具体例をプロンプトに含めること）</li>
         <li>AIが生成したJSONデータを <code>JSON.parse()</code> で処理し、そのデータを元に動作するUIを構築すること</li>
         <li><code>try</code>/<code>catch</code> でパース失敗に備えること</li>
@@ -3119,7 +3162,7 @@ getPrice();</code></pre>
       </table>
     </div>
 
-    <div class="note"><a href="https://docs.google.com/document/d/11CXS89JGlwIMifToVYvj6Y0Twh3qDIkNRSqzexu6IkY/edit?usp=sharing"><strong>OpenAI Models 一覧</strong></a>　gpt-5.2 を使用する場合は <code>temperature</code> を <strong>1</strong> にしてください。gpt-5.2 は temperature パラメータをサポートしていないため、1以外だとエラーになります。</div>
+    <div class="note">使用できるモデルは <code>gpt-5.6-luna</code> です。<code>temperature</code> の指定はモデルによって制約が異なるため、うまく動かない場合はまず指定を外して試してください。</div>
   </section>
 
   <section class="week" id="w13">
