@@ -1945,21 +1945,48 @@ fetchData();</code></pre>
     <h3>Google Books API</h3>
     <p>Google Booksに記録されている本をキーワードで検索し、結果をJSONで返すAPIです。<a href="https://developers.google.com/books/docs/v1/using?hl=ja">公式仕様</a>　／　<a href="https://qiita.com/stella0270/items/8fdd2efcdd9db96a5c4d">わかりやすい解説</a>　／　<a href="https://codesandbox.io/p/sandbox/4jrztk">サンプルコード</a></p>
 
-    <div class="note mark">APIキーなしでも1つのIPアドレスで1日1000回呼び出せますが、<strong>大妻学院からのリクエストは合算されます</strong>。3クラスで呼び出すと簡単に制限に達する可能性があります。制限に達すると一時的にアクセスできなくなるため、以下の3つのうちいずれかの方法で開発してください。</div>
+    <h3>なぜ「授業用サーバ」を経由するのか</h3>
+    <p>Google Books APIは、以前は<strong>APIキーなしでも呼び出せました</strong>。しかし現在は使えません。実際に試すと、こうなります。</p>
 
     <div class="code">
-      <div class="code-bar"><span class="code-name">3つの呼び出し方</span></div>
-      <pre><code><span class="cmt">// （１）直接呼ぶ（一時的に使えなくなる可能性あり）</span>
-fetch("https://www.googleapis.com/books/v1/volumes?q=検索語")
-
-<span class="cmt">// （２）授業用のproxyサーバを経由する（予備用・藤村のAPIキーが付与される）</span>
-fetch("https://google-books-proxy-746164391621.us-west1.run.app?q=検索語")
-
-<span class="cmt">// （３）事前に検索した結果をファイルとして置いておく（CSS調整などに便利）</span>
-fetch("result.json")</code></pre>
+      <div class="code-bar"><span class="code-name">キーなしで直接呼んだ場合</span></div>
+      <pre><code>{
+  "error": {
+    "code": 429,
+    "message": "Quota exceeded for quota metric 'Queries' ...",
+    "status": "RESOURCE_EXHAUSTED"
+  }
+}</code></pre>
     </div>
 
-    <p>便利な検索オプション：件数を増やすには <code>&amp;maxResults=40</code>（デフォルトは10件）、新着順にするには <code>&amp;orderBy=newest</code> をURLに追加します。</p>
+    <p><code>429</code> は「回数の上限に達した」という意味です。しかしこれは、みなさんが使いすぎたからではありません。<strong>キーを使わないリクエストは、世界中の利用者ぶんが1つの枠にまとめて数えられます。</strong>誰かが大量に呼べば、その日は全員が使えなくなります。</p>
+
+    <div class="note mark">ここに<strong>APIキーが存在する理由</strong>が現れています。キーがなければ「誰が呼んだか」を区別できないので、サービス側は全員をまとめて制限するしかありません。キーを付ければ「あなたの枠」として管理できます。<em>認証は、利用者を縛るためではなく、区別するためにあります。</em></div>
+
+    <p>とはいえ、APIキーをみなさんに配ることはできません（第７回で詳しく扱います）。そこで、この授業では<strong>授業用サーバ</strong>を経由します。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">経路</span></div>
+      <pre><code>みなさんのアプリ ──▶ 授業用サーバ ──[APIキー]──▶ Google Books</code></pre>
+    </div>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">呼び出し方</span></div>
+      <pre><code>fetch("https://otsuma-llm-gateway-umber.vercel.app/api/books?q=" + encodeURIComponent(word))</code></pre>
+    </div>
+
+    <p>返ってくるデータの形は<strong>Google Books本家とまったく同じ</strong>です。公式ドキュメントをそのまま読めます。</p>
+
+    <div class="note">同じ検索語は授業用サーバが1時間おぼえています。クラス全員が「ディープラーニング」で検索しても、Googleへの問い合わせは1回で済みます。<em>キャッシュという考え方です。</em></div>
+
+    <h4>便利な検索オプション</h4>
+    <ul>
+      <li><code>&amp;maxResults=40</code>　件数を増やす（既定は10件、最大40件）</li>
+      <li><code>&amp;orderBy=newest</code>　新着順にする</li>
+      <li><code>&amp;langRestrict=ja</code>　日本語の本に絞る</li>
+    </ul>
+
+    <div class="note mark"><strong>ネットワークが不調のときは。</strong>検索結果のJSONをファイルとして保存しておき、<code>fetch("result.json")</code> で読み込めば、通信なしで見た目の調整を進められます。サンプルには「ディープラーニング」で検索した結果を <code>result.json</code> として置いてあります。</div>
 
     <h3>外の形を、自分の形に変換する</h3>
     <p>今日いちばん大事な考え方です。<strong>外部APIの応答の形は、自分では選べません。</strong>Google Booksの応答は次のような深い構造をしています。</p>
@@ -1987,7 +2014,7 @@ fetch("result.json")</code></pre>
       <pre><code>"use strict";
 
 async function search(word) {
-  const url = "https://www.googleapis.com/books/v1/volumes?q=" + encodeURIComponent(word);
+  const url = "https://otsuma-llm-gateway-umber.vercel.app/api/books?q=" + encodeURIComponent(word);
 
   try {
     const res  = await fetch(url);
