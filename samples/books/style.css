@@ -1,0 +1,13 @@
+body { font-family: "Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif; background:#faf9f6; color:#1a1a18; margin:0; padding:2rem 1rem; }
+.container { max-width: 60rem; margin: 0 auto; }
+h1 { font-size:1.3rem; }
+.searchbar { display:flex; gap:.6rem; margin-bottom:1.5rem; }
+#searchInput { flex:1; font:inherit; padding:.6rem .8rem; border:1px solid #e2dfd6; border-radius:5px; }
+button { font:inherit; font-weight:700; padding:.6rem 1.2rem; border:none; border-radius:5px; background:#2b4c7e; color:#fff; cursor:pointer; }
+button:disabled { opacity:.5; }
+#results { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:1.2rem; }
+.card { background:#fff; border:1px solid #e2dfd6; border-radius:6px; padding:.8rem; text-align:center; }
+.card img { max-width:100%; height:auto; }
+.card h3 { font-size:.9rem; margin:.6rem 0 .3rem; }
+.card p { font-size:.8rem; color:#6e6c64; margin:0; }
+.error { color:#b3261e; }

@@ -1,0 +1,17 @@
+body { font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif; background:#faf9f6; color:#1a1a18; margin:0; line-height:1.8; }
+header { padding:1rem 1.2rem; border-bottom:1px solid #e2dfd6; background:#fff; }
+header h1 { font-size:1.05rem; margin:0; }
+main, footer { max-width:34rem; margin:0 auto; padding:1.5rem 1.2rem; }
+#progress { font-size:.85rem; color:#6e6c64; margin:0; }
+#questions { font-size:1.15rem; font-weight:700; margin:.4rem 0 1rem; }
+#choices { display:flex; flex-direction:column; gap:.5rem; margin-bottom:1.2rem; }
+#choices label { background:#fff; border:1px solid #e2dfd6; border-radius:5px; padding:.7rem .9rem; cursor:pointer; display:block; }
+button { font:inherit; font-weight:700; padding:.6rem 1.2rem; border:none; border-radius:5px; background:#2b4c7e; color:#fff; cursor:pointer; }
+button:disabled { opacity:.5; }
+#answer { font-weight:700; min-height:1.8rem; }
+#history { list-style:none; padding:0; font-size:.85rem; color:#6e6c64; }
+#question { font-size:1.15rem; margin:.4rem 0 1rem; }
+#choices { display:flex; flex-direction:column; gap:.5rem; margin-bottom:1.2rem; }
+#choices button { background:#fff; color:#1a1a18; border:1px solid #e2dfd6; font-weight:400; text-align:left; }
+#result { font-size:1.05rem; font-weight:700; min-height:2rem; margin-bottom:1rem; }
+#back { background:transparent; color:#6e6c64; border:1px solid #e2dfd6; font-weight:400; font-size:.85rem; }

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple AI Chat</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Simple AI Chat</h1>
+      <button id="settingsBtn" title="設定">⚙️</button>
+    </header>
+
+    <!-- 設定画面（歯車で開閉する） -->
+    <section id="settings" class="hidden">
+      <label for="token">授業用トークン</label>
+      <input
+        type="password"
+        id="token"
+        placeholder="otsuma.s132y001.1.xxxxxxxx"
+        autocomplete="off"
+      />
+      <p class="hint">
+        トークンは<a
+          href="https://otsuma-llm-gateway-umber.vercel.app"
+          target="_blank"
+          >発行ページ</a
+        >で取得します。控えは不要です。いつでも取り直せます。
+      </p>
+
+      <label for="systemPrompt">システムプロンプト（AIの役割）</label>
+      <textarea id="systemPrompt" rows="3">あなたは親切なアシスタントです。日本語で簡潔に答えてください。</textarea>
+
+      <div class="row">
+        <button id="saveBtn">保存</button>
+        <button id="forgetBtn" class="danger">このPCからトークンを消す</button>
+      </div>
+      <p class="hint">
+        大学のPCで作業した日は、帰る前に必ず「消す」を押してください。
+      </p>
+    </section>
+
+    <main>
+      <div id="messages"></div>
+      <div id="thinking" class="hidden">考え中です…</div>
+    </main>
+
+    <footer>
+      <input id="messageInput" placeholder="メッセージを入力" />
+      <button id="sendBtn">送信</button>
+    </footer>
+
+    <script>
+      "use strict";
+
+      // 授業用サーバ（プロキシ）のエンドポイント
+      //   本来の宛先: https://api.openai.com/v1/chat/completions
+      //   OpenAIのAPIキーはサーバ側で付与される。ここには書かない
+      const CHAT_API = "https://otsuma-llm-gateway-umber.vercel.app/api/chat";
+      const MODEL = "gpt-5.6-luna";
+
+      // ---- 画面の部品をまとめて取得 ----
+      const settingsEl = document.querySelector("#settings");
+      const tokenEl = document.querySelector("#token");
+      const systemPromptEl = document.querySelector("#systemPrompt");
+      const messagesEl = document.querySelector("#messages");
+      const thinkingEl = document.querySelector("#thinking");
+      const inputEl = document.querySelector("#messageInput");
+      const sendBtn = document.querySelector("#sendBtn");
+
+      // ---- 会話履歴（第３回からおなじみの「オブジェクトの配列」） ----
+      let history = [];
+
+      // ---- 設定の保存と読み出し（第４回のローカルストレージ） ----
+      function saveSettings() {
+        const settings = {
+          token: tokenEl.value.trim(),
+          systemPrompt: systemPromptEl.value,
+        };
+        localStorage.setItem("aiChat", JSON.stringify(settings));
+      }
+
+      function loadSettings() {
+        const saved = JSON.parse(localStorage.getItem("aiChat") ?? "{}");
+        tokenEl.value = saved.token ?? "";
+        if (saved.systemPrompt) systemPromptEl.value = saved.systemPrompt;
+      }
+
+      document.querySelector("#settingsBtn").addEventListener("click", () => {
+        settingsEl.classList.toggle("hidden");
+      });
+
+      document.querySelector("#saveBtn").addEventListener("click", () => {
+        saveSettings();
+        settingsEl.classList.add("hidden");
+      });
+
+      document.querySelector("#forgetBtn").addEventListener("click", () => {
+        localStorage.removeItem("aiChat");
+        tokenEl.value = "";
+        addMessage("system", "このPCからトークンを消しました。");
+      });
+
+      // ---- 画面にメッセージを1件追加する ----
+      function addMessage(role, text) {
+        const div = document.createElement("div");
+        div.className = "msg " + role;
+        div.textContent = text;
+        messagesEl.appendChild(div);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }
+
+      // ---- AIに送る ----
+      async function askAI(messages) {
+        const response = await fetch(CHAT_API, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + tokenEl.value.trim(),
+          },
+          body: JSON.stringify({
+            model: MODEL,
+            messages: messages,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error ?? "AIの呼び出しに失敗しました");
+        }
+        return data.choices[0].message.content;
+      }
+
+      // ---- 送信ボタン ----
+      async function sendMessage() {
+        const text = inputEl.value.trim();
+        if (text === "") return;
+
+        if (tokenEl.value.trim() === "") {
+          addMessage("system", "設定画面（⚙️）でトークンを入力してください。");
+          settingsEl.classList.remove("hidden");
+          return;
+        }
+
+        addMessage("user", text);
+        history.push({ role: "user", content: text });
+        inputEl.value = "";
+
+        // 待っている間、状況を見せる＋連打を防ぐ
+        sendBtn.disabled = true;
+        thinkingEl.classList.remove("hidden");
+
+        try {
+          // システムプロンプトを先頭に置き、履歴は直近10件だけ送る
+          const messages = [
+            { role: "system", content: systemPromptEl.value },
+            ...history.slice(-10),
+          ];
+
+          const answer = await askAI(messages);
+          addMessage("assistant", answer);
+          history.push({ role: "assistant", content: answer });
+        } catch (error) {
+          addMessage("system", "エラー：" + error.message);
+          console.error(error);
+        } finally {
+          // 成功しても失敗しても、必ず元に戻す
+          sendBtn.disabled = false;
+          thinkingEl.classList.add("hidden");
+        }
+      }
+
+      sendBtn.addEventListener("click", sendMessage);
+      inputEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") sendMessage();
+      });
+
+      loadSettings();
+      if (tokenEl.value === "") settingsEl.classList.remove("hidden");
+    </script>
+  </body>
+</html>

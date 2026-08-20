@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Quiz Generator</title>
+    <link rel="stylesheet" href="quiz.css" />
+  </head>
+  <body>
+    <header>
+      <h1>AI Quiz Generator</h1>
+      <button id="settingsBtn" title="設定">⚙️</button>
+    </header>
+
+    <!-- 設定画面 -->
+    <section id="settings" class="hidden">
+      <label for="token">授業用トークン</label>
+      <input type="password" id="token" placeholder="otsuma.s132y001.1.xxxxxxxx" autocomplete="off" />
+      <p class="hint">
+        <a href="https://otsuma-llm-gateway-umber.vercel.app" target="_blank">発行ページ</a>で取得できます。
+      </p>
+      <div class="row">
+        <button id="saveBtn">保存</button>
+        <button id="forgetBtn" class="danger">このPCからトークンを消す</button>
+      </div>
+    </section>
+
+    <!-- ① クイズの設定 -->
+    <section id="setup">
+      <label for="theme">テーマ</label>
+      <input id="theme" value="日本の歴史" />
+
+      <label for="count">問題数（1〜10）</label>
+      <input id="count" type="number" value="5" min="1" max="10" />
+
+      <button id="generateBtn">クイズを作る</button>
+      <p id="setupMsg" class="hint"></p>
+    </section>
+
+    <!-- ② クイズの実行 -->
+    <section id="play" class="hidden">
+      <p id="progress"></p>
+      <h2 id="question"></h2>
+      <div id="choices"></div>
+      <p id="feedback"></p>
+      <button id="nextBtn" class="hidden">次へ</button>
+    </section>
+
+    <!-- ③ 結果 -->
+    <section id="result" class="hidden">
+      <h2>おつかれさまでした</h2>
+      <p id="score"></p>
+      <button id="retryBtn">もう一度つくる</button>
+    </section>
+
+    <script>
+      "use strict";
+
+      // 授業用サーバ（プロキシ）のエンドポイント
+      //   本来の宛先: https://api.openai.com/v1/chat/completions
+      const CHAT_API = "https://otsuma-llm-gateway-umber.vercel.app/api/chat";
+      const MODEL = "gpt-5.6-luna";
+
+      const $ = (id) => document.querySelector(id);
+
+      // ---- クイズのデータ。第４回で手で書いたものと同じ形 ----
+      //   [{ question: "...", choices: ["A","B","C"], answer: 0 }, ...]
+      let quizData = [];
+      let count = 0;   // 今何問目か（0から数える）
+      let score = 0;   // 正解数
+
+      // ---- 設定（第４回のローカルストレージ） ----
+      function loadToken() {
+        $("#token").value = localStorage.getItem("quizToken") ?? "";
+      }
+      $("#settingsBtn").addEventListener("click", () => $("#settings").classList.toggle("hidden"));
+      $("#saveBtn").addEventListener("click", () => {
+        localStorage.setItem("quizToken", $("#token").value.trim());
+        $("#settings").classList.add("hidden");
+      });
+      $("#forgetBtn").addEventListener("click", () => {
+        localStorage.removeItem("quizToken");
+        $("#token").value = "";
+      });
+
+      // ---- ① AIに問題を作らせる ----
+      $("#generateBtn").addEventListener("click", generateQuiz);
+
+      async function generateQuiz() {
+        const token = $("#token").value.trim();
+        if (token === "") {
+          $("#setupMsg").textContent = "設定画面（⚙️）でトークンを入力してください。";
+          $("#settings").classList.remove("hidden");
+          return;
+        }
+
+        const theme = $("#theme").value.trim();
+        const n = Number($("#count").value);
+
+        // AIに「決められた形のJSONだけ」を返させる。具体例を必ず示すこと
+        const systemPrompt = `あなたは${theme}に関するクイズを作成するAIです。
+${n}問のクイズを作成してください。
+
+必ず以下の形式のJSON配列だけを返してください。説明文は不要です。
+
+[
+  {
+    "question": "問題文",
+    "choices": ["選択肢1", "選択肢2", "選択肢3"],
+    "answer": 0
+  }
+]
+
+条件：
+- choices は必ず3つ
+- answer は正解の選択肢のインデックス（0, 1, 2 のいずれか）
+- answer は0から数える（最初の選択肢が正解なら 0）`;
+
+        $("#generateBtn").disabled = true;
+        $("#setupMsg").textContent = "AIが問題を作っています…";
+
+        try {
+          const response = await fetch(CHAT_API, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+            body: JSON.stringify({
+              model: MODEL,
+              messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: `${theme} のクイズを${n}問つくってください` },
+              ],
+              response_format: { type: "json_object" },   // JSON形式を強制
+            }),
+          });
+
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error ?? "呼び出しに失敗しました");
+
+          const responseText = data.choices[0].message.content;
+
+          // AIは必ず指示に従うとは限らない。パースの失敗に必ず備える
+          let parsed;
+          try {
+            parsed = JSON.parse(responseText);
+          } catch (e) {
+            console.error("JSONとして読めませんでした:", responseText);
+            throw new Error("問題の形式が正しくありませんでした。もう一度お試しください。");
+          }
+
+          // 配列そのものか、{"quiz": [...]} のように包まれている場合の両方に対応する
+          quizData = Array.isArray(parsed) ? parsed : Object.values(parsed).find(Array.isArray);
+          if (!quizData || quizData.length === 0) {
+            throw new Error("問題を取り出せませんでした。もう一度お試しください。");
+          }
+
+          startQuiz();
+        } catch (error) {
+          $("#setupMsg").textContent = "エラー：" + error.message;
+          console.error(error);
+        } finally {
+          $("#generateBtn").disabled = false;
+        }
+      }
+
+      // ---- ② クイズを実行する（第４回のコードとほぼ同じ） ----
+      function startQuiz() {
+        count = 0;
+        score = 0;
+        $("#setup").classList.add("hidden");
+        $("#result").classList.add("hidden");
+        $("#play").classList.remove("hidden");
+        $("#setupMsg").textContent = "";
+        showQuestion();
+      }
+
+      function showQuestion() {
+        const quiz = quizData[count];
+
+        $("#progress").textContent = `問題 ${count + 1} / ${quizData.length}`;
+        $("#question").textContent = quiz.question;
+        $("#feedback").textContent = "";
+        $("#nextBtn").classList.add("hidden");
+
+        // 選択肢の数はデータが決める
+        $("#choices").innerHTML = quiz.choices
+          .map((text, i) => `<button class="choice" data-index="${i}">${text}</button>`)
+          .join("");
+
+        document.querySelectorAll(".choice").forEach((btn) => {
+          btn.addEventListener("click", () => selectAnswer(Number(btn.dataset.index)));
+        });
+      }
+
+      function selectAnswer(picked) {
+        const quiz = quizData[count];
+        document.querySelectorAll(".choice").forEach((b) => (b.disabled = true));
+
+        if (picked === quiz.answer) {          // どちらも数値。=== で比べられる
+          $("#feedback").textContent = "正解！";
+          score++;
+        } else {
+          $("#feedback").textContent = `不正解。正解は「${quiz.choices[quiz.answer]}」でした`;
+        }
+        $("#nextBtn").classList.remove("hidden");
+      }
+
+      $("#nextBtn").addEventListener("click", () => {
+        count++;
+        if (count < quizData.length) {
+          showQuestion();
+        } else {
+          showResult();
+        }
+      });
+
+      // ---- ③ 結果 ----
+      function showResult() {
+        $("#play").classList.add("hidden");
+        $("#result").classList.remove("hidden");
+        const rate = Math.round((score / quizData.length) * 100);
+        $("#score").textContent = `${quizData.length}問中 ${score}問正解（正答率 ${rate}%）`;
+      }
+
+      $("#retryBtn").addEventListener("click", () => {
+        $("#result").classList.add("hidden");
+        $("#setup").classList.remove("hidden");
+      });
+
+      loadToken();
+    </script>
+  </body>
+</html>

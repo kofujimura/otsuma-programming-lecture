@@ -1,0 +1,48 @@
+:root {
+  --bg: #faf9f6; --panel: #fff; --ink: #1a1a18; --soft: #6e6c64;
+  --line: #e2dfd6; --accent: #2b4c7e; --mark: #a8760a;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink); line-height: 1.8;
+  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+}
+header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .8rem 1.1rem; border-bottom: 1px solid var(--line); background: var(--panel);
+}
+header h1 { font-size: 1.05rem; margin: 0; }
+#settingsBtn { font-size: 1.2rem; background: none; border: none; cursor: pointer; }
+
+section { max-width: 34rem; margin: 0 auto; padding: 1.5rem 1.2rem; display: flex; flex-direction: column; gap: .5rem; }
+#settings { background: var(--panel); border-bottom: 1px solid var(--line); max-width: none; }
+
+label { font-size: .85rem; font-weight: 700; margin-top: .5rem; }
+input {
+  font: inherit; font-size: .95rem; padding: .55rem .7rem;
+  border: 1px solid var(--line); border-radius: 5px; width: 100%;
+}
+.hint { font-size: .8rem; color: var(--soft); margin: .2rem 0 0; }
+.row { display: flex; gap: .6rem; margin-top: .8rem; flex-wrap: wrap; }
+
+button {
+  font: inherit; font-size: .95rem; font-weight: 700; padding: .6rem 1.1rem;
+  border: none; border-radius: 5px; background: var(--accent); color: #fff; cursor: pointer;
+}
+button:disabled { opacity: .5; cursor: default; }
+button.danger { background: transparent; color: var(--mark); border: 1px solid var(--mark); font-size: .85rem; }
+#generateBtn { margin-top: 1rem; }
+
+#progress { font-size: .85rem; color: var(--soft); margin: 0; }
+#question { font-size: 1.2rem; line-height: 1.6; margin: .3rem 0 1rem; }
+
+#choices { display: flex; flex-direction: column; gap: .6rem; }
+.choice {
+  background: var(--panel); color: var(--ink); border: 1px solid var(--line);
+  text-align: left; font-weight: 400; padding: .8rem 1rem;
+}
+.choice:hover:not(:disabled) { border-color: var(--accent); }
+
+#feedback { font-weight: 700; min-height: 1.8rem; margin: .8rem 0 0; }
+#score { font-size: 1.1rem; font-weight: 700; }
+.hidden { display: none; }

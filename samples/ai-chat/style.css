@@ -1,0 +1,117 @@
+:root {
+  --bg: #faf9f6;
+  --panel: #fff;
+  --ink: #1a1a18;
+  --soft: #6e6c64;
+  --line: #e2dfd6;
+  --accent: #2b4c7e;
+  --mark: #a8760a;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  line-height: 1.7;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .8rem 1.1rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+
+header h1 { font-size: 1.05rem; margin: 0; }
+
+#settingsBtn {
+  font-size: 1.2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* ---- 設定画面 ---- */
+#settings {
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+  padding: 1rem 1.1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+}
+
+#settings label { font-size: .85rem; font-weight: 700; margin-top: .5rem; }
+
+#settings input,
+#settings textarea {
+  font: inherit;
+  font-size: .9rem;
+  padding: .55rem .7rem;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  width: 100%;
+}
+
+.hint { font-size: .78rem; color: var(--soft); margin: .1rem 0 0; }
+.row { display: flex; gap: .6rem; margin-top: .8rem; flex-wrap: wrap; }
+
+button {
+  font: inherit;
+  font-size: .9rem;
+  font-weight: 700;
+  padding: .5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+
+button:disabled { opacity: .5; cursor: default; }
+button.danger { background: transparent; color: var(--mark); border: 1px solid var(--mark); }
+
+/* ---- 会話 ---- */
+main { flex: 1; overflow-y: auto; padding: 1rem; }
+#messages { max-width: 42rem; margin: 0 auto; display: flex; flex-direction: column; gap: .7rem; }
+
+.msg {
+  padding: .7rem .95rem;
+  border-radius: 10px;
+  max-width: 80%;
+  white-space: pre-wrap;
+  font-size: .95rem;
+}
+
+.msg.user      { background: var(--accent); color: #fff; align-self: flex-end; }
+.msg.assistant { background: var(--panel); border: 1px solid var(--line); align-self: flex-start; }
+.msg.system    { background: #faf1dc; color: var(--mark); align-self: center; font-size: .85rem; }
+
+#thinking { text-align: center; color: var(--soft); font-size: .88rem; padding: .8rem; }
+
+/* ---- 入力欄 ---- */
+footer {
+  display: flex;
+  gap: .6rem;
+  padding: .8rem 1.1rem;
+  border-top: 1px solid var(--line);
+  background: var(--panel);
+}
+
+#messageInput {
+  flex: 1;
+  font: inherit;
+  padding: .6rem .8rem;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+}
+
+.hidden { display: none; }
