@@ -535,6 +535,31 @@
   .toc a:hover { color: var(--accent-ink); }
   .toc .n { font-family: var(--font-mono); font-size: .78rem; color: var(--accent); flex: none; }
 
+  .figure {
+    overflow-x: auto;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 5px;
+    padding: 1.1rem .6rem;
+  }
+
+  .figure svg { display: block; margin: 0 auto; min-width: 34rem; }
+  .figure .fig-box   { fill: var(--surface-alt); stroke: var(--rule-strong); stroke-width: 1.5; }
+  .figure .fig-key   { fill: var(--mark-soft);   stroke: var(--mark);        stroke-width: 1.5; }
+  .figure .fig-ttl   { fill: var(--ink);      font-size: 15px; font-weight: 700; }
+  .figure .fig-sub   { fill: var(--ink-soft); font-size: 11.5px; font-family: var(--font-mono); }
+  .figure .fig-note  { fill: var(--accent-ink); font-size: 12px; font-weight: 700; }
+  .figure .fig-line  { stroke: var(--rule-strong); stroke-width: 2; fill: none; }
+  .figure .fig-arrow { fill: var(--rule-strong); }
+  .figure .fig-cap   { fill: var(--ink-soft); font-size: 11.5px; }
+
+  figcaption {
+    font-size: .85rem;
+    color: var(--ink-soft);
+    margin-top: .5rem;
+    text-align: center;
+  }
+
   footer {
     margin-top: 5rem;
     border-top: 3px double var(--rule-strong);
@@ -1963,21 +1988,92 @@ fetchData();</code></pre>
 
     <div class="note mark">ここに<strong>APIキーが存在する理由</strong>が現れています。キーがなければ「誰が呼んだか」を区別できないので、サービス側は全員をまとめて制限するしかありません。キーを付ければ「あなたの枠」として管理できます。<em>認証は、利用者を縛るためではなく、区別するためにあります。</em></div>
 
-    <p>とはいえ、APIキーをみなさんに配ることはできません（第７回で詳しく扱います）。そこで、この授業では<strong>授業用サーバ</strong>を経由します。</p>
+    <h3>エンドポイントとは</h3>
+    <p>WebAPIには、リクエストを受け付ける<strong>窓口のURL</strong>があります。これを<strong>エンドポイント</strong>と呼びます。「この住所に、この形で送ってください」と決められた宛先です。</p>
 
-    <div class="code">
-      <div class="code-bar"><span class="code-name">経路</span></div>
-      <pre><code>みなさんのアプリ ──▶ 授業用サーバ ──[APIキー]──▶ Google Books</code></pre>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th scope="col">サービス</th><th scope="col">本来のエンドポイント</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Google Books</th><td class="mono">https://www.googleapis.com/books/v1/volumes</td></tr>
+          <tr><th scope="row">OpenAI（第７回で使用）</th><td class="mono">https://api.openai.com/v1/chat/completions</td></tr>
+          <tr><th scope="row">ZipCloud（第９回で使用）</th><td class="mono">https://zipcloud.ibsnet.co.jp/api/search</td></tr>
+        </tbody>
+      </table>
     </div>
 
+    <p>これらは世界中の開発者が使っている、正真正銘の宛先です。公式ドキュメントに書かれているのもこのURLです。<strong>ところが、この授業ではここに直接送りません。</strong></p>
+
+    <h3>プロキシサーバとは</h3>
+    <p><strong>プロキシ（proxy）は「代理」という意味です。</strong>リクエストをいったん受け取り、<em>代わりに</em>本来のエンドポイントへ送り、返ってきたものをそのまま渡す——この中継役をするサーバをプロキシサーバと呼びます。</p>
+
+    <figure class="figure">
+      <svg viewBox="0 0 780 250" role="img" aria-label="ブラウザから授業用サーバを経由してGoogle Booksへ至る経路の図">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" class="fig-arrow"/>
+          </marker>
+        </defs>
+
+        <rect class="fig-box" x="8"   y="80" width="190" height="76" rx="6"/>
+        <text class="fig-ttl" x="103" y="110" text-anchor="middle">みなさんのアプリ</text>
+        <text class="fig-sub" x="103" y="133" text-anchor="middle">xxxxx.csb.app</text>
+
+        <rect class="fig-key" x="295" y="80" width="190" height="76" rx="6"/>
+        <text class="fig-ttl" x="390" y="106" text-anchor="middle">授業用サーバ</text>
+        <text class="fig-ttl" x="390" y="126" text-anchor="middle">（プロキシ）</text>
+        <text class="fig-sub" x="390" y="146" text-anchor="middle">…vercel.app/api/books</text>
+
+        <rect class="fig-box" x="582" y="80" width="190" height="76" rx="6"/>
+        <text class="fig-ttl" x="677" y="110" text-anchor="middle">Google Books</text>
+        <text class="fig-sub" x="677" y="133" text-anchor="middle">googleapis.com</text>
+
+        <path class="fig-line" d="M 204 118 L 288 118" marker-end="url(#ar)"/>
+        <text class="fig-cap" x="246" y="106" text-anchor="middle">検索語</text>
+
+        <path class="fig-line" d="M 491 118 L 575 118" marker-end="url(#ar)"/>
+        <text class="fig-note" x="533" y="106" text-anchor="middle">＋APIキー</text>
+
+        <path class="fig-line" d="M 575 140 L 491 140" marker-end="url(#ar)"/>
+        <path class="fig-line" d="M 288 140 L 204 140" marker-end="url(#ar)"/>
+        <text class="fig-cap" x="533" y="163" text-anchor="middle">検索結果</text>
+        <text class="fig-cap" x="246" y="163" text-anchor="middle">検索結果</text>
+
+        <text class="fig-note" x="390" y="196" text-anchor="middle">APIキーはこの中だけに存在する</text>
+        <text class="fig-cap"  x="390" y="216" text-anchor="middle">みなさんのブラウザには一度も届かない</text>
+      </svg>
+      <figcaption>プロキシを経由する経路。APIキーが付くのは、サーバから先だけ。</figcaption>
+    </figure>
+
+    <p>プロキシを置く理由は5つあります。</p>
+    <ol>
+      <li><strong>APIキーを配らなくて済む</strong>：キーはサーバの環境変数だけに置きます。みなさんのブラウザには届かないので、Sandboxを公開しても漏れません</li>
+      <li><strong>使いすぎを防げる</strong>：1人あたりの上限をサーバ側で決められます</li>
+      <li><strong>誰が使ったか分かる</strong>：問題が起きたときに追跡できます</li>
+      <li><strong>キャッシュできる</strong>：同じ検索語の結果を覚えておけば、Googleに何度も聞かずに済みます</li>
+      <li><strong>できることを限定できる</strong>：許可した操作だけを通せます</li>
+    </ol>
+
+    <div class="note">プロキシは特別な技術ではありません。<strong>「リクエストを受けて、別の場所へ送って、返す」だけのプログラム</strong>です。みなさんが第８回でAIを呼ぶときも、同じ仕組みを通ります。<em>実際のWebサービスでも、外部APIを使うときはほぼ必ずこの形になっています。</em></div>
+
+    <h3>呼び出し方</h3>
     <div class="code">
-      <div class="code-bar"><span class="code-name">呼び出し方</span></div>
-      <pre><code>fetch("https://otsuma-llm-gateway-umber.vercel.app/api/books?q=" + encodeURIComponent(word))</code></pre>
+      <div class="code-bar"><span class="code-name">エンドポイントは const にまとめる</span></div>
+      <pre><code>"use strict";
+
+<span class="cmt">// 授業用サーバ（プロキシ）のエンドポイント</span>
+<span class="cmt">//   本来の宛先: https://www.googleapis.com/books/v1/volumes</span>
+<span class="cmt">//   APIキーはサーバ側で付与されるので、ここには書かない</span>
+const BOOKS_API = "https://otsuma-llm-gateway-umber.vercel.app/api/books";
+
+const url = BOOKS_API + "?q=" + encodeURIComponent(word);</code></pre>
     </div>
+
+    <p>URLを直接 <code>fetch()</code> に書かず、<strong><code>const</code> で名前を付けて先頭にまとめて</strong>ください。サーバのURLが変わったとき、直す場所が1か所で済みます。第３回で <code>hands</code> を、第１０回で <code>design</code> を外に出したのと同じ考え方です。</p>
 
     <p>返ってくるデータの形は<strong>Google Books本家とまったく同じ</strong>です。公式ドキュメントをそのまま読めます。</p>
-
-    <div class="note">同じ検索語は授業用サーバが1時間おぼえています。クラス全員が「ディープラーニング」で検索しても、Googleへの問い合わせは1回で済みます。<em>キャッシュという考え方です。</em></div>
 
     <h4>便利な検索オプション</h4>
     <ul>
@@ -1986,7 +2082,18 @@ fetchData();</code></pre>
       <li><code>&amp;langRestrict=ja</code>　日本語の本に絞る</li>
     </ul>
 
-    <div class="note mark"><strong>ネットワークが不調のときは。</strong>検索結果のJSONをファイルとして保存しておき、<code>fetch("result.json")</code> で読み込めば、通信なしで見た目の調整を進められます。サンプルには「ディープラーニング」で検索した結果を <code>result.json</code> として置いてあります。</div>
+    <div class="note">同じ検索語は授業用サーバが1時間おぼえています。クラス全員が「ディープラーニング」で検索しても、Googleへの問い合わせは1回で済みます。<em>これが上の「キャッシュできる」です。</em></div>
+
+    <div class="box mark">
+      <h4>Googleが応答しないことがあります</h4>
+      <p>Google Books は、こちらに問題がなくても <code>503 Service temporarily unavailable</code> を返すことがあります。数分で直ることもあれば、しばらく続くこともあります。<strong>外部のサービスに依存するとは、こういうことです。</strong></p>
+      <p>授業用サーバは自動で4回まで再試行しますが、それでも失敗することがあります。だから——</p>
+      <ul>
+        <li><strong><code>try</code>/<code>catch</code> を必ず書いてください。</strong>エラーでアプリ全体が止まらないように</li>
+        <li><strong>ユーザーに状況を伝えてください。</strong>「検索できませんでした。少し待ってお試しください」と画面に出す。無反応が一番困ります</li>
+        <li>どうしても繋がらないときは、検索結果を保存した <code>result.json</code> を読み込めば、通信なしで見た目の調整を進められます（サンプルに同梱）</li>
+      </ul>
+    </div>
 
     <h3>外の形を、自分の形に変換する</h3>
     <p>今日いちばん大事な考え方です。<strong>外部APIの応答の形は、自分では選べません。</strong>Google Booksの応答は次のような深い構造をしています。</p>
@@ -2013,8 +2120,12 @@ fetchData();</code></pre>
       <div class="code-bar"><span class="code-name">books.html</span></div>
       <pre><code>"use strict";
 
+<span class="cmt">// 授業用サーバ（プロキシ）のエンドポイント</span>
+<span class="cmt">//   本来の宛先: https://www.googleapis.com/books/v1/volumes</span>
+const BOOKS_API = "https://otsuma-llm-gateway-umber.vercel.app/api/books";
+
 async function search(word) {
-  const url = "https://otsuma-llm-gateway-umber.vercel.app/api/books?q=" + encodeURIComponent(word);
+  const url = BOOKS_API + "?q=" + encodeURIComponent(word);
 
   try {
     const res  = await fetch(url);
@@ -2186,15 +2297,70 @@ const recent = conversationHistory.slice(-10);</code></pre>
 
     <p>システムプロンプトは <code>role: "system"</code> として<strong>配列の先頭に置きます</strong>。あとはユーザーとAIの発言を交互に並べるだけです。</p>
 
+    <h3>OpenAIのエンドポイントと、その手前のプロキシ</h3>
+    <p>第６回で学んだ<strong>エンドポイント</strong>と<strong>プロキシ</strong>が、ここでも同じように出てきます。OpenAIの本来のエンドポイントはこれです。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">本来の宛先</span></div>
+      <pre><code>https://api.openai.com/v1/chat/completions</code></pre>
+    </div>
+
+    <p>世界中の開発者はここに直接リクエストを送っています。ただしその際は、<strong>自分のAPIキーを添える</strong>必要があります。この授業ではキーを配れないので、Google Booksのときと同じく、手前に授業用サーバを置きます。</p>
+
+    <figure class="figure">
+      <svg viewBox="0 0 780 250" role="img" aria-label="ブラウザからトークンで授業用サーバへ、そこからAPIキーでOpenAIへ至る経路の図">
+        <defs>
+          <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" class="fig-arrow"/>
+          </marker>
+        </defs>
+
+        <rect class="fig-box" x="8"   y="80" width="190" height="76" rx="6"/>
+        <text class="fig-ttl" x="103" y="110" text-anchor="middle">みなさんのアプリ</text>
+        <text class="fig-sub" x="103" y="133" text-anchor="middle">xxxxx.csb.app</text>
+
+        <rect class="fig-key" x="295" y="80" width="190" height="76" rx="6"/>
+        <text class="fig-ttl" x="390" y="106" text-anchor="middle">授業用サーバ</text>
+        <text class="fig-ttl" x="390" y="126" text-anchor="middle">（プロキシ）</text>
+        <text class="fig-sub" x="390" y="146" text-anchor="middle">…vercel.app/api/chat</text>
+
+        <rect class="fig-box" x="582" y="80" width="190" height="76" rx="6"/>
+        <text class="fig-ttl" x="677" y="110" text-anchor="middle">OpenAI</text>
+        <text class="fig-sub" x="677" y="133" text-anchor="middle">api.openai.com</text>
+
+        <path class="fig-line" d="M 204 118 L 288 118" marker-end="url(#ar2)"/>
+        <text class="fig-note" x="246" y="106" text-anchor="middle">＋トークン</text>
+
+        <path class="fig-line" d="M 491 118 L 575 118" marker-end="url(#ar2)"/>
+        <text class="fig-note" x="533" y="106" text-anchor="middle">＋APIキー</text>
+
+        <path class="fig-line" d="M 575 140 L 491 140" marker-end="url(#ar2)"/>
+        <path class="fig-line" d="M 288 140 L 204 140" marker-end="url(#ar2)"/>
+        <text class="fig-cap" x="533" y="163" text-anchor="middle">AIの応答</text>
+        <text class="fig-cap" x="246" y="163" text-anchor="middle">AIの応答</text>
+
+        <text class="fig-note" x="390" y="196" text-anchor="middle">トークンを確認し、APIキーに付け替える</text>
+        <text class="fig-cap"  x="390" y="216" text-anchor="middle">利用回数の記録と上限の確認もここで行う</text>
+      </svg>
+      <figcaption>Google Booksとの違いは、みなさん側にもトークンが要ること。誰の利用かを区別するため。</figcaption>
+    </figure>
+
+    <div class="note">Google Booksのプロキシとの違いは、<strong>入口でトークンを確認している</strong>点だけです。AIの呼び出しには費用がかかるので、「誰が、何回使ったか」を記録する必要があるからです。<em>第６回で「認証は区別するためにある」と書いたのは、このことです。</em></div>
+
     <h3>APIの呼び出し</h3>
-    <p>通信には第６回で学んだ <code>fetch()</code> を使います。送信先は授業用サーバです。</p>
+    <p>通信には第６回で学んだ <code>fetch()</code> を使います。送信先は、上の図の真ん中——授業用サーバです。</p>
 
     <div class="code">
       <div class="code-bar"><span class="code-name">JavaScript</span></div>
       <pre><code>"use strict";
 
+<span class="cmt">// 授業用サーバ（プロキシ）のエンドポイント</span>
+<span class="cmt">//   本来の宛先: https://api.openai.com/v1/chat/completions</span>
+<span class="cmt">//   OpenAIのAPIキーはサーバ側で付与される。ここには書かない</span>
+const CHAT_API = "https://otsuma-llm-gateway-umber.vercel.app/api/chat";
+
 async function askAI(messages) {
-  const response = await fetch("https://otsuma-llm-gateway-umber.vercel.app/api/chat", {
+  const response = await fetch(CHAT_API, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -2232,9 +2398,20 @@ async function askAI(messages) {
           <tr><th scope="row">401</th><td>トークンが正しくない、または再発行済み。発行ページで取り直す</td></tr>
           <tr><th scope="row">429</th><td>その日の利用上限に達した。翌日まで待つ</td></tr>
           <tr><th scope="row">400</th><td>送ったデータの形が正しくない。<code>messages</code> の中身を確認する</td></tr>
-          <tr><th scope="row">502</th><td>AI側の一時的な不調。少し待って再試行する</td></tr>
+          <tr><th scope="row">502 / 503</th><td>OpenAI側の一時的な不調。少し待って再試行する</td></tr>
         </tbody>
       </table>
+    </div>
+
+    <div class="box mark">
+      <h4>AIが応答しないことがあります</h4>
+      <p>第６回のGoogle Booksと同じで、<strong>こちらに問題がなくてもOpenAI側が一時的に応答しないこと</strong>があります。混雑時や、モデルの更新作業中などです。</p>
+      <p>AIの呼び出しは<em>数秒から十数秒かかります</em>。この間ユーザーは何も起きていないように感じるので、次の3つを必ず入れてください。</p>
+      <ul>
+        <li><strong><code>try</code>/<code>catch</code></strong>：エラーでアプリ全体が止まらないように</li>
+        <li><strong>「考え中です…」の表示</strong>：待っていることが分かるように</li>
+        <li><strong>送信ボタンを一時的に無効化</strong>：連打で何度も課金されないように</li>
+      </ul>
     </div>
 
     <div class="code">
