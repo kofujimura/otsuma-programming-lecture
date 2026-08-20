@@ -1081,11 +1081,11 @@ console.log(book["title"]);   <span class="cmt">// "こころ"（角括弧でも
       <pre><code>"use strict";
 
 const members = [
-  { name: "岩本照",   age: 31, bloodtype: "A",  color: "黄" },
-  { name: "深澤辰哉", age: 32, bloodtype: "B",  color: "黒" },
-  { name: "ラウール", age: 21, bloodtype: "A",  color: "白" },
-  { name: "渡辺翔太", age: 31, bloodtype: "B",  color: "青" },
-  { name: "向井康二", age: 30, bloodtype: "A",  color: "オレンジ" }
+  { name: "岩本照",   birthday: "05/17", bloodtype: "A", color: "黄" },
+  { name: "深澤辰哉", birthday: "05/05", bloodtype: "B", color: "黒" },
+  { name: "ラウール", birthday: "06/27", bloodtype: "A", color: "白" },
+  { name: "渡辺翔太", birthday: "11/05", bloodtype: "B", color: "青" },
+  { name: "向井康二", birthday: "06/21", bloodtype: "A", color: "オレンジ" }
 ];
 
 console.log(members[0].name);  <span class="cmt">// "岩本照"</span>
@@ -1101,9 +1101,9 @@ console.log(members.length);   <span class="cmt">// 5</span></code></pre>
     <div class="code">
       <div class="code-bar"><span class="code-name">JSON（テキスト）</span></div>
       <pre><code>[
-  {"name":"岩本照","age":31,"bloodtype":"A","color":"黄"},
-  {"name":"深澤辰哉","age":32,"bloodtype":"B","color":"黒"},
-  {"name":"ラウール","age":21,"bloodtype":"A","color":"白"}
+  {"name":"岩本照","birthday":"05/17","bloodtype":"A","color":"黄"},
+  {"name":"深澤辰哉","birthday":"05/05","bloodtype":"B","color":"黒"},
+  {"name":"ラウール","birthday":"06/27","bloodtype":"A","color":"白"}
 ]</code></pre>
     </div>
 
@@ -1122,12 +1122,12 @@ console.log(members.length);   <span class="cmt">// 5</span></code></pre>
       <pre><code>"use strict";
 
 <span class="cmt">// 文字列 → オブジェクト（受け取ったとき）</span>
-const data = JSON.parse('[{"name":"岩本照","age":31}]');
+const data = JSON.parse('[{"name":"岩本照","birthday":"05/17"}]');
 console.log(data[0].name);     <span class="cmt">// "岩本照"</span>
 
 <span class="cmt">// オブジェクト → 文字列（送る・保存するとき）</span>
 const text = JSON.stringify(data);
-console.log(text);             <span class="cmt">// '[{"name":"岩本照","age":31}]'</span></code></pre>
+console.log(text);             <span class="cmt">// '[{"name":"岩本照","birthday":"05/17"}]'</span></code></pre>
     </div>
 
     <p>この2つの関数は、第４回（ブラウザへの保存）、第６回（サーバからの受信）、第８回（AIからの受信）で繰り返し登場します。</p>
