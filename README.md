@@ -30,7 +30,6 @@
 LLM API と Google Books API は、授業用のプロキシサーバを経由して呼び出します。
 APIキーはサーバ側にのみ置き、学生には配りません。
 
-- リポジトリ: https://github.com/kofujimura/otsuma-llm-gateway
 - トークン発行ページ: https://otsuma-llm-gateway-umber.vercel.app
 
 ## 授業の構成
