@@ -15,7 +15,7 @@
     <!-- 設定画面 -->
     <section id="settings" class="hidden">
       <label for="token">授業用トークン</label>
-      <input type="password" id="token" placeholder="otsuma.s132y001.1.xxxxxxxx" autocomplete="off" />
+      <input type="password" id="token" placeholder="otsuma.s13YYXXX.XXXXXXXX" autocomplete="off" />
       <p class="hint">
         <a href="https://otsuma-llm-gateway-umber.vercel.app" target="_blank">発行ページ</a>で取得できます。
       </p>
@@ -118,7 +118,6 @@
           body: JSON.stringify({
             model: MODEL,
             messages: messages,
-            response_format: { type: "json_object" },
           }),
         });
 
@@ -178,9 +177,22 @@ ${n}問のクイズを作成してください。
             throw new Error("問題の形式が正しくありませんでした。もう一度お試しください。");
           }
 
-          // 配列そのものか、{"quiz": [...]} のように包まれている場合の両方に対応する
-          quizData = Array.isArray(parsed) ? parsed : Object.values(parsed).find(Array.isArray);
-          if (!quizData || quizData.length === 0) {
+          quizData = parsed;
+          const isValidQuiz =
+            Array.isArray(quizData) &&
+            quizData.length > 0 &&
+            quizData.every(
+              (quiz) =>
+                typeof quiz.question === "string" &&
+                Array.isArray(quiz.choices) &&
+                quiz.choices.length === 3 &&
+                quiz.choices.every((choice) => typeof choice === "string") &&
+                Number.isInteger(quiz.answer) &&
+                quiz.answer >= 0 &&
+                quiz.answer < quiz.choices.length,
+            );
+
+          if (!isValidQuiz) {
             throw new Error("問題を取り出せませんでした。もう一度お試しください。");
           }
 
