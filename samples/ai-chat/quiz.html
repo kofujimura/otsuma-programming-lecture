@@ -61,7 +61,22 @@
       const CHAT_API = "https://otsuma-llm-gateway-umber.vercel.app/api/chat";
       const MODEL = "gpt-5.6-luna";
 
-      const $ = (id) => document.querySelector(id);
+      // ---- 画面の部品をまとめて取得 ----
+      const settingsEl = document.querySelector("#settings");
+      const tokenEl = document.querySelector("#token");
+      const setupEl = document.querySelector("#setup");
+      const themeEl = document.querySelector("#theme");
+      const countEl = document.querySelector("#count");
+      const generateBtn = document.querySelector("#generateBtn");
+      const setupMsgEl = document.querySelector("#setupMsg");
+      const playEl = document.querySelector("#play");
+      const progressEl = document.querySelector("#progress");
+      const questionEl = document.querySelector("#question");
+      const choicesEl = document.querySelector("#choices");
+      const feedbackEl = document.querySelector("#feedback");
+      const nextBtn = document.querySelector("#nextBtn");
+      const resultEl = document.querySelector("#result");
+      const scoreEl = document.querySelector("#score");
 
       // ---- クイズのデータ。第４回で手で書いたものと同じ形 ----
       //   [{ question: "...", choices: ["A","B","C"], answer: 0 }, ...]
@@ -70,32 +85,60 @@
       let score = 0;   // 正解数
 
       // ---- 設定（第４回のローカルストレージ） ----
-      function loadToken() {
-        $("#token").value = localStorage.getItem("quizToken") ?? "";
+      function saveSettings() {
+        localStorage.setItem("quizToken", tokenEl.value.trim());
       }
-      $("#settingsBtn").addEventListener("click", () => $("#settings").classList.toggle("hidden"));
-      $("#saveBtn").addEventListener("click", () => {
-        localStorage.setItem("quizToken", $("#token").value.trim());
-        $("#settings").classList.add("hidden");
+
+      function loadSettings() {
+        tokenEl.value = localStorage.getItem("quizToken") ?? "";
+      }
+
+      document.querySelector("#settingsBtn").addEventListener("click", () => {
+        settingsEl.classList.toggle("hidden");
       });
-      $("#forgetBtn").addEventListener("click", () => {
+
+      document.querySelector("#saveBtn").addEventListener("click", () => {
+        saveSettings();
+        settingsEl.classList.add("hidden");
+      });
+
+      document.querySelector("#forgetBtn").addEventListener("click", () => {
         localStorage.removeItem("quizToken");
-        $("#token").value = "";
+        tokenEl.value = "";
       });
 
       // ---- ① AIに問題を作らせる ----
-      $("#generateBtn").addEventListener("click", generateQuiz);
+      async function askAI(messages) {
+        const response = await fetch(CHAT_API, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + tokenEl.value.trim(),
+          },
+          body: JSON.stringify({
+            model: MODEL,
+            messages: messages,
+            response_format: { type: "json_object" },
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error ?? "AIの呼び出しに失敗しました");
+        }
+        return data.choices[0].message.content;
+      }
 
       async function generateQuiz() {
-        const token = $("#token").value.trim();
-        if (token === "") {
-          $("#setupMsg").textContent = "設定画面（⚙️）でトークンを入力してください。";
-          $("#settings").classList.remove("hidden");
+        if (tokenEl.value.trim() === "") {
+          setupMsgEl.textContent = "設定画面（⚙️）でトークンを入力してください。";
+          settingsEl.classList.remove("hidden");
           return;
         }
 
-        const theme = $("#theme").value.trim();
-        const n = Number($("#count").value);
+        const theme = themeEl.value.trim();
+        const n = Number(countEl.value);
 
         // AIに「決められた形のJSONだけ」を返させる。具体例を必ず示すこと
         const systemPrompt = `あなたは${theme}に関するクイズを作成するAIです。
@@ -116,30 +159,15 @@ ${n}問のクイズを作成してください。
 - answer は正解の選択肢のインデックス（0, 1, 2 のいずれか）
 - answer は0から数える（最初の選択肢が正解なら 0）`;
 
-        $("#generateBtn").disabled = true;
-        $("#setupMsg").textContent = "AIが問題を作っています…";
+        generateBtn.disabled = true;
+        setupMsgEl.textContent = "AIが問題を作っています…";
 
         try {
-          const response = await fetch(CHAT_API, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
-            },
-            body: JSON.stringify({
-              model: MODEL,
-              messages: [
-                { role: "system", content: systemPrompt },
-                { role: "user", content: `${theme} のクイズを${n}問つくってください` },
-              ],
-              response_format: { type: "json_object" },   // JSON形式を強制
-            }),
-          });
-
-          const data = await response.json();
-          if (!response.ok) throw new Error(data.error ?? "呼び出しに失敗しました");
-
-          const responseText = data.choices[0].message.content;
+          const messages = [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: `${theme} のクイズを${n}問つくってください` },
+          ];
+          const responseText = await askAI(messages);
 
           // AIは必ず指示に従うとは限らない。パースの失敗に必ず備える
           let parsed;
@@ -158,39 +186,42 @@ ${n}問のクイズを作成してください。
 
           startQuiz();
         } catch (error) {
-          $("#setupMsg").textContent = "エラー：" + error.message;
+          setupMsgEl.textContent = "エラー：" + error.message;
           console.error(error);
         } finally {
-          $("#generateBtn").disabled = false;
+          generateBtn.disabled = false;
         }
       }
+
+      generateBtn.addEventListener("click", generateQuiz);
 
       // ---- ② クイズを実行する（第４回のコードとほぼ同じ） ----
       function startQuiz() {
         count = 0;
         score = 0;
-        $("#setup").classList.add("hidden");
-        $("#result").classList.add("hidden");
-        $("#play").classList.remove("hidden");
-        $("#setupMsg").textContent = "";
+        setupEl.classList.add("hidden");
+        resultEl.classList.add("hidden");
+        playEl.classList.remove("hidden");
+        setupMsgEl.textContent = "";
         showQuestion();
       }
 
       function showQuestion() {
         const quiz = quizData[count];
 
-        $("#progress").textContent = `問題 ${count + 1} / ${quizData.length}`;
-        $("#question").textContent = quiz.question;
-        $("#feedback").textContent = "";
-        $("#nextBtn").classList.add("hidden");
+        progressEl.textContent = `問題 ${count + 1} / ${quizData.length}`;
+        questionEl.textContent = quiz.question;
+        feedbackEl.textContent = "";
+        nextBtn.classList.add("hidden");
 
         // 選択肢の数はデータが決める
-        $("#choices").innerHTML = quiz.choices
-          .map((text, i) => `<button class="choice" data-index="${i}">${text}</button>`)
-          .join("");
-
-        document.querySelectorAll(".choice").forEach((btn) => {
-          btn.addEventListener("click", () => selectAnswer(Number(btn.dataset.index)));
+        choicesEl.replaceChildren();
+        quiz.choices.forEach((text, index) => {
+          const button = document.createElement("button");
+          button.className = "choice";
+          button.textContent = text;
+          button.addEventListener("click", () => selectAnswer(index));
+          choicesEl.appendChild(button);
         });
       }
 
@@ -199,15 +230,15 @@ ${n}問のクイズを作成してください。
         document.querySelectorAll(".choice").forEach((b) => (b.disabled = true));
 
         if (picked === quiz.answer) {          // どちらも数値。=== で比べられる
-          $("#feedback").textContent = "正解！";
+          feedbackEl.textContent = "正解！";
           score++;
         } else {
-          $("#feedback").textContent = `不正解。正解は「${quiz.choices[quiz.answer]}」でした`;
+          feedbackEl.textContent = `不正解。正解は「${quiz.choices[quiz.answer]}」でした`;
         }
-        $("#nextBtn").classList.remove("hidden");
+        nextBtn.classList.remove("hidden");
       }
 
-      $("#nextBtn").addEventListener("click", () => {
+      nextBtn.addEventListener("click", () => {
         count++;
         if (count < quizData.length) {
           showQuestion();
@@ -218,18 +249,19 @@ ${n}問のクイズを作成してください。
 
       // ---- ③ 結果 ----
       function showResult() {
-        $("#play").classList.add("hidden");
-        $("#result").classList.remove("hidden");
+        playEl.classList.add("hidden");
+        resultEl.classList.remove("hidden");
         const rate = Math.round((score / quizData.length) * 100);
-        $("#score").textContent = `${quizData.length}問中 ${score}問正解（正答率 ${rate}%）`;
+        scoreEl.textContent = `${quizData.length}問中 ${score}問正解（正答率 ${rate}%）`;
       }
 
-      $("#retryBtn").addEventListener("click", () => {
-        $("#result").classList.add("hidden");
-        $("#setup").classList.remove("hidden");
+      document.querySelector("#retryBtn").addEventListener("click", () => {
+        resultEl.classList.add("hidden");
+        setupEl.classList.remove("hidden");
       });
 
-      loadToken();
+      loadSettings();
+      if (tokenEl.value === "") settingsEl.classList.remove("hidden");
     </script>
   </body>
 </html>

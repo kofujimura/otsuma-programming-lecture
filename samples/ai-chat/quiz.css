@@ -46,3 +46,6 @@ button.danger { background: transparent; color: var(--mark); border: 1px solid v
 #feedback { font-weight: 700; min-height: 1.8rem; margin: .8rem 0 0; }
 #score { font-size: 1.1rem; font-weight: 700; }
 .hidden { display: none; }
+#settings.hidden {
+  display: none;
+}
