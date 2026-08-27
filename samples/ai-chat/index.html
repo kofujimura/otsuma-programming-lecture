@@ -18,7 +18,7 @@
       <input
         type="password"
         id="token"
-        placeholder="otsuma.s132y001.1.xxxxxxxx"
+        placeholder="otsuma.s13YYXXX.1.XXXXXXXX"
         autocomplete="off"
       />
       <p class="hint">
@@ -30,15 +30,15 @@
       </p>
 
       <label for="systemPrompt">システムプロンプト（AIの役割）</label>
-      <textarea id="systemPrompt" rows="3">あなたは親切なアシスタントです。日本語で簡潔に答えてください。</textarea>
+      <textarea id="systemPrompt" rows="3">
+あなたは親切なアシスタントです。日本語で簡潔に答えてください。</textarea
+      >
 
       <div class="row">
         <button id="saveBtn">保存</button>
         <button id="forgetBtn" class="danger">このPCからトークンを消す</button>
       </div>
-      <p class="hint">
-        大学のPCで作業した日は、帰る前に必ず「消す」を押してください。
-      </p>
+      <p class="hint">共有PCの場合、使用後「消す」を押してください。</p>
     </section>
 
     <main>
@@ -89,6 +89,7 @@
 
       document.querySelector("#settingsBtn").addEventListener("click", () => {
         settingsEl.classList.toggle("hidden");
+        console.log("clicked settings");
       });
 
       document.querySelector("#saveBtn").addEventListener("click", () => {
@@ -174,7 +175,8 @@
 
       sendBtn.addEventListener("click", sendMessage);
       inputEl.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") sendMessage();
+        // Enter Keyによる送信を行いたい場合は、以下の行を有効化する
+        // if (e.key === "Enter") sendMessage();
       });
 
       loadSettings();
