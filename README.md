@@ -30,6 +30,55 @@
 選んだ設定はブラウザに保存されます。何も選んでいないうちは、
 OSの設定（ダークモードかどうか）にそのまま従います。
 
+## この資料を fork して使う場合
+
+非常勤講師の方など、この資料を fork して独自に手を入れながら、
+こちらの修正も取り込みたい場合の手順です。
+
+まず、GitHub の Fork ボタンで作られたものか、ファイルをコピーして
+別リポジトリにしたものかを確認してください。リポジトリのページに
+「forked from kofujimura/otsuma-programming-lecture」と出ていれば前者です。
+手元でなら `git log --oneline | tail -1` が
+`1c89ca2 授業ノート2026年度版（HTML）を追加` になっていれば履歴が繋がっています。
+
+一度だけ、こちらを upstream として登録します。
+
+```bash
+git remote add upstream https://github.com/kofujimura/otsuma-programming-lecture.git
+```
+
+以後、取り込むときは毎回これだけです。
+
+```bash
+git fetch upstream
+git log --oneline HEAD..upstream/main   # 何が増えたかを先に見る
+git merge upstream/main
+```
+
+`rebase` ではなく `merge` を使ってください。rebase だと自分のコミット1つずつで
+衝突を解きなおすことになり、巨大な HTML 1枚では手間が増えるだけです。
+
+コピーから始めた場合は履歴が繋がっていないので、初回だけ
+`git merge upstream/main --allow-unrelated-histories` とします。
+このときは共通の祖先が無いため `index.html` 全体が衝突しますが、
+一度解いて commit すれば履歴が繋がり、次回からは上と同じ手順で済みます。
+
+GitHub の画面にある **Sync fork** ボタンは使わないでください。独自の変更があると
+自動同期できず、状況によっては「Discard commits」（自分の変更を捨てる）しか
+出ないことがあります。
+
+特定の修正だけ欲しいときは `git cherry-pick <コミットのハッシュ>` が使えます。
+
+### 衝突したときの決めごと
+
+`course-data` は fork 側もこちら側も毎年書き換えるので、必ず衝突します。
+**ここは常に fork 側を採用**してください。逆に、本文への改良を
+`course-data` の外に置いておくと、取り込みがそのぶん楽になります。
+
+git を使わずに済ませることもできます。こちらの `index.html` を丸ごと受け取り、
+冒頭の `course-data` だけを自分のものに差し替えて、ブラウザで開いて確認する。
+fork 側の変更が `course-data` の中だけなら、これで足ります。
+
 ## 授業で使うサーバ
 
 LLM API と Google Books API は、授業用のプロキシサーバを経由して呼び出します。
