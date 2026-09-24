@@ -1386,7 +1386,16 @@ else                          result = "負け";</code></pre>
 
     <p><code>beats</code> は「自分がどのインデックスの手に勝つか」を表しています。グー（0番）はチョキ（1番）に勝つので <code>beats: 1</code> です。<strong>勝敗の知識がコードからデータに移りました。</strong></p>
 
-    <div class="note">手を5種類（グー・チョキ・パー・井戸・紙）に増やしたくなったとき、左のコードは条件式を書き直す必要がありますが、右は配列に行を足すだけです。<em>データを変えれば挙動が変わる</em>——この感覚が、今日いちばん持ち帰ってほしいものです。</div>
+    <div class="note">たとえば、じゃんけんを「ほのお・くさ・みず」の三すくみに変えたくなったとき、右のコードは <code>hands</code> の中身を差し替えるだけです。判定の3行も、この後のボタンを作るコードも書き換える必要がありません。<em>データを変えれば挙動が変わる</em>——この感覚が、今日いちばん持ち帰ってほしいものです。</div>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">データだけ差し替える</span></div>
+      <pre><code>const hands = [
+  { name: "ほのお", emoji: "🔥", beats: 1 },
+  { name: "くさ",   emoji: "🌿", beats: 2 },
+  { name: "みず",   emoji: "💧", beats: 0 }
+];</code></pre>
+    </div>
 
     <h4>全体のコード</h4>
     <div class="code">
@@ -1443,7 +1452,7 @@ else                          result = "負け";</code></pre>
         <li><strong>画像表示</strong>：<code>hands</code> に <code>image</code> プロパティを足して、絵文字ではなく画像で表示する</li>
         <li><strong>スコア表示</strong>：勝利数・敗北数をカウントして表示する</li>
         <li><strong>あいこ処理</strong>：引き分けのとき、もう一度押すよう促す</li>
-        <li><strong>手を増やす</strong>：<code>hands</code> に行を足して5種類じゃんけんにする（<code>beats</code> を配列にする必要があります）</li>
+        <li><strong>勝ちセリフ</strong>：<code>hands</code> に <code>winMessage</code> プロパティを足して（例：<code>winMessage: "かたい拳で粉砕！"</code>）、勝ったときに自分の手のセリフを表示する</li>
       </ul>
       <h4>提出方法</h4>
       <p>プレビュー画面のURLをmanabaのレポート機能で提出してください。<code>https://xxxxx.csb.app/janken.html</code> のように書いてください。</p>
