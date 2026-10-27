@@ -44,10 +44,10 @@
     { "n": 7,    "date": "11/6",  "topic": "<a href=\"#w7\">LLM APIの活用（１）</a>・トークン・プロンプト", "task": "（参考課題）" },
     { "n": 8,    "date": "11/13", "topic": "<a href=\"#w8\">LLM APIの活用（２）</a>・AIによるJSON生成", "task": "AIデータ生成（5）" },
     { "n": 9,    "date": "11/20", "topic": "<a href=\"#w9\">他のAPIの活用</a>・Web API調査・Sheet API", "task": "API活用（3）" },
-    { "n": 10,   "date": "11/27", "topic": "<a href=\"#w10\">規則性を見つけて手順にする</a>・衝突判定と計算量　<strong>小テスト実施</strong>", "task": "作品シリーズ（5）" },
-    { "n": 11,   "date": "12/4",  "topic": "<a href=\"#w11\">3Dとインタラクション</a>・総合制作の素材づくり", "task": "3D作品（5）" },
-    { "n": 12,   "date": "12/11", "topic": "<a href=\"#w12\">総合課題（企画と設計）</a>・授業評価アンケート", "task": "総合課題（35）" },
-    { "n": 13,   "date": "12/18", "topic": "<a href=\"#w13\">総合課題（制作）</a>（１限のみ・２限はゼミ説明会）", "task": "↑ 継続" },
+    { "n": 10,   "date": "11/27", "topic": "<a href=\"#w10\">エラーを読む</a>・デバッグ入門　<strong>小テスト 9:50-10:20</strong>（１限のみ・２限はゼミ説明会 ＠H113）" },
+    { "n": 11,   "date": "12/4",  "topic": "<a href=\"#w11\">規則性を見つけて手順にする</a>・衝突判定と計算量", "task": "作品シリーズ（5）" },
+    { "n": 12,   "date": "12/11", "topic": "<a href=\"#w12\">3Dとインタラクション</a>・総合制作の素材づくり　<a href=\"#w12b\">総合課題の説明</a>（11:30〜）・授業評価アンケート（12:00〜）", "task": "3D作品（5）" },
+    { "n": 13,   "date": "12/18", "topic": "<a href=\"#w13\">総合課題（作品案のフォローと制作）</a>", "task": "総合課題（35）" },
     { "n": null, "date": "12/25", "topic": "冬季休業（12/24〜1/6）" },
     { "n": 14,   "date": "1/8",   "topic": "<a href=\"#w14\">総合課題（制作）</a>　<strong>第２回小テスト 9:05-9:30</strong>", "task": "↑ 継続" },
     { "n": 15,   "date": "1/15",  "topic": "<a href=\"#w15\">総合課題（発表）</a>・プレゼンと投票", "task": "当日9:10までにシート入力" }
@@ -705,10 +705,11 @@
       <li><a href="#w7"><span class="n">07</span>LLM APIの活用（１）</a></li>
       <li><a href="#w8"><span class="n">08</span>LLM APIの活用（２）</a></li>
       <li><a href="#w9"><span class="n">09</span>他のAPIの活用</a></li>
-      <li><a href="#w10"><span class="n">10</span>規則性を見つけて手順にする</a></li>
-      <li><a href="#w11"><span class="n">11</span>3Dとインタラクション</a></li>
-      <li><a href="#w12"><span class="n">12</span>総合課題（企画と設計）</a></li>
-      <li><a href="#w13"><span class="n">13</span>総合課題（制作）</a></li>
+      <li><a href="#w10"><span class="n">10</span>エラーを読む（デバッグ入門）</a></li>
+      <li><a href="#w11"><span class="n">11</span>規則性を見つけて手順にする</a></li>
+      <li><a href="#w12"><span class="n">12</span>3Dとインタラクション</a></li>
+      <li><a href="#w12b"><span class="n">12</span>総合課題の説明</a></li>
+      <li><a href="#w13"><span class="n">13</span>総合課題（作品案のフォローと制作）</a></li>
       <li><a href="#w14"><span class="n">14</span>総合課題（制作）</a></li>
       <li><a href="#w15"><span class="n">15</span>総合課題（発表）</a></li>
     </ul>
@@ -2363,7 +2364,7 @@ const recent = conversationHistory.slice(-10);</code></pre>
     <div class="code">
       <div class="code-bar"><span class="code-name">送信するデータ</span></div>
       <pre><code>{
-  "model": "gpt-5.6-luna",
+  "model": "gpt-6-luna",
   "messages": [
     { "role": "system",    "content": "あなたは親切なプログラミングアシスタントです" },
     { "role": "user",      "content": "今日の天気は？" },
@@ -2445,7 +2446,7 @@ async function askAI(messages) {
       "Authorization": "Bearer " + settings.token   <span class="cmt">// 設定画面で入力したトークン</span>
     },
     body: JSON.stringify({                          <span class="cmt">// オブジェクト → JSON文字列</span>
-      model: "gpt-5.6-luna",
+      model: "gpt-6-luna",
       messages: messages
     })
   });
@@ -2548,7 +2549,7 @@ async function askAI(messages) {
 
     <div class="note mark"><strong>【注意】</strong>トークンはソースコードに書かず、必ず設定画面から入力してください。また、CodeSandboxのアクセスは <strong>Unlisted</strong>（URLを知っている人のみ参照可）にしてください。</div>
 
-    <p>使用するモデルは <code>gpt-5.6-luna</code> です。授業用サーバが許可しているモデル以外を指定するとエラーになります。</p>
+    <p>使用するモデルは <code>gpt-6-luna</code> です。授業用サーバが許可しているモデル以外を指定するとエラーになります。</p>
 
     <h3>新しいAPIの利用モデル</h3>
     <p>第６回のGoogle Books APIのような従来のWebAPIは、<strong>事前に用意されたデータベース</strong>からデータを取得するものでした。しかし生成AIを使えば、アプリケーションの要求に応じて<strong>動的に、かつ構造化されたデータ</strong>をAI自身に生成させることができます。</p>
@@ -2589,7 +2590,7 @@ ${count}問のクイズを作成してください。
     <div class="code">
       <div class="code-bar"><span class="code-name">JSON形式を強制する</span></div>
       <pre><code>body: JSON.stringify({
-  model: "gpt-5.6-luna",
+  model: "gpt-6-luna",
   messages: [
     { role: "system", content: systemPrompt },
     { role: "user",   content: `${theme} に関するクイズを${count}問作ってください` }
@@ -2654,7 +2655,6 @@ showQuestion();</code></pre>
       <h4>提出方法</h4>
       <p>プレビュー画面のURLをmanabaのレポート機能で提出してください。<code>https://xxxxx.csb.app/ai.html</code> のように書いてください。</p>
       <p class="deadline">提出締切：来週木曜日 13:00</p>
-      <p><a href="https://script.google.com/a/macros/otsuma.ac.jp/s/AKfycby1HBmxgaBgUyL6rYziZy6zn8RMFs7a3Vh5AMqusWEgbrHOh1LmOzlbCsxEHQnWMiBH4w/exec">LLMの活用の作品一覧</a></p>
     </div>
 
 
@@ -2753,11 +2753,9 @@ getPrice();</code></pre>
       <p class="deadline">提出締切：来週木曜日 13:00</p>
     </div>
 
-    <p>ご案内：<a href="https://drive.google.com/file/d/1_3WtKa8mrBVs9uRPwqwPtmZ_hCUpf1kp/view?usp=sharing">大妻データサイエンスセミナーポスター</a>（来週月曜5限開催）</p>
-  </section>
 
     <h3>小テストについて（来週実施）</h3>
-    <p>来週11/27、11:30から12:00までの間に3クラス合同でmanaba小テストを実施します。JavaScriptの基本言語仕様に関わるもので、授業で学んだ範囲です。</p>
+    <p>来週11/27、<strong>9:50から10:20まで</strong>の間に3クラス合同でmanaba小テストを実施します。JavaScriptの基本言語仕様に関わるもので、授業で学んだ範囲です。来週は２限がゼミ配属説明会（＠H113）のため、授業は１限のみです。</p>
     <div class="cmp">
       <div>
         <h5>出題範囲</h5>
@@ -2782,14 +2780,128 @@ getPrice();</code></pre>
       </div>
     </div>
     <p><strong>持ち込み禁止</strong>ですが、4択問題ですので、これまで多くのJavaScriptコードを書いてきた皆様はうろ覚えでも対応できる問題です。</p>
-    <p><a href="https://chatgpt.com/g/g-691f3c61d1548191b028c2054199bd1d-hurokuraminkulun-ji-hiyan-xi-noshi-yan-dui-ce">試験対策用GPTs</a>　（<a href="https://hitobo.io/blog/chatbot-chatgpt_gpts/">ChatGPT GPTsとは</a>）</p>
+  </section>
+
   <section class="week" id="w10">
     <div class="week-head">
       <span class="week-num">第１０回</span>
-      <h2>規則性を見つけて手順にする<br>重ならないように置く</h2>
+      <h2>エラーを読む<br>デバッグ入門</h2>
     </div>
 
-    <div class="note mark"><strong>本日は11:30から12:00に小テストを実施します。</strong>出題範囲はJavaScriptの基本言語仕様、<code>for</code> 文、<code>if</code> 文、関数定義、変数の有効範囲、配列とオブジェクト、DOMの操作、Dateオブジェクト、ローカルストレージ、非同期通信（<code>async</code>/<code>await</code>/<code>fetch</code>）です。p5.jsは範囲外です。</div>
+    <div class="note mark"><strong>本日は１限のみです。</strong>9:00〜9:45 デバッグ入門、<strong>9:50〜10:20 小テスト</strong>。<strong>２限はゼミ配属説明会 ＠H113</strong> です。<br>小テストの出題範囲はJavaScriptの基本言語仕様、<code>for</code> 文、<code>if</code> 文、関数定義、変数の有効範囲、配列とオブジェクト、DOMの操作、Dateオブジェクト、ローカルストレージ、非同期通信（<code>async</code>/<code>await</code>/<code>fetch</code>）です。p5.jsは範囲外です。</div>
+
+    <p>来週からはp5.jsで自分でアルゴリズムを考え、その次の回から総合課題に入ります。制作の時間の大半は、<strong>思ったとおりに動かないコードと向き合う時間</strong>です。今日はその準備として、エラーメッセージを読む練習をします。</p>
+    <p>シラバスの「AIの使用について」で、AIが書いたコードをチェックし、使うかどうかを判断するのは人間の役割だと書きました。エラーをそのままAIに貼る前に、<strong>まず自分で読む</strong>。読めるようになれば、AIが返してきた答えが正しいかどうかも判断できます。</p>
+
+    <h3>エラーメッセージの読み方</h3>
+    <p>コードの実行中にエラーが起きると、デベロッパーツールの <strong>Console</strong> に赤い文字でメッセージが出ます（第１回）。たとえばこうです。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">Console</span></div>
+      <pre><code><span class="bad-line">Uncaught TypeError: Cannot set properties of null (setting 'textContent')</span>
+    at HTMLButtonElement.&lt;anonymous&gt; (script.js:52:46)</code></pre>
+    </div>
+
+    <p>英語で書かれていますが、読むところは3つだけです。</p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th scope="col">部分</th><th scope="col">この例では</th><th scope="col">読み取ること</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">種類</th><td><code>TypeError</code></td><td>どんな種類の失敗か（下の表）</td></tr>
+          <tr><th scope="row">内容</th><td><code>Cannot set properties of null (setting 'textContent')</code></td><td>何をしようとして失敗したか。ここでは「<code>null</code> の <code>textContent</code> に書き込もうとした」</td></tr>
+          <tr><th scope="row">場所</th><td><code>script.js:52:46</code></td><td><code>script.js</code> の52行目。Consoleの右端にあるリンクをクリックすると、その行が表示されます</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>よく出る3つの種類</h3>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th scope="col">種類</th><th scope="col">意味</th><th scope="col">よくある原因</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row"><code>SyntaxError</code></th><td>文法の誤り。<strong>1行も実行されません</strong></td><td>かっこやクォートの閉じ忘れ、全角スペース</td></tr>
+          <tr><th scope="row"><code>ReferenceError</code></th><td>その名前の変数や関数が<strong>見つからない</strong></td><td>スペルミス、宣言していない、<strong>有効範囲の外</strong>から使っている</td></tr>
+          <tr><th scope="row"><code>TypeError</code></th><td>値はあるが、<strong>その使い方ができない</strong></td><td><code>null</code> や <code>undefined</code> のプロパティを読み書きする、関数でないものを呼ぶ、<code>const</code> に再代入する</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>いちばんよく見るのは次の2つの言い回しです。</p>
+    <ul>
+      <li><code>Cannot read properties of undefined (reading 'title')</code>：「<code>undefined</code> の <code>title</code> を読もうとした」。つまり <strong><code>.title</code> の左側</strong>が <code>undefined</code> です。<code>books[i].title</code> なら、<code>books[i]</code> に何も入っていません</li>
+      <li><code>memos.push is not a function</code>：「<code>memos.push</code> は関数ではない」。<code>memos</code> が、<code>push</code> を持っている配列ではなかった、ということです</li>
+    </ul>
+
+    <div class="note"><code>querySelector()</code> は要素が見つからないと <code>null</code> を返し、配列の範囲外や存在しないプロパティを読むと <code>undefined</code> になります。どちらも<strong>「ドットの左側に、期待したものが入っていない」</strong>というサインです。<code>async</code> 関数の中で起きたエラーには、頭に <code>Uncaught (in promise)</code> がつきます。</div>
+
+    <h3>練習：8つの壊れたボタン</h3>
+    <p>サンプルコードは<a href="samples/debug/" target="_blank">こちら</a>。ページに8つのボタンがありますが、<strong>どれも正しく動きません</strong>。Consoleを開いてからボタンを押し、<code>script.js</code> を直してください。上のエラーの例は⑤のボタンのものです。</p>
+    <ol>
+      <li>25分で、いくつ直せるか挑戦します。順番は自由です</li>
+      <li><strong>今日はAIに聞かないでください。</strong>エラーを自分で読む練習です</li>
+      <li>直したら、何が原因だったかをコメントで一言書いておきます（<code>// const だったので let にした</code> など）</li>
+      <li>8つのうち<strong>2つはエラーが出ません</strong>。それでも動きは間違っています。ボタンの上の説明と見比べてください</li>
+    </ol>
+
+    <h3>エラーが出ないときは</h3>
+    <p>エラーが出ないのに結果がおかしいときが、いちばん厄介です。Consoleは何も教えてくれないので、<strong>自分で <code>console.log()</code> を入れて、途中の値を確かめます</strong>。どこまでは正しくて、どこからおかしくなるのかを探します。</p>
+
+    <div class="code">
+      <div class="code-bar"><span class="code-name">途中の値を確かめる</span></div>
+      <pre><code>const point = document.querySelector("#point").value;   <span class="cmt">// 入力欄に 80 と入れた</span>
+console.log("point:", point);    <span class="cmt">// point: 80</span>
+const total = point + 10;
+<span class="bad-line">console.log("total:", total);    // total: 8010  ← ここでおかしくなった</span></code></pre>
+    </div>
+
+    <p><code>point</code> までは正しく見えて、<code>total</code> でおかしくなっています。原因はその間の <code>+</code> です。HTMLから取り出した値は文字列なので（第４回）、足し算ではなく文字の連結になっていました。<code>Number(point) + 10</code> と書けば直ります。</p>
+
+    <h3>解説</h3>
+    <p>授業の最後に、全員で答え合わせをします。</p>
+    <details>
+      <summary>答えを見る</summary>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th scope="col" class="c">番号</th><th scope="col">出題範囲</th><th scope="col">画面に出るもの</th><th scope="col">原因と直し方</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="c">①</td><td>変数宣言</td><td><code>TypeError: Assignment to constant variable.</code></td><td><code>const</code> で宣言した変数を <code>++</code> で書き換えている。<code>let</code> にする</td></tr>
+            <tr><td class="c">②</td><td><code>if</code>・演算子</td><td>エラーなし。何度押しても「100 点　満点！」</td><td><code>if (point = 100)</code> は比較ではなく<strong>代入</strong>。<code>===</code> にする</td></tr>
+            <tr><td class="c">③</td><td>変数の有効範囲</td><td><code>ReferenceError: score is not defined</code></td><td><code>score</code> は <code>addScore</code> の中で宣言したので、外からは見えない。関数の外で宣言する</td></tr>
+            <tr><td class="c">④</td><td><code>for</code>・配列</td><td><code>TypeError: Cannot read properties of undefined (reading 'title')</code></td><td><code>i &lt;= books.length</code> だと1回多く回り、存在しない <code>books[3]</code> を読む。<code>&lt;</code> にする</td></tr>
+            <tr><td class="c">⑤</td><td>DOMの操作</td><td><code>TypeError: Cannot set properties of null (setting 'textContent')</code></td><td><code>querySelector("out5")</code> に <code>#</code> がないので、<code>&lt;out5&gt;</code> というタグを探して見つからず <code>null</code> になる</td></tr>
+            <tr><td class="c">⑥</td><td>Dateオブジェクト</td><td>エラーなし。今月より1つ前の月が出る</td><td><code>getMonth()</code> は0から数える（1月が0）。<code>+ 1</code> する</td></tr>
+            <tr><td class="c">⑦</td><td>ローカルストレージ</td><td><code>TypeError: memos.push is not a function</code></td><td><code>getItem()</code> が返すのは<strong>文字列</strong>。<code>JSON.parse()</code> で配列に戻す</td></tr>
+            <tr><td class="c">⑧</td><td>非同期通信</td><td><code>Uncaught (in promise) TypeError: res.json is not a function</code></td><td><code>fetch()</code> の前に <code>await</code> がないので、<code>res</code> が応答ではなく Promise のまま</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    <div class="box mark">
+      <h4>今日のまとめ　制作でもこの順で</h4>
+      <ol>
+        <li>Consoleで、エラーの<strong>種類</strong>と<strong>行番号</strong>を見る</li>
+        <li><code>undefined</code> や <code>null</code> と出たら、<strong>ドットの左側</strong>を疑う</li>
+        <li>エラーが出ないときは、<code>console.log()</code> で途中の値を確かめる</li>
+        <li>それでも分からなければAIに聞く。<strong>エラーメッセージと該当箇所のコードを一緒に貼り</strong>、返ってきた修正は、なぜ直るのかを理解してから使う</li>
+      </ol>
+      <p>このチェックリストは、第１３回の制作のときにもう一度出てきます。</p>
+    </div>
+
+    <p>今回の課題はありません。9:50からの小テストに臨んでください。</p>
+  </section>
+
+  <section class="week" id="w11">
+    <div class="week-head">
+      <span class="week-num">第１１回</span>
+      <h2>規則性を見つけて手順にする<br>重ならないように置く</h2>
+    </div>
 
     <p>ここまでの７回で、データを設計し、保存し、外から取ってきて、AIに作らせるところまで来ました。残りの２回は、<strong>自分でアルゴリズムを考える</strong>訓練にあてます。総合課題の素材づくりでもあります。</p>
     <p>今回使うのはJavaScriptのライブラリ <strong>p5.js</strong> ですが、目的は描画の習得ではありません。<em>複雑に見えるものの中に規則を見つけ、それを手順に分解する</em>——これが今日のテーマです。</p>
@@ -3209,7 +3321,7 @@ function drawAll() {
     <div class="note mark"><strong>今日いちばん大事なところです。</strong>AIに<em>コードを書かせた</em>のではありません。<strong>データを作らせて、自分のコードで描いた</strong>のです。この２つはまったく違います。<br><br>コードを書かせた場合、それが正しいかは読まないと分かりません。データを作らせた場合、動いているのは<em>自分が書いて、計算量まで理解しているコード</em>です。何が起きているか完全に把握できます。<br><br>これは第８回でやることの予告編です。そのときはAIにクイズの問題データを作らせます。<em>形を指定できるのは、その形を自分で設計したからです。</em></div>
 
     <div class="task">
-      <h3>第１０回課題　作品シリーズを作る<span class="pts">5点</span></h3>
+      <h3>第１１回課題　作品シリーズを作る<span class="pts">5点</span></h3>
 
       <p>一枚の作品ではなく、<strong>同じ設計から生まれた作品のシリーズ</strong>を制作してください。</p>
 
@@ -3252,13 +3364,15 @@ function drawAll() {
     </div>
   </section>
 
-  <section class="week" id="w11">
+  <section class="week" id="w12">
     <div class="week-head">
-      <span class="week-num">第１１回</span>
+      <span class="week-num">第１２回</span>
       <h2>3Dとインタラクション<br>総合制作の素材をつくる</h2>
     </div>
 
-    <p>前回は、平面の上で「重ならないように置く」というアルゴリズムを考えました。今回は舞台を<strong>立体</strong>に移し、さらに<strong>触れる</strong>ようにします。次回から始まる総合課題で、そのまま素材として使える回にします。</p>
+    <div class="note mark"><strong>本日は２限の11:30ごろまで3Dの課題に取り組みます。</strong>そのあと<a href="#w12b">総合課題の説明</a>、<strong>12:00から授業評価アンケート</strong>です。</div>
+
+    <p>前回は、平面の上で「重ならないように置く」というアルゴリズムを考えました。今回は舞台を<strong>立体</strong>に移し、さらに<strong>触れる</strong>ようにします。今日の最後に説明する総合課題で、そのまま素材として使える回にします。</p>
 
     <h3>2Dから3Dへ</h3>
     <p><code>createCanvas()</code> の第3引数に <code>WEBGL</code> を指定するだけで、3D空間になります。ただし<strong>座標系が変わる</strong>ことに注意してください。</p>
@@ -3513,9 +3627,9 @@ function findSpot() {
     <p>描画コードは1つのまま、<strong>データを差し替えるだけで5つの作品が出ます</strong>。総合課題で作風を試行錯誤するとき、この形にしておくと圧倒的に速く回せます。</p>
 
     <div class="task">
-      <h3>第１１回課題　動いて、触れる3D作品<span class="pts">5点</span></h3>
+      <h3>第１２回課題　動いて、触れる3D作品<span class="pts">5点</span></h3>
 
-      <p>次回から総合課題の制作が始まります。<strong>この課題で作ったものを、そのまま総合課題の一部に使って構いません。</strong></p>
+      <p>今日の最後に総合課題を説明します。<strong>この課題で作ったものを、そのまま総合課題の一部に使って構いません。</strong></p>
 
       <h4>必須条件</h4>
       <ol>
@@ -3555,31 +3669,35 @@ function findSpot() {
       </div>
     </div>
 
-    <div class="box">
-      <h4>次回に向けて</h4>
-      <p>次回から総合課題の制作に入ります。テーマは<strong>「LLMの活用」</strong>で、分野は「美しい／オリジナリティ」「便利・役に立つ」「楽しい」から一つ選びます。</p>
-      <p>今日作ったものは「美しい」「楽しい」の直接の素材になります。<strong>ここにAIの活用をどう組み合わせるか</strong>を、来週までに考えてきてください。たとえば——</p>
-      <ul>
-        <li>AIが生成したデータ（星座、生物、感情、色の組み合わせ）を立体で見せる</li>
-        <li>ユーザーの入力からAIが作った世界を、その場で3D空間に構築する</li>
-        <li>AIに作らせた診断結果を、動く立体で表現する</li>
-      </ul>
-    </div>
   </section>
 
-  <section class="week" id="w12">
+  <section class="week" id="w12b">
     <div class="week-head">
-      <span class="week-num">第１２回</span>
-      <h2>総合課題の制作（企画と設計）</h2>
+      <span class="week-num">第１２回　11:30〜</span>
+      <h2>総合課題の説明</h2>
     </div>
 
-    <h3>今日のアジェンダ</h3>
+    <h3>２限の進め方</h3>
     <ol>
-      <li>前回の課題の振り返り（お互いにどのようなAPIを試したか紹介しあい、何ができそうか議論する）</li>
-      <li>アイデアのブレインストーミング</li>
-      <li>企画と設計</li>
-      <li>授業評価アンケート（<a href="https://drive.google.com/file/d/1zGbNfvi66AzAqTmwl9-GCVrAkkmvSCIH/view?usp=sharing">UNIPA操作説明（学生用）</a>）</li>
+      <li><strong>11:30ごろまで</strong>：<a href="#w12">第１２回課題</a>（3D作品）の続き</li>
+      <li><strong>11:30ごろから</strong>：総合課題の説明（テーマ、分野、評価基準、日程）。このページの内容です</li>
+      <li><strong>12:00から</strong>：授業評価アンケート（<a href="https://drive.google.com/file/d/1zGbNfvi66AzAqTmwl9-GCVrAkkmvSCIH/view?usp=sharing">UNIPA操作説明（学生用）</a>）</li>
     </ol>
+
+    <h3>総合課題の日程</h3>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th scope="col" class="c">日付</th><th scope="col">回</th><th scope="col">内容</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="c">12/11</td><td>第１２回（今日）</td><td>総合課題の説明。<strong>次回までに作品案を考えてくる</strong>（このページの最後）</td></tr>
+          <tr><td class="c">12/18</td><td>第１３回</td><td>作品案のフォロー、制作</td></tr>
+          <tr><td class="c">1/8</td><td>第１４回</td><td>制作・ブラッシュアップ（第２回小テスト 9:05-9:30）</td></tr>
+          <tr><td class="c">1/15</td><td>第１５回</td><td>発表と投票</td></tr>
+        </tbody>
+      </table>
+    </div>
 
     <h3>総合課題について</h3>
     <p><strong>テーマ：「LLMの活用」</strong>（LLM APIを使用すること）</p>
@@ -3600,7 +3718,7 @@ function findSpot() {
 
     <div class="box">
       <h4>設計のヒント：まずデータの形を決める</h4>
-      <p>この授業でずっとやってきたことを、そのまま使ってください。作りたいものが決まったら、<strong>コードを書く前に「どんな形のデータが必要か」を書き出します</strong>。第１０回の手順書と同じ考え方です。</p>
+      <p>この授業でずっとやってきたことを、そのまま使ってください。作りたいものが決まったら、<strong>コードを書く前に「どんな形のデータが必要か」を書き出します</strong>。第１１回の手順書と同じ考え方です。</p>
       <ul>
         <li>アプリが扱う<strong>1件のデータ</strong>は、どんなプロパティを持つか</li>
         <li>そのデータは<strong>どこから来るか</strong>（自分で書く／AIに生成させる／APIから取る／ユーザーが入力する）</li>
@@ -3641,17 +3759,39 @@ function findSpot() {
       </table>
     </div>
 
-    <div class="note">使用できるモデルは <code>gpt-5.6-luna</code> です。授業用サーバが許可していないモデルを指定するとエラーになります。</div>
+    <div class="note">使用できるモデルは <code>gpt-6-luna</code> です。授業用サーバが許可していないモデルを指定するとエラーになります。</div>
+
+    <div class="box mark">
+      <h4>次回（12/18）までに：作品案を考えてくる</h4>
+      <p>次回の最初に作品案を見せ合い、教員とSAが一人ずつフォローします。そのあと、すぐに制作に入ります。次の5つを書いてきてください（形式は自由です）。</p>
+      <ol>
+        <li><strong>分野</strong>：「美しい／オリジナリティ」「便利・役に立つ」「楽しい」のどれか</li>
+        <li><strong>一言で言うと</strong>：何ができるアプリか。誰のためのものか</li>
+        <li><strong>LLMに何をさせるか</strong>：どんなデータをAIに作らせるか</li>
+        <li><strong>1件のデータの形</strong>：どんなプロパティを持つか（上の「設計のヒント」）</li>
+        <li><strong>データがどこから来るか</strong>：自分で書く／AIに生成させる／APIから取る／ユーザーが入力する</li>
+      </ol>
+      <p>案は2つ3つあっても構いません。どれにするか迷っていることも、次回に相談してください。</p>
+      <p>１限で作った3D作品は「美しい」「楽しい」の直接の素材になります。<strong>ここにAIの活用をどう組み合わせるか</strong>を考えるなら、たとえば——</p>
+      <ul>
+        <li>AIが生成したデータ（星座、生物、感情、色の組み合わせ）を立体で見せる</li>
+        <li>ユーザーの入力からAIが作った世界を、その場で3D空間に構築する</li>
+        <li>AIに作らせた診断結果を、動く立体で表現する</li>
+      </ul>
+    </div>
   </section>
 
   <section class="week" id="w13">
     <div class="week-head">
       <span class="week-num">第１３回</span>
-      <h2>総合課題（制作）</h2>
+      <h2>総合課題（作品案のフォローと制作）</h2>
     </div>
 
     <h3>今日のアジェンダ</h3>
-    <p><strong>１限は総合課題の制作</strong>（質問に答えます）　／　<strong>２限はゼミ配属説明会 ＠H113</strong></p>
+    <ol>
+      <li><strong>作品案のフォロー</strong>：考えてきた作品案（<a href="#w12b">第１２回</a>の最後の5項目）を周りの人と見せ合い、教員とSAが回って一人ずつ相談に乗ります。まだ案が決まっていない人も、この時間に一緒に考えます</li>
+      <li><strong>制作</strong>：方向が決まった人から制作に入ります（質問に答えます）</li>
+    </ol>
 
     <h3>第２回小テストについて</h3>
     <ul>
@@ -3711,7 +3851,6 @@ function findSpot() {
       <li><a href="https://prog-8.com/">Progate</a>（JavaScript入門）</li>
       <li><a href="https://dotinstall.com/">ドットインストール</a>（JavaScript全般）</li>
       <li><a href="https://developer.mozilla.org/ja/docs/Learn/Getting_started_with_the_web/JavaScript_basics">JavaScriptの基本</a>（MDN・マニュアル）</li>
-      <li><a href="https://www.youtube.com/watch?v=DRvjnolIP1s">山崎先生の動画</a>（プログラミングの学び方、PCの選び方、AIの動向）</li>
     </ul>
   </section>
 
@@ -3726,7 +3865,6 @@ function findSpot() {
     <div class="note mark"><strong>今回はシートにURLを入力しますので、manabaへのURLの提出は不要です。</strong><br>当日の朝<strong>9:10まで</strong>に、以下のシートに作品の概要とURLを入力してください。<br><strong>アプリの操作方法はアプリ自体（Web画面）に書いてください。</strong></div>
 
     <ul>
-      <li><a href="https://docs.google.com/spreadsheets/d/1Bxusp-UQm2-4vT3jMteO7h_Csu1YqFEyluRsUx5MBko/edit?usp=sharing"><strong>プログラミング論総合制作課題一覧 2025</strong></a></li>
       <li><a href="https://forms.gle/UxmCHjywhPt99PE26">オーディエンス賞の投票フォーム</a>（送信後でも編集できますが、全作品を見てから入力してください）</li>
       <li><a href="https://docs.google.com/document/d/14aHtYDUyqK3s-2NDoylKOy1TzrXnHbkXoI4yxmk9wqk/edit?usp=sharing">AIコーディング支援ツールの紹介</a></li>
     </ul>
