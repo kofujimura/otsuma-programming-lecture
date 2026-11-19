@@ -11,6 +11,7 @@
 | | 内容 |
 |---|---|
 | `index.html` | 授業資料の本体（全15回）。ファイル1つで完結し、外部ライブラリに依存しない |
+| `quiz/` | 第１回小テストの練習ページ（50問から5問ずつ出題。第９回の予告から張っている）。問題は `quiz/index.html` 内の `QUESTIONS` 配列 |
 | `samples/` | CodeSandboxで配布するサンプルコード。詳細は [samples/README.md](samples/README.md) |
 | `favicon.svg` `favicon.png` | タブに出るアイコン。`favicon.png` は `favicon.svg` から書き出したもの |
 

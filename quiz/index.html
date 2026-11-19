@@ -1,0 +1,1759 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>小テスト練習 | プログラミング論 2026</title>
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon.png" sizes="32x32" type="image/png">
+
+<script>
+  // 授業資料と同じ "theme" キーを読む（同じサイト内なので設定が共有される）
+  (function () {
+    try {
+      var t = localStorage.getItem("theme");
+      if (t === "light" || t === "dark") {
+        document.documentElement.setAttribute("data-theme", t);
+      }
+    } catch (e) { /* 読めなくても既定の配色で動く */ }
+  })();
+</script>
+
+<style>
+  /* 配色とフォントは授業資料（../index.html）と同じ値 */
+  :root {
+    --ground: #FAF9F6;
+    --surface: #FFFFFF;
+    --surface-alt: #F1EFE9;
+    --code-bg: #23262B;
+    --code-ink: #E6E9EE;
+    --code-dim: #8B93A1;
+    --ink: #1A1A18;
+    --ink-mid: #45443F;
+    --ink-soft: #6E6C64;
+    --rule: #E2DFD6;
+    --rule-strong: #C9C4B7;
+    --accent: #2B4C7E;
+    --accent-ink: #233E68;
+    --accent-soft: #E6ECF5;
+    --mark: #A8760A;
+    --mark-soft: #FAF1DC;
+    --ok: #2F6B3A;
+    --ok-soft: #E3F0E3;
+    --ng: #A3322B;
+    --ng-soft: #F8E4E1;
+    --shadow: 0 1px 2px rgba(26, 26, 24, .04), 0 12px 30px -18px rgba(26, 26, 24, .2);
+
+    --font-display: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "MS PMincho", serif;
+    --font-ui: "Hiragino Kaku Gothic ProN", "Yu Gothic", "YuGothic", "Noto Sans JP", "Meiryo", sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Menlo", "Consolas", "Roboto Mono", monospace;
+
+    --nav-h: 3.25rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #191817;
+      --surface: #212020;
+      --surface-alt: #2A2927;
+      --code-bg: #131518;
+      --code-ink: #DDE2E8;
+      --code-dim: #7A828F;
+      --ink: #EDEBE6;
+      --ink-mid: #BEBAB2;
+      --ink-soft: #918C84;
+      --rule: #333230;
+      --rule-strong: #4A4844;
+      --accent: #7BA3DC;
+      --accent-ink: #97B8E8;
+      --accent-soft: #1C2836;
+      --mark: #E0A93F;
+      --mark-soft: #322710;
+      --ok: #7CC28A;
+      --ok-soft: #18281B;
+      --ng: #EC8A80;
+      --ng-soft: #331B19;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 12px 30px -18px rgba(0, 0, 0, .7);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #191817;
+    --surface: #212020;
+    --surface-alt: #2A2927;
+    --code-bg: #131518;
+    --code-ink: #DDE2E8;
+    --code-dim: #7A828F;
+    --ink: #EDEBE6;
+    --ink-mid: #BEBAB2;
+    --ink-soft: #918C84;
+    --rule: #333230;
+    --rule-strong: #4A4844;
+    --accent: #7BA3DC;
+    --accent-ink: #97B8E8;
+    --accent-soft: #1C2836;
+    --mark: #E0A93F;
+    --mark-soft: #322710;
+    --ok: #7CC28A;
+    --ok-soft: #18281B;
+    --ng: #EC8A80;
+    --ng-soft: #331B19;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 12px 30px -18px rgba(0, 0, 0, .7);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--font-ui);
+    font-size: 16px;
+    line-height: 1.85;
+    margin: 0;
+    padding: 0 0 6rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  [hidden] { display: none !important; }
+
+  /* ---------- nav ---------- */
+
+  nav.jump {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--ground);
+    border-bottom: 1px solid var(--rule);
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: 0 1rem;
+  }
+
+  nav.jump .brand {
+    font-family: var(--font-mono);
+    font-size: .72rem;
+    letter-spacing: .1em;
+    font-weight: 600;
+    color: var(--accent-ink);
+    white-space: nowrap;
+    text-decoration: none;
+    margin-right: auto;
+  }
+
+  nav.jump .brand:hover { text-decoration: underline; }
+
+  .theme-toggle {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: .72rem;
+    letter-spacing: .04em;
+    color: var(--ink-soft);
+    background: var(--ground);
+    border: 1px solid var(--rule-strong);
+    border-radius: 999px;
+    padding: .25rem .6rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .theme-toggle:hover { color: var(--ink); background: var(--surface-alt); }
+  .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .theme-toggle > span { display: inline-flex; align-items: center; gap: .35rem; }
+  .theme-toggle svg { width: .95em; height: .95em; flex: none; }
+  .theme-toggle .to-light { display: none; }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .theme-toggle .to-dark  { display: none; }
+    :root:not([data-theme="light"]) .theme-toggle .to-light { display: inline-flex; }
+  }
+
+  :root[data-theme="dark"] .theme-toggle .to-dark  { display: none; }
+  :root[data-theme="dark"] .theme-toggle .to-light { display: inline-flex; }
+
+  /* ---------- layout ---------- */
+
+  .wrap {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .masthead {
+    padding: 3.5rem 0 1.75rem;
+    border-bottom: 3px double var(--rule-strong);
+    display: flex;
+    flex-direction: column;
+    gap: .9rem;
+  }
+
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: .74rem;
+    letter-spacing: .16em;
+    font-weight: 600;
+    color: var(--accent-ink);
+    margin: 0;
+  }
+
+  .masthead h1 {
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 6vw, 2.6rem);
+    font-weight: 600;
+    line-height: 1.35;
+    margin: 0;
+  }
+
+  .masthead p { margin: 0; color: var(--ink-mid); font-size: .95rem; }
+
+  section.view {
+    scroll-margin-top: calc(var(--nav-h) + .5rem);
+    padding-top: 2.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  h2 {
+    font-size: 1.12rem;
+    font-weight: 700;
+    line-height: 1.55;
+    margin: .5rem 0 0;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  p { margin: 0; }
+
+  a { color: var(--accent-ink); text-underline-offset: .2em; }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: .87em;
+    background: var(--surface-alt);
+    padding: .1em .35em;
+    border-radius: 3px;
+    word-break: break-word;
+  }
+
+  .note {
+    background: var(--accent-soft);
+    border-radius: 4px;
+    padding: .85rem 1.05rem;
+    font-size: .92rem;
+    line-height: 1.75;
+  }
+
+  .note.mark { background: var(--mark-soft); }
+
+  /* ---------- 成績のまとめ ---------- */
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: .75rem;
+  }
+
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: .8rem .9rem .7rem;
+    display: flex;
+    flex-direction: column;
+    gap: .1rem;
+  }
+
+  .stat .label { font-size: .78rem; color: var(--ink-soft); }
+  .stat .value { font-family: var(--font-mono); font-size: 1.55rem; font-weight: 600; line-height: 1.3; }
+  .stat .value small { font-size: .8rem; color: var(--ink-soft); font-weight: 400; }
+  .stat.review .value { color: var(--ng); }
+  .stat.mastered .value { color: var(--ok); }
+
+  .topics {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .55rem;
+  }
+
+  .topics li {
+    display: grid;
+    grid-template-columns: 1fr 6.5rem 3.2rem;
+    align-items: center;
+    gap: .75rem;
+    font-size: .9rem;
+  }
+
+  .bar {
+    height: .5rem;
+    background: var(--surface-alt);
+    border-radius: 999px;
+    overflow: hidden;
+    display: flex;
+  }
+
+  .bar span { display: block; height: 100%; }
+  .bar .ok { background: var(--ok); }
+  .bar .ng { background: var(--ng); }
+
+  .topics .count { font-family: var(--font-mono); font-size: .8rem; color: var(--ink-soft); text-align: right; }
+
+  .legend { font-size: .8rem; color: var(--ink-soft); display: flex; gap: 1rem; flex-wrap: wrap; }
+  .legend i { display: inline-block; width: .7rem; height: .7rem; border-radius: 2px; margin-right: .3rem; vertical-align: -.05rem; }
+
+  /* ---------- ボタン ---------- */
+
+  .actions { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
+
+  button.primary, button.secondary {
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 6px;
+    padding: .7rem 1.5rem;
+    cursor: pointer;
+    min-height: 2.9rem;
+  }
+
+  button.primary {
+    color: #fff;
+    background: var(--accent);
+    border: 1px solid var(--accent);
+  }
+
+  :root[data-theme="dark"] button.primary { color: #111; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) button.primary { color: #111; }
+  }
+
+  button.primary:hover { filter: brightness(1.08); }
+  button.primary:disabled { opacity: .45; cursor: not-allowed; filter: none; }
+
+  button.secondary {
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--rule-strong);
+  }
+
+  button.secondary:hover { background: var(--surface-alt); }
+
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .plan { font-size: .9rem; color: var(--ink-mid); }
+
+  /* ---------- 出題画面 ---------- */
+
+  .q-head {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    flex-wrap: wrap;
+  }
+
+  .progress {
+    font-family: var(--font-mono);
+    font-size: .8rem;
+    letter-spacing: .08em;
+    font-weight: 600;
+    color: var(--accent-ink);
+  }
+
+  .tag {
+    font-size: .75rem;
+    border-radius: 999px;
+    padding: .05rem .6rem;
+    background: var(--surface-alt);
+    color: var(--ink-mid);
+  }
+
+  .tag.review { background: var(--ng-soft); color: var(--ng); font-weight: 700; }
+  .tag.new { background: var(--accent-soft); color: var(--accent-ink); font-weight: 700; }
+
+  .question { font-size: 1.08rem; font-weight: 700; line-height: 1.75; }
+
+  .code {
+    background: var(--code-bg);
+    border-radius: 5px;
+    box-shadow: var(--shadow);
+    overflow-x: auto;
+  }
+
+  .code pre {
+    margin: 0;
+    padding: .95rem 1.1rem;
+    font-family: var(--font-mono);
+    font-size: .86rem;
+    line-height: 1.7;
+    color: var(--code-ink);
+    tab-size: 2;
+  }
+
+  .code pre code { background: none; padding: 0; font-size: inherit; color: inherit; word-break: normal; }
+
+  .choices { display: flex; flex-direction: column; gap: .55rem; border: 0; margin: 0; padding: 0; }
+
+  .choice {
+    display: flex;
+    align-items: flex-start;
+    gap: .7rem;
+    background: var(--surface);
+    border: 1px solid var(--rule-strong);
+    border-radius: 6px;
+    padding: .7rem .9rem;
+    cursor: pointer;
+    line-height: 1.65;
+  }
+
+  .choice:hover { border-color: var(--ink-soft); }
+  .choice:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+  .choice:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .choice input { margin: .35rem 0 0; flex: none; accent-color: var(--accent); }
+  .choice .letter { font-family: var(--font-mono); font-weight: 600; color: var(--ink-soft); flex: none; }
+  .choice .text { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+  .choice.mono .text { font-family: var(--font-mono); font-size: .9rem; }
+  .choice.mono .text code { background: none; padding: 0; font-size: inherit; }
+
+  .choices.locked .choice { cursor: default; }
+  .choices.locked .choice:hover { border-color: var(--rule-strong); }
+  .choice.is-correct { border-color: var(--ok) !important; background: var(--ok-soft) !important; }
+  .choice.is-wrong { border-color: var(--ng) !important; background: var(--ng-soft) !important; }
+
+  .feedback {
+    border-radius: 6px;
+    padding: .9rem 1.05rem;
+    display: flex;
+    flex-direction: column;
+    gap: .45rem;
+    font-size: .95rem;
+    line-height: 1.8;
+  }
+
+  .feedback.ok { background: var(--ok-soft); }
+  .feedback.ng { background: var(--ng-soft); }
+  .feedback .verdict { font-weight: 700; font-size: 1.05rem; }
+  .feedback.ok .verdict { color: var(--ok); }
+  .feedback.ng .verdict { color: var(--ng); }
+  .feedback .hint { font-size: .85rem; color: var(--ink-soft); }
+
+  /* ---------- 結果画面 ---------- */
+
+  .score {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 8vw, 2.8rem);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .score small { font-family: var(--font-ui); font-size: 1rem; color: var(--ink-soft); font-weight: 400; margin-left: .4rem; }
+
+  .review-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+  }
+
+  .review-list li {
+    display: grid;
+    grid-template-columns: 1.6rem 1fr;
+    gap: .5rem;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: .6rem .8rem;
+    font-size: .92rem;
+    line-height: 1.7;
+  }
+
+  .review-list .mark-ok { color: var(--ok); font-weight: 700; }
+  .review-list .mark-ng { color: var(--ng); font-weight: 700; }
+  .review-list .topic { display: block; font-size: .78rem; color: var(--ink-soft); }
+
+  .history { font-size: .85rem; color: var(--ink-soft); }
+
+  footer.foot {
+    margin-top: 3.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem 1.25rem;
+    align-items: center;
+    font-size: .85rem;
+    color: var(--ink-soft);
+  }
+
+  button.link {
+    font: inherit;
+    color: var(--ink-soft);
+    background: none;
+    border: 1px solid var(--rule-strong);
+    border-radius: 4px;
+    padding: .3rem .7rem;
+    cursor: pointer;
+  }
+
+  button.link:hover { color: var(--ink); }
+  button.link.armed { color: var(--ng); border-color: var(--ng); font-weight: 700; }
+
+  @media (max-width: 34rem) {
+    body { font-size: 15.5px; }
+    .wrap { padding: 0 1rem; }
+    .masthead { padding-top: 2.25rem; }
+    .stats { gap: .5rem; }
+    .stat { padding: .65rem .7rem .55rem; }
+    .stat .value { font-size: 1.3rem; }
+    .topics li { grid-template-columns: 1fr 4.5rem 2.8rem; gap: .5rem; }
+    .actions button { flex: 1 1 100%; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="jump">
+  <a class="brand" href="../#w9">← 授業資料 第９回</a>
+  <button class="theme-toggle" type="button" data-theme-toggle>
+    <span class="to-dark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M13.4 9.6A5.8 5.8 0 0 1 6.4 2.6 5.8 5.8 0 1 0 13.4 9.6Z"/></svg>ダーク</span>
+    <span class="to-light"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.6M8 13.4V15M15 8h-1.6M2.6 8H1M12.9 3.1l-1.1 1.1M4.2 11.8l-1.1 1.1M12.9 12.9l-1.1-1.1M4.2 4.2 3.1 3.1"/></svg>ライト</span>
+  </button>
+</nav>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="kicker">プログラミング論及び演習　小テスト対策</p>
+    <h1>小テスト練習</h1>
+    <p>第９回で予告した小テストの出題範囲（JavaScriptの基本言語仕様）から、50問の中から5問ずつ出題します。本番と同じ4択です。</p>
+  </header>
+
+  <!-- ========== ホーム ========== -->
+  <section class="view" id="home">
+    <div class="stats">
+      <div class="stat"><span class="label">出題済み</span><span class="value" id="statSeen"></span></div>
+      <div class="stat mastered"><span class="label">正解済み</span><span class="value" id="statOk"></span></div>
+      <div class="stat review"><span class="label">要復習</span><span class="value" id="statNg"></span></div>
+    </div>
+
+    <div class="note mark">
+      <strong>出題のしくみ：</strong>まだ解いていない問題と、前回まちがえた問題から5問を選びます。まちがえた問題は、正解するまで何度でも出てきます。記録はこのブラウザにだけ保存されます（別のPCやスマホとは共有されません）。
+    </div>
+
+    <div class="actions">
+      <button class="primary" type="button" id="startBtn">5問に挑戦する</button>
+      <span class="plan" id="planText"></span>
+    </div>
+
+    <h2>出題範囲と達成状況</h2>
+    <ul class="topics" id="topicList"></ul>
+    <p class="legend">
+      <span><i style="background: var(--ok)"></i>正解済み</span>
+      <span><i style="background: var(--ng)"></i>要復習</span>
+      <span><i style="background: var(--surface-alt); border: 1px solid var(--rule-strong)"></i>未出題</span>
+    </p>
+    <p class="history" id="historyText"></p>
+  </section>
+
+  <!-- ========== 出題 ========== -->
+  <section class="view" id="play" hidden>
+    <div class="q-head">
+      <span class="progress" id="progress"></span>
+      <span class="tag" id="topicTag"></span>
+      <span class="tag" id="kindTag"></span>
+    </div>
+    <p class="question" id="question"></p>
+    <div class="code" id="codeBox" hidden><pre><code id="code"></code></pre></div>
+    <fieldset class="choices" id="choices"></fieldset>
+    <div class="feedback" id="feedback" hidden></div>
+    <div class="actions">
+      <button class="primary" type="button" id="answerBtn" disabled>回答する</button>
+      <button class="primary" type="button" id="nextBtn" hidden>次の問題へ</button>
+    </div>
+  </section>
+
+  <!-- ========== 結果 ========== -->
+  <section class="view" id="result" hidden>
+    <h2>結果</h2>
+    <p class="score" id="score"></p>
+    <ul class="review-list" id="reviewList"></ul>
+    <div class="actions">
+      <button class="primary" type="button" id="againBtn">次の5問に挑戦する</button>
+      <button class="secondary" type="button" id="homeBtn">達成状況を見る</button>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span id="storageNote">記録はこのブラウザのローカルストレージに保存されます。</span>
+    <button class="link" type="button" id="resetBtn">記録をリセット</button>
+  </footer>
+</div>
+
+<script>
+"use strict";
+
+// =====================================================================
+//  問題データ（オブジェクトの配列）
+//    id       : 記録に使う名前。並べ替えても記録がずれないよう番号ではなく名前にする
+//    topic    : 出題範囲（下の TOPICS のキー）
+//    question : 問題文。`…` で囲んだ部分はコードとして表示
+//    code     : コード（無ければ省略）
+//    choices  : 選択肢。表示するときに順番をシャッフルする
+//    mono     : true なら選択肢全体をコードの書体で表示
+//    answer   : choices の何番目が正解か（0から数える。第４回のクイズと同じ形）
+//    explain  : 解説
+// =====================================================================
+
+const TOPICS = {
+  var:     "let, const などの変数宣言",
+  syntax:  "基本構文（for, if, 関数, 演算子）",
+  scope:   "変数の有効範囲",
+  data:    "配列とオブジェクト",
+  dom:     "querySelector と DOM の操作",
+  date:    "Dateオブジェクト",
+  storage: "ローカルストレージ",
+  async:   "非同期通信（async / await / fetch）"
+};
+
+const QUESTIONS = [
+  // ---------------- 変数宣言 ----------------
+  {
+    id: "var-const-reassign",
+    topic: "var",
+    question: "次のコードを実行するとどうなりますか。",
+    code: `"use strict";
+const x = 5;
+x = 10;
+console.log(x);`,
+    choices: ["10 と表示される", "5 と表示される", "エラーになる", "undefined と表示される"],
+    answer: 2,
+    explain: "`const` で宣言した変数には再代入できません。3行目で TypeError（Assignment to constant variable）が発生し、`console.log` まで到達しません。値を変えたい変数は `let` で宣言します。"
+  },
+  {
+    id: "var-let-rule",
+    topic: "var",
+    question: "この授業のルールに従うと、後で `count++` で値を増やしていく変数 `count` の宣言として最も適切なものはどれですか。",
+    choices: ["let count = 0;", "const count = 0;", "int count = 0;", "count := 0;"],
+    mono: true,
+    answer: 0,
+    explain: "`count++` も再代入の一種なので `let` で宣言します。授業では「まず `const` で書き、再代入が必要になったものだけ `let` に変える」と決めています。`int` は型を宣言する言語（C言語など）の書き方で、JavaScriptでは使いません。"
+  },
+  {
+    id: "var-let-twice",
+    topic: "var",
+    question: "次のコードを実行するとどうなりますか。",
+    code: `"use strict";
+let a = 1;
+let a = 2;
+console.log(a);`,
+    choices: ["2 と表示される", "1 と表示される", "1 と 2 が順に表示される", "エラーになる"],
+    answer: 3,
+    explain: "同じ範囲で同じ名前の変数を `let` で2回宣言することはできません（SyntaxError）。値を変えたいときは2回目の `let` を取って `a = 2;` と書きます。"
+  },
+  {
+    id: "var-const-push",
+    topic: "var",
+    question: "次のコードを実行するとどうなりますか。",
+    code: `"use strict";
+const list = [1, 2];
+list.push(3);
+console.log(list);`,
+    choices: ["[1, 2, 3] と表示される", "[1, 2] と表示される", "const の配列は変更できないのでエラーになる", "3 と表示される"],
+    answer: 0,
+    explain: "`const` が禁止するのは、変数に別の値を入れ直すこと（`list = [5, 6];` など）です。配列の中身を `push()` で増やすのは再代入ではないので、問題なく実行できます。"
+  },
+  {
+    id: "var-template-literal",
+    topic: "var",
+    question: "変数 `name` に `\"花子\"` が入っているとき、「こんにちは花子さん」と表示されるものはどれですか。",
+    choices: [
+      "console.log(`こんにちは${name}さん`);",
+      "console.log(\"こんにちは${name}さん\");",
+      "console.log('こんにちは${name}さん');",
+      "console.log(こんにちは + name + さん);"
+    ],
+    mono: true,
+    answer: 0,
+    explain: "バッククォートで囲んだ文字列（テンプレートリテラル）の中だけ、`${ }` の部分が変数の値に置き換わります。ダブルクォートやシングルクォートで囲むと `${name}` がそのまま文字として表示されます。4つ目は「こんにちは」「さん」が引用符で囲まれていないためエラーです。"
+  },
+  {
+    id: "var-strict-undeclared",
+    topic: "var",
+    question: "次のコードを実行するとどうなりますか。",
+    code: `"use strict";
+total = 100;
+console.log(total);`,
+    choices: ["100 と表示される", "エラーになる", "undefined と表示される", "0 と表示される"],
+    answer: 1,
+    explain: "`\"use strict\";`（厳格モード）では、`let` や `const` で宣言していない変数に代入するとエラー（ReferenceError: total is not defined）になります。宣言し忘れや変数名の打ち間違いにすぐ気づけるのが厳格モードの利点です。"
+  },
+
+  // ---------------- 基本構文・演算子 ----------------
+  {
+    id: "syntax-string-plus",
+    topic: "syntax",
+    question: "次のコードを実行したときの表示はどれですか。",
+    code: `"use strict";
+const a = "5";
+const b = 3;
+console.log(a + b);`,
+    choices: ["8", "53", "エラーになる", "NaN"],
+    answer: 1,
+    explain: "`+` は、どちらかが文字列だと文字列の連結になります。`\"5\"` は文字列なので `\"5\" + 3` は `\"53\"` です。数値として足したいときは `Number(a) + b` のように変換します。"
+  },
+  {
+    id: "syntax-strict-equal",
+    topic: "syntax",
+    question: "次の式のうち、結果が `true` になるものはどれですか。",
+    choices: ["\"0\" === 0", "Number(\"0\") === 0", "5 !== 5", "\"abc\" === \"ABC\""],
+    mono: true,
+    answer: 1,
+    explain: "`===` は型も含めて比較します。`\"0\"`（文字列）と `0`（数値）は型が違うので `false` です。`Number()` で数値に変換してから比べると `true` になります。クイズアプリで `Number(picked.value) === answer` と書いたのはこのためです。"
+  },
+  {
+    id: "syntax-for-sum",
+    topic: "syntax",
+    question: "次のコードを実行したときの表示はどれですか。",
+    code: `"use strict";
+let sum = 0;
+for (let i = 1; i <= 5; i++) {
+  sum += i;
+}
+console.log(sum);`,
+    choices: ["15", "10", "5", "14"],
+    answer: 0,
+    explain: "`i` が 1, 2, 3, 4, 5 の5回繰り返し、`sum` に順に足していきます。1+2+3+4+5 = 15 です。条件が `i < 5` なら 5 を含まないので 10 になります。"
+  },
+  {
+    id: "syntax-else-if",
+    topic: "syntax",
+    question: "次のコードを実行したときの表示はどれですか。",
+    code: `"use strict";
+const hour = 15;
+let msg = "";
+if (hour < 12) {
+  msg = "午前";
+} else if (hour < 18) {
+  msg = "午後";
+} else {
+  msg = "夜";
+}
+console.log(msg);`,
+    choices: ["午前", "午後", "夜", "午後夜"],
+    answer: 1,
+    explain: "上から順に条件を調べ、最初に当てはまったブロックだけが実行されます。`15 < 12` は偽、`15 < 18` は真なので「午後」です。そこで終わるので `else` は実行されません。"
+  },
+  {
+    id: "syntax-logical",
+    topic: "syntax",
+    question: "次のコードを実行したときの表示はどれですか。",
+    code: `"use strict";
+const score = 20;
+if (score >= 5 && score <= 15) {
+  console.log("A");
+} else if (score > 15 || score < 0) {
+  console.log("B");
+} else {
+  console.log("C");
+}`,
+    choices: ["A", "B", "C", "A と B"],
+    answer: 1,
+    explain: "`&&` は「かつ」です。`20 >= 5` は真でも `20 <= 15` が偽なので、全体は偽になります。`||` は「または」なので、`20 > 15` が真であれば全体が真になり、B が表示されます。"
+  },
+  {
+    id: "syntax-function-return",
+    topic: "syntax",
+    question: "次のコードを実行したときの表示はどれですか。",
+    code: `"use strict";
+function add(a, b) {
+  return a + b;
+}
+const result = add(2, 3) * 2;
+console.log(result);`,
+    choices: ["10", "8", "7", "エラーになる"],
+    answer: 0,
+    explain: "`add(2, 3)` は `return` で 5 を返します。関数の呼び出しはその戻り値に置き換わると考えると、`5 * 2` で 10 です。"
+  },
+  {
+    id: "syntax-no-return",
+    topic: "syntax",
+    question: "次のコードの最後の行で表示されるものはどれですか。",
+    code: `"use strict";
+function greet(name) {
+  console.log("こんにちは " + name);
+}
+const r = greet("花子");
+console.log(r);`,
+    choices: ["こんにちは 花子", "undefined", "花子", "null"],
+    answer: 1,
+    explain: "`greet` の中には `return` がありません。`return` で値を返さない関数の戻り値は `undefined` です。「こんにちは 花子」は関数の中の `console.log` が先に表示しますが、`r` には入りません。"
+  },
+
+  // ---------------- 変数の有効範囲 ----------------
+  {
+    id: "scope-block",
+    topic: "scope",
+    question: "次のコードを実行するとどうなりますか。",
+    code: `"use strict";
+if (true) {
+  let msg = "こんにちは";
+}
+console.log(msg);`,
+    choices: ["こんにちは と表示される", "undefined と表示される", "エラーになる", "何も表示されない（空文字）"],
+    answer: 2,
+    explain: "`let` と `const` で宣言した変数は、宣言した `{ }`（ブロック）の中でだけ有効です。ブロックの外から `msg` は見えないので ReferenceError になります。外でも使いたいなら、ブロックの外で宣言します。"
+  },
+  {
+    id: "scope-local",
+    topic: "scope",
+    question: "次のコードを実行するとどうなりますか。",
+    code: `"use strict";
+function setup() {
+  const x = 10;
+}
+setup();
+console.log(x);`,
+    choices: ["10 と表示される", "undefined と表示される", "エラーになる", "0 と表示される"],
+    answer: 2,
+    explain: "関数の中で宣言した変数はローカル変数で、その関数の中でしか使えません。値を外で使いたいときは、関数の中で `return x;` と返し、`const x = setup();` のように受け取ります。"
+  },
+  {
+    id: "scope-global",
+    topic: "scope",
+    question: "次のコードを実行したときの表示はどれですか。",
+    code: `"use strict";
+let count = 0;
+function countUp() {
+  count++;
+}
+countUp();
+countUp();
+console.log(count);`,
+    choices: ["0", "1", "2", "エラーになる"],
+    answer: 2,
+    explain: "`count` は関数の外で宣言したグローバル変数なので、関数の中から読み書きできます。2回呼んだので 2 です。クイズアプリの `score` や `count` もこの形で、問題をまたいで値を覚えていました。"
+  },
+  {
+    id: "scope-shadow",
+    topic: "scope",
+    question: "次のコードを実行したとき、表示される順番はどれですか。",
+    code: `"use strict";
+const x = 1;
+function show() {
+  const x = 2;
+  console.log(x);
+}
+show();
+console.log(x);`,
+    choices: ["2 → 1", "2 → 2", "1 → 1", "エラーになる"],
+    answer: 0,
+    explain: "関数の中の `const x = 2` は、外の `x` とは別のローカル変数です。関数の中では内側の `x`（2）が使われ、外の `x`（1）は変わりません。読み違えやすいので、実際には別の名前を付けるほうが安全です。"
+  },
+  {
+    id: "scope-for-let",
+    topic: "scope",
+    question: "次のコードの最後の行（`console.log(i)`）はどうなりますか。",
+    code: `"use strict";
+for (let i = 0; i < 3; i++) {
+  console.log(i);
+}
+console.log(i);`,
+    choices: ["3 と表示される", "2 と表示される", "エラーになる", "undefined と表示される"],
+    answer: 2,
+    explain: "`for (let i = 0; ...)` の `i` は、その `for` 文の中だけで有効です。ループが終わった後に `i` を参照すると ReferenceError になります。"
+  },
+  {
+    id: "scope-omikuji",
+    topic: "scope",
+    question: "おみくじアプリで、抽選する行をクリック処理の外に書きました。ボタンを何度も押すとどうなりますか。",
+    code: `const results = ["大吉", "中吉", "小吉", "吉", "凶"];
+const index = Math.floor(Math.random() * results.length);
+
+btn.addEventListener("click", function () {
+  resultEl.textContent = results[index];
+});`,
+    choices: ["押すたびに違う結果が出る", "何度押しても同じ結果が出る", "エラーになり何も表示されない", "必ず「大吉」になる"],
+    answer: 1,
+    explain: "関数の外の行は、ページを開いたときに1回だけ実行されます。`index` はそのとき一度決まったきりなので、何度押しても同じ結果です。毎回変わってほしい処理は、イベントの関数の中に書きます。"
+  },
+
+  // ---------------- 配列とオブジェクト ----------------
+  {
+    id: "data-last-index",
+    topic: "data",
+    question: "`const list = [\"大吉\", \"中吉\", \"小吉\", \"吉\", \"凶\"];` のとき、最後の要素「凶」を取り出す式はどれですか。",
+    choices: ["list[list.length - 1]", "list[list.length]", "list[5]", "list.length"],
+    mono: true,
+    answer: 0,
+    explain: "要素は5個（`list.length` は 5）で、インデックスは 0〜4 です。最後の要素は `list.length - 1` 番目です。`list[5]` や `list[list.length]` は存在しない位置なので `undefined` になります。"
+  },
+  {
+    id: "data-object-access",
+    topic: "data",
+    question: "次のオブジェクトから「夏目漱石」を取り出せないものはどれですか。",
+    code: `const book = {
+  title:  "こころ",
+  author: "夏目漱石",
+  year:   1914
+};`,
+    choices: ["book.author", "book[\"author\"]", "book[1]", "const key = \"author\"; book[key]"],
+    mono: true,
+    answer: 2,
+    explain: "オブジェクトの値は番号ではなくプロパティ名で取り出します。`book.author` と `book[\"author\"]` は同じ意味で、角括弧の中には変数も使えます。`book[1]` は「1」という名前のプロパティを探すので `undefined` です。"
+  },
+  {
+    id: "data-array-of-objects",
+    topic: "data",
+    question: "次のデータから「青」を取り出す式はどれですか。",
+    code: `const members = [
+  { name: "花子", color: "赤" },
+  { name: "桜",   color: "青" },
+  { name: "葵",   color: "白" }
+];`,
+    choices: ["members[1].color", "members[2].color", "members.color[1]", "members[\"青\"]"],
+    mono: true,
+    answer: 0,
+    explain: "まず `members[1]` で2番目のオブジェクト `{ name: \"桜\", color: \"青\" }` を取り出し、その `.color` を読みます。配列は番号で、オブジェクトは名前で取り出す、の組み合わせです。"
+  },
+  {
+    id: "data-push-pop",
+    topic: "data",
+    question: "次のコードを実行したときの表示はどれですか。",
+    code: `"use strict";
+const history = ["q1", "q3"];
+history.push("q4");
+const s = history.pop();
+console.log(s, history.length);`,
+    choices: ["q4 2", "q1 2", "q4 3", "q3 2"],
+    mono: true,
+    answer: 0,
+    explain: "`push()` は配列の末尾に追加し（`[\"q1\", \"q3\", \"q4\"]`）、`pop()` は末尾の要素を取り除いて返します。`s` は \"q4\"、残りは2個です。診断チャートの「一つ前に戻る」はこの仕組み（スタック）でした。"
+  },
+  {
+    id: "data-json-format",
+    topic: "data",
+    question: "JSONとして正しい書き方はどれですか。",
+    choices: [
+      "{\"name\": \"花子\", \"age\": 20}",
+      "{name: \"花子\", age: 20}",
+      "{'name': '花子', 'age': 20}",
+      "{\"name\": \"花子\", \"age\": 20,}"
+    ],
+    mono: true,
+    answer: 0,
+    explain: "JSONではキーを必ずダブルクォートで囲みます。キーのクォートを省略する書き方（2つ目）はJavaScriptのオブジェクトなら書けますが、JSONでは不可です。シングルクォート（3つ目）や末尾のカンマ（4つ目）も許されません。"
+  },
+  {
+    id: "data-map",
+    topic: "data",
+    question: "次のコードを実行したときの表示はどれですか。",
+    code: `"use strict";
+const nums = [1, 2, 3];
+const doubled = nums.map(function (n) {
+  return n * 2;
+});
+console.log(doubled);`,
+    choices: ["[2, 4, 6]", "[1, 2, 3]", "12", "6"],
+    mono: true,
+    answer: 0,
+    explain: "`map()` は配列の各要素に関数を適用し、戻り値を集めた新しい配列を作ります。元の `nums` は変わりません。クイズアプリでは、選択肢の配列を `map()` でHTMLの文字列の配列に変換していました。"
+  },
+  {
+    id: "data-random-index",
+    topic: "data",
+    question: "`const list = [\"大吉\", \"中吉\", \"小吉\", \"吉\", \"凶\"];` のとき、`Math.floor(Math.random() * list.length)` が取りうる値はどれですか。",
+    choices: ["0, 1, 2, 3, 4 のいずれか", "1, 2, 3, 4, 5 のいずれか", "0 以上 5 以下の小数", "0, 1, 2, 3, 4, 5 のいずれか"],
+    answer: 0,
+    explain: "`Math.random()` は 0 以上 1 未満の小数を返します。5 を掛けると 0 以上 5 未満、`Math.floor()` で切り捨てると 0〜4 の整数になり、ちょうど配列のインデックスの範囲になります。"
+  },
+  {
+    id: "data-janken",
+    topic: "data",
+    question: "じゃんけんのルールをデータで表しました。最後の行の表示はどれですか。",
+    code: `const hands = [
+  { name: "グー",   beats: 1 },
+  { name: "チョキ", beats: 2 },
+  { name: "パー",   beats: 0 }
+];
+function judge(my, cpu) {
+  if (my === cpu) return "引き分け";
+  if (hands[my].beats === cpu) return "勝ち";
+  return "負け";
+}
+console.log(judge(2, 1));`,
+    choices: ["勝ち", "負け", "引き分け", "エラーになる"],
+    answer: 1,
+    explain: "`my` は 2（パー）、`cpu` は 1（チョキ）です。`hands[2].beats` は 0 で、`cpu` の 1 と一致しないので「負け」です。パーはチョキに負けるので、ルール通りの結果です。"
+  },
+
+  // ---------------- DOM の操作 ----------------
+  {
+    id: "dom-selector-id",
+    topic: "dom",
+    question: "`document.querySelector(\"#result\")` が取得するものはどれですか。",
+    choices: ["id=\"result\" の要素", "class=\"result\" の要素", "<result> というタグの要素", "name=\"result\" の入力欄"],
+    answer: 0,
+    explain: "`querySelector()` にはCSSと同じセレクタを書きます。`#` は id、`.` は class を表します。`#` も `.` も付けずに `\"result\"` と書くと、`<result>` というタグを探してしまいます。"
+  },
+  {
+    id: "dom-selector-first",
+    topic: "dom",
+    question: "次のHTMLで、`document.querySelector(\".item\").textContent` の値はどれですか。",
+    code: `<p class="item">りんご</p>
+<p class="item">みかん</p>
+<p class="item">ぶどう</p>`,
+    choices: ["りんご", "ぶどう", "りんごみかんぶどう", "エラーになる"],
+    answer: 0,
+    explain: "`querySelector()` は、条件に合う要素のうち最初の1つだけを返します。条件に合う要素をすべて取得したいときは `querySelectorAll()` を使います。"
+  },
+  {
+    id: "dom-textcontent",
+    topic: "dom",
+    question: "`el.textContent = \"<b>太字</b>\";` を実行すると、画面にはどう表示されますか。",
+    choices: ["<b>太字</b> と、タグも文字のまま表示される", "「太字」が太字で表示される", "何も表示されない", "エラーになる"],
+    answer: 0,
+    explain: "`textContent` は値をただの文字として入れるので、タグもそのまま表示されます。HTMLとして解釈させたいときは `innerHTML` を使います。文字を入れるだけなら、安全な `textContent` を使うのが授業のルールです。"
+  },
+  {
+    id: "dom-addeventlistener",
+    topic: "dom",
+    question: "ボタン `btn` がクリックされたときに関数 `show` を実行する書き方として正しいものはどれですか。",
+    choices: [
+      "btn.addEventListener(\"click\", show);",
+      "btn.addEventListener(\"click\", show());",
+      "btn.addEventListener(\"onclick\", show);",
+      "btn.addEventListener(show, \"click\");"
+    ],
+    mono: true,
+    answer: 0,
+    explain: "第2引数には関数そのもの（`show`）を渡します。`show()` と括弧を付けると、登録した瞬間に一度実行され、その戻り値が渡されてしまいます。イベント名は `\"click\"` で、`\"onclick\"` ではありません。"
+  },
+  {
+    id: "dom-input-string",
+    topic: "dom",
+    question: "入力欄に 20 と入力してから次のコードを実行しました。表示はどれですか。",
+    code: `<input id="age">
+<script>
+  "use strict";
+  const v = document.querySelector("#age").value;
+  console.log(v === 20);
+<\/script>`,
+    choices: ["true", "false", "20", "エラーになる"],
+    answer: 1,
+    explain: "入力欄の `value` は、数字に見えても常に文字列（`\"20\"`）です。`\"20\" === 20` は型が違うので `false` になります。`Number(v) === 20` のように変換してから比べます。"
+  },
+  {
+    id: "dom-null",
+    topic: "dom",
+    question: "次のコードを実行するとどうなりますか。",
+    code: `<p id="result"></p>
+<script>
+  "use strict";
+  const el = document.querySelector("#reslt");
+  el.textContent = "OK";
+<\/script>`,
+    choices: ["段落に OK と表示される", "エラーになる", "ページの先頭に OK と表示される", "何も起きず、エラーも出ない"],
+    answer: 1,
+    explain: "`#reslt` はつづりの間違いで、該当する要素がありません。見つからないとき `querySelector()` は `null` を返し、`null` の `textContent` に代入しようとして TypeError（Cannot set properties of null）になります。このエラーが出たら、まずセレクタのつづりを疑いましょう。"
+  },
+  {
+    id: "dom-script-position",
+    topic: "dom",
+    question: "DOMを操作する `<script>` を `</body>` の直前に置く理由として正しいものはどれですか。",
+    choices: [
+      "HTMLの要素が読み込まれた後で実行しないと、querySelector() が要素を見つけられないから",
+      "<head> の中にはJavaScriptを書くことができないから",
+      "</body> の直前に置くと計算が速くなるから",
+      "\"use strict\" が </body> の直前でしか有効にならないから"
+    ],
+    answer: 0,
+    explain: "ブラウザはHTMLを上から順に読み込みます。`<head>` の中のスクリプトが実行される時点では、まだ `<body>` の要素が作られていないため、`querySelector()` が `null` を返してしまいます。"
+  },
+
+  // ---------------- Dateオブジェクト ----------------
+  {
+    id: "date-getmonth",
+    topic: "date",
+    question: "11月20日に `new Date().getMonth()` を実行したときの値はどれですか。",
+    choices: ["10", "11", "12", "20"],
+    answer: 0,
+    explain: "`getMonth()` は月を 0〜11 で返します（1月が 0）。画面に表示するときは `getMonth() + 1` とします。"
+  },
+  {
+    id: "date-getdate-gethours",
+    topic: "date",
+    question: "2026年11月20日（金）の午後3時5分に次のコードを実行しました。表示はどれですか。",
+    code: `const now = new Date();
+console.log(now.getDate(), now.getHours());`,
+    choices: ["20 15", "5 15", "20 3", "金 15"],
+    mono: true,
+    answer: 0,
+    explain: "`getDate()` は日（1〜31）、`getHours()` は時（0〜23）を返します。午後3時は 15 です。曜日を数値で返す `getDay()`（日曜が 0、金曜は 5）と混同しないようにしましょう。"
+  },
+  {
+    id: "date-getfullyear",
+    topic: "date",
+    question: "`const now = new Date();` のとき、現在の年を「2026」のように4桁で得るものはどれですか。",
+    choices: ["now.getFullYear()", "now.getYear()", "now.getDate()", "now.getDay()"],
+    mono: true,
+    answer: 0,
+    explain: "年は `getFullYear()` で取得します。`getDate()` は日、`getDay()` は曜日（0〜6）です。`getYear()` は古い仕様の名残で、2026年なら 126 のような値を返すため使いません。"
+  },
+  {
+    id: "date-outside-function",
+    topic: "date",
+    question: "時計を作るために次のように書きました。1秒ごとに `showTime` を呼んでいるのに、表示が変わりません。原因はどれですか。",
+    code: `const now = new Date();
+function showTime() {
+  clockEl.textContent =
+    \`\${now.getHours()}時\${now.getMinutes()}分\${now.getSeconds()}秒\`;
+}
+setInterval(showTime, 1000);`,
+    choices: [
+      "new Date() が関数の外にあり、ページを開いたときの時刻のまま変わらないから",
+      "setInterval の 1000 は 1000秒を意味するから",
+      "getSeconds() は1分ごとにしか値が変わらないから",
+      "textContent では数字を表示できないから"
+    ],
+    answer: 0,
+    explain: "`new Date()` は「実行した瞬間」の日時を持つオブジェクトを作ります。関数の外で一度だけ作ると、何度表示し直しても同じ時刻のままです。毎回計算し直したいものは関数の中に書きます。`setInterval` の時間はミリ秒単位で、1000 は1秒です。"
+  },
+  {
+    id: "date-setinterval",
+    topic: "date",
+    question: "関数 `showTime` を1秒ごとに繰り返し実行する書き方として正しいものはどれですか。",
+    choices: ["setInterval(showTime, 1000);", "setInterval(showTime(), 1000);", "setInterval(showTime, 1);", "setTimeout(showTime, 1000);"],
+    mono: true,
+    answer: 0,
+    explain: "時間はミリ秒で指定するので、1秒は 1000 です。関数は括弧を付けずに渡します（`showTime()` だと1回実行した結果を渡してしまう）。`setTimeout` は指定した時間の後に1回だけ実行する関数です。"
+  },
+
+  // ---------------- ローカルストレージ ----------------
+  {
+    id: "storage-persist",
+    topic: "storage",
+    question: "`localStorage` の説明として正しいものはどれですか。",
+    choices: [
+      "ブラウザを閉じても、削除しない限りデータが残る",
+      "タブを閉じるとデータが消える",
+      "保存したデータは、同じサイトを見ている他の人のブラウザにも共有される",
+      "数値や配列を、型を保ったままそのまま保存できる"
+    ],
+    answer: 0,
+    explain: "`localStorage` はオリジン（ドメインとポートの組み合わせ）ごとにブラウザの中へデータを保存し、明示的に削除しない限り残ります。タブを閉じると消えるのは `sessionStorage` です。保存先は各自のブラウザなので他の人とは共有されず、保存できるのは文字列だけです。"
+  },
+  {
+    id: "storage-object-object",
+    topic: "storage",
+    question: "次のコードを実行したときの表示はどれですか。",
+    code: `"use strict";
+const score = { name: "花子", point: 8 };
+localStorage.setItem("score", score);
+console.log(localStorage.getItem("score"));`,
+    choices: ["{ name: \"花子\", point: 8 }", "[object Object]", "8", "null"],
+    mono: true,
+    answer: 1,
+    explain: "`localStorage` は文字列しか保存できません。オブジェクトをそのまま渡すと文字列に変換されて「[object Object]」になり、中身が失われます。保存するときは `JSON.stringify(score)` で文字列にし、読み出すときは `JSON.parse()` で戻します。"
+  },
+  {
+    id: "storage-nullish",
+    topic: "storage",
+    question: "次のコードで `?? \"[]\"` を付けている理由はどれですか。",
+    code: `const saved = JSON.parse(localStorage.getItem("log") ?? "[]");`,
+    choices: [
+      "まだ何も保存されていないとき getItem() が null を返すので、空の配列から始めるため",
+      "保存できる容量が足りないときに、古いデータを消すため",
+      "JSON.parse() は配列しか読み込めないため",
+      "保存されたデータを必ず空にしてから読み込むため"
+    ],
+    answer: 0,
+    explain: "初めて開いたときは \"log\" が保存されていないので、`getItem()` は `null` を返します。`??` は「左が `null` か `undefined` なら右を使う」演算子で、そのとき `\"[]\"`（空の配列を表す文字列）を代わりに `JSON.parse()` に渡します。"
+  },
+  {
+    id: "storage-number-string",
+    topic: "storage",
+    question: "次のコードを実行したときの表示はどれですか。",
+    code: `"use strict";
+localStorage.setItem("count", 5);
+const c = localStorage.getItem("count");
+console.log(c + 1);`,
+    choices: ["6", "51", "エラーになる", "null"],
+    answer: 1,
+    explain: "数値の 5 を保存しても、`localStorage` の中では文字列の \"5\" になります。取り出した `c` は文字列なので、`c + 1` は文字列の連結で \"51\" です。計算するには `Number(c) + 1` とします。"
+  },
+  {
+    id: "storage-removeitem",
+    topic: "storage",
+    question: "`localStorage` から \"memos\" というキーのデータだけを削除するものはどれですか。",
+    choices: [
+      "localStorage.removeItem(\"memos\");",
+      "localStorage.clear();",
+      "localStorage.setItem(\"memos\");",
+      "localStorage.getItem(\"memos\").delete();"
+    ],
+    mono: true,
+    answer: 0,
+    explain: "特定のキーだけを消すのは `removeItem()`、そのサイトで保存したデータをすべて消すのが `clear()` です。`clear()` は別の機能が保存したデータまで消してしまうので注意が必要です。"
+  },
+
+  // ---------------- 非同期通信 ----------------
+  {
+    id: "async-settimeout-order",
+    topic: "async",
+    question: "次のコードを実行したとき、表示される順番はどれですか。",
+    code: `"use strict";
+console.log("開始");
+setTimeout(function () {
+  console.log("待った");
+}, 1000);
+console.log("終了");`,
+    choices: ["開始 → 終了 → 待った", "開始 → 待った → 終了", "待った → 開始 → 終了", "開始 → 終了（「待った」は表示されない）"],
+    answer: 0,
+    explain: "`setTimeout` は「1秒後にこの関数を実行して」と予約するだけで、待たずに次の行へ進みます。これが非同期処理です。そのため「終了」が先に表示され、1秒後に「待った」が表示されます。"
+  },
+  {
+    id: "async-await-order",
+    topic: "async",
+    question: "次のコードを実行したとき、表示される順番はどれですか。",
+    code: `"use strict";
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+async function main() {
+  console.log("A");
+  await delay(1000);
+  console.log("B");
+}
+main();
+console.log("C");`,
+    choices: ["A → C → B", "A → B → C", "C → A → B", "A → C（B は表示されない）"],
+    answer: 0,
+    explain: "`main()` を呼ぶと、まず「A」が表示されます。`await` で待つのは `main` の中だけで、呼び出した側はその間に次の行へ進み「C」を表示します。1秒後に `main` の続きが再開して「B」が表示されます。"
+  },
+  {
+    id: "async-forgot-await",
+    topic: "async",
+    question: "`await` を付け忘れました。表示されるものはどれですか。",
+    code: `"use strict";
+async function load() {
+  const res = fetch("https://api.example.com/data");
+  console.log(res);
+}
+load();`,
+    choices: ["Promise（処理がまだ終わっていない状態）のオブジェクト", "取得したJSONのデータ", "エラーになり何も表示されない", "URLの文字列"],
+    answer: 0,
+    explain: "`fetch()` はすぐに Promise を返します。`await` を付けないと完了を待たずに次の行へ進むため、`res` には通信の結果ではなく、Pending（保留中）の Promise が入っています。"
+  },
+  {
+    id: "async-res-json",
+    topic: "async",
+    question: "次のコードの2行目、`res.json()` の役割はどれですか。",
+    code: `const res  = await fetch(url);
+const data = await res.json();`,
+    choices: [
+      "受け取った本文をJSONとして読み、JavaScriptのオブジェクトに変換する",
+      "オブジェクトをJSONの文字列に変換してサーバに送る",
+      "サーバにもう一度リクエストを送り直す",
+      "取得したデータをローカルストレージに保存する"
+    ],
+    answer: 0,
+    explain: "`fetch()` が返すのは応答（レスポンス）全体です。`res.json()` で本文をJSONとして読み、オブジェクトに変換します。これも時間のかかる処理で Promise を返すので、`await` を付けて待ちます。"
+  },
+  {
+    id: "async-optional-chaining",
+    topic: "async",
+    question: "Google Books の応答を変換するコードです。表示はどれですか。",
+    code: `const info = { title: "ある本" };   // imageLinks が無い本
+const cover = info.imageLinks?.thumbnail ?? "noimage.png";
+console.log(cover);`,
+    choices: ["noimage.png", "undefined", "エラーになる", "ある本"],
+    answer: 0,
+    explain: "`info.imageLinks` は存在しないので `undefined` です。`?.` は左が `undefined` や `null` ならエラーにせず `undefined` を返し、`??` はそのとき右の `\"noimage.png\"` を使います。`?.` が無いと `undefined` の `thumbnail` を読もうとしてエラーになります。"
+  },
+  {
+    id: "async-try-catch",
+    topic: "async",
+    question: "ネットワークにつながらず `fetch()` が失敗したとき、どうなりますか。",
+    code: `async function search(word) {
+  try {
+    const res  = await fetch(BOOKS_API + "?q=" + encodeURIComponent(word));
+    const data = await res.json();
+    show(data);
+  } catch (error) {
+    messageEl.textContent = "検索できませんでした";
+  }
+}`,
+    choices: [
+      "catch の中が実行され「検索できませんでした」と表示される",
+      "show(data) が空のデータで実行される",
+      "ページ全体が自動で再読み込みされる",
+      "通信が成功するまで自動で何度も再試行する"
+    ],
+    answer: 0,
+    explain: "`try` の中でエラーが起きると、残りの処理（`res.json()` や `show(data)`）は飛ばされ、`catch` の中が実行されます。外部のサービスは応答しないことがあるので、通信には必ず `try / catch` を書き、利用者に状況を伝えます。"
+  }
+];
+
+// =====================================================================
+//  設定
+// =====================================================================
+
+const QUIZ_SIZE = 5;         // 1回に出す問題数
+const REVIEW_MAX = 2;        // 1回のうち、まちがえた問題を優先して入れる最大数
+const STORAGE_KEY = "otsuma-prog-quiz1";
+
+// =====================================================================
+//  記録の読み書き（第４回と同じ JSON.stringify / JSON.parse の往復）
+//    records : { 問題のid: { tries: 解いた回数, correct: 正解した回数, last: 直近が正解か, at: 日時 } }
+//    runs    : [{ date: "2026/11/20 10:23", score: 4, total: 5 }, ...]
+// =====================================================================
+
+let canSave = true;
+
+function loadStore() {
+  try {
+    const data = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}");
+    return {
+      records: data.records ?? {},
+      runs: Array.isArray(data.runs) ? data.runs : []
+    };
+  } catch (error) {
+    // 保存できない環境（プライベートモードなど）や、壊れたデータのとき
+    canSave = false;
+    return { records: {}, runs: [] };
+  }
+}
+
+function saveStore() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+  } catch (error) {
+    canSave = false;
+  }
+}
+
+let store = loadStore();
+
+// =====================================================================
+//  出題する5問を選ぶ
+//    1. 前回まちがえた問題（直近の回答が不正解）から最大 REVIEW_MAX 問
+//    2. まだ出題していない問題で残りを埋める
+//    3. 足りなければ、まちがえた問題をさらに足す
+//    4. それでも足りなければ（全問正解済み）、正解済みの問題を古い順に
+// =====================================================================
+
+function shuffle(array) {
+  const a = array.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function makePlan() {
+  const wrong = [];
+  const fresh = [];
+  const mastered = [];
+
+  QUESTIONS.forEach(function (q) {
+    const rec = store.records[q.id];
+    if (!rec) fresh.push(q);
+    else if (rec.last === false) wrong.push(q);
+    else mastered.push(q);
+  });
+
+  const wrongList = shuffle(wrong);
+  const freshList = shuffle(fresh);
+  // 正解済みは、前に解いたのが古いものから
+  const masteredList = mastered.slice().sort(function (a, b) {
+    return store.records[a.id].at - store.records[b.id].at;
+  });
+
+  const picked = [];
+  function take(list, max, kind) {
+    while (picked.length < QUIZ_SIZE && max > 0 && list.length > 0) {
+      picked.push({ q: list.shift(), kind: kind });
+      max--;
+    }
+  }
+
+  take(wrongList, REVIEW_MAX, "review");
+  take(freshList, QUIZ_SIZE, "new");
+  take(wrongList, QUIZ_SIZE, "review");
+  take(masteredList, QUIZ_SIZE, "again");
+
+  return shuffle(picked);
+}
+
+// =====================================================================
+//  画面の部品
+// =====================================================================
+
+const homeView   = document.querySelector("#home");
+const playView   = document.querySelector("#play");
+const resultView = document.querySelector("#result");
+
+const progressEl = document.querySelector("#progress");
+const topicTagEl = document.querySelector("#topicTag");
+const kindTagEl  = document.querySelector("#kindTag");
+const questionEl = document.querySelector("#question");
+const codeBoxEl  = document.querySelector("#codeBox");
+const codeEl     = document.querySelector("#code");
+const choicesEl  = document.querySelector("#choices");
+const feedbackEl = document.querySelector("#feedback");
+const answerBtn  = document.querySelector("#answerBtn");
+const nextBtn    = document.querySelector("#nextBtn");
+
+let plan = [];       // 今回の5問 [{ q, kind }]
+let count = 0;       // 今何問目か（0から数える）
+let results = [];    // 今回の正誤 [true, false, ...]
+
+// `…` で囲んだ部分を <code> にする。innerHTML を使わず要素を組み立てるので、
+// 問題文に < や > が入っていてもタグとして解釈されない
+function renderInline(el, text) {
+  el.textContent = "";
+  text.split("`").forEach(function (part, i) {
+    if (part === "") return;
+    if (i % 2 === 1) {
+      const c = document.createElement("code");
+      c.textContent = part;
+      el.appendChild(c);
+    } else {
+      el.appendChild(document.createTextNode(part));
+    }
+  });
+}
+
+function show(view) {
+  [homeView, playView, resultView].forEach(function (v) {
+    v.hidden = v !== view;
+  });
+  scrollToView(view);
+}
+
+// ホームはページの先頭へ、出題・結果は見出しを飛ばしてその画面の先頭へ
+function scrollToView(view) {
+  if (view === homeView) window.scrollTo(0, 0);
+  else view.scrollIntoView();
+}
+
+// =====================================================================
+//  ホーム画面
+// =====================================================================
+
+function renderHome() {
+  let seen = 0;
+  let ok = 0;
+  let ng = 0;
+  QUESTIONS.forEach(function (q) {
+    const rec = store.records[q.id];
+    if (!rec) return;
+    seen++;
+    if (rec.last) ok++;
+    else ng++;
+  });
+
+  const total = QUESTIONS.length;
+  document.querySelector("#statSeen").innerHTML = `${seen}<small> / ${total}</small>`;
+  document.querySelector("#statOk").innerHTML   = `${ok}<small> / ${total}</small>`;
+  document.querySelector("#statNg").textContent = ng;
+
+  // 出題範囲ごとの達成状況
+  const listEl = document.querySelector("#topicList");
+  listEl.innerHTML = "";
+  Object.keys(TOPICS).forEach(function (key) {
+    const qs = QUESTIONS.filter(q => q.topic === key);
+    const okN = qs.filter(q => store.records[q.id]?.last === true).length;
+    const ngN = qs.filter(q => store.records[q.id]?.last === false).length;
+
+    const li = document.createElement("li");
+    const name = document.createElement("span");
+    name.textContent = TOPICS[key];
+    const bar = document.createElement("span");
+    bar.className = "bar";
+    bar.innerHTML =
+      `<span class="ok" style="width:${okN / qs.length * 100}%"></span>` +
+      `<span class="ng" style="width:${ngN / qs.length * 100}%"></span>`;
+    const cnt = document.createElement("span");
+    cnt.className = "count";
+    cnt.textContent = `${okN}/${qs.length}`;
+    li.append(name, bar, cnt);
+    listEl.appendChild(li);
+  });
+
+  // 次の5問の内訳
+  plan = makePlan();
+  const nNew = plan.filter(p => p.kind === "new").length;
+  const nReview = plan.filter(p => p.kind === "review").length;
+  const nAgain = plan.filter(p => p.kind === "again").length;
+  const parts = [];
+  if (nNew) parts.push(`新しい問題 ${nNew}問`);
+  if (nReview) parts.push(`まちがえた問題 ${nReview}問`);
+  if (nAgain) parts.push(`正解済みの問題 ${nAgain}問`);
+  let planText = "次は " + parts.join("・");
+  if (ok === total) planText = "全問正解済みです。" + planText + "をもう一度";
+  document.querySelector("#planText").textContent = planText;
+
+  // これまでの挑戦
+  const historyEl = document.querySelector("#historyText");
+  if (store.runs.length === 0) {
+    historyEl.textContent = "";
+  } else {
+    const recent = store.runs.slice(-5).reverse()
+      .map(r => `${r.date}（${r.score}/${r.total}）`)
+      .join("、");
+    historyEl.textContent = `これまで ${store.runs.length} 回挑戦。最近の記録：${recent}`;
+  }
+
+  document.querySelector("#storageNote").textContent = canSave
+    ? "記録はこのブラウザのローカルストレージに保存されます。"
+    : "このブラウザでは記録を保存できません（プライベートモードなど）。ページを閉じると記録は消えます。";
+
+  show(homeView);
+}
+
+// =====================================================================
+//  出題
+// =====================================================================
+
+function startQuiz() {
+  if (plan.length === 0) plan = makePlan();
+  count = 0;
+  results = [];
+  showQuestion();
+  show(playView);
+}
+
+function showQuestion() {
+  const item = plan[count];
+  const q = item.q;
+
+  progressEl.textContent = `問題 ${count + 1} / ${plan.length}`;
+  topicTagEl.textContent = TOPICS[q.topic];
+  kindTagEl.className = "tag";
+  if (item.kind === "review") {
+    kindTagEl.textContent = "前回まちがえた問題";
+    kindTagEl.classList.add("review");
+    kindTagEl.hidden = false;
+  } else if (item.kind === "new") {
+    kindTagEl.textContent = "新しい問題";
+    kindTagEl.classList.add("new");
+    kindTagEl.hidden = false;
+  } else {
+    kindTagEl.hidden = true;
+  }
+
+  renderInline(questionEl, q.question);
+
+  if (q.code) {
+    codeEl.textContent = q.code;
+    codeBoxEl.hidden = false;
+  } else {
+    codeBoxEl.hidden = true;
+  }
+
+  // 選択肢は表示する順番だけシャッフルする。value には元の番号を入れておくので、
+  // 正誤判定は第４回と同じく Number(picked.value) === q.answer でできる
+  choicesEl.innerHTML = "";
+  choicesEl.classList.remove("locked");
+  const order = shuffle(q.choices.map((_, i) => i));
+  order.forEach(function (originalIndex, pos) {
+    const label = document.createElement("label");
+    label.className = "choice" + (q.mono ? " mono" : "");
+
+    const input = document.createElement("input");
+    input.type = "radio";
+    input.name = "answer";
+    input.value = originalIndex;
+    input.addEventListener("change", function () {
+      answerBtn.disabled = false;
+    });
+
+    const letter = document.createElement("span");
+    letter.className = "letter";
+    letter.textContent = "abcd"[pos] + ".";
+
+    const text = document.createElement("span");
+    text.className = "text";
+    if (q.mono) text.textContent = q.choices[originalIndex];
+    else renderInline(text, q.choices[originalIndex]);
+
+    label.append(input, letter, text);
+    choicesEl.appendChild(label);
+  });
+
+  feedbackEl.hidden = true;
+  answerBtn.hidden = false;
+  answerBtn.disabled = true;
+  nextBtn.hidden = true;
+}
+
+answerBtn.addEventListener("click", function () {
+  const picked = document.querySelector('input[name="answer"]:checked');
+  if (!picked) return;
+
+  const q = plan[count].q;
+  const ok = Number(picked.value) === q.answer;
+  results.push(ok);
+
+  // 1問ごとに記録する（途中でやめても、解いた分は残る）
+  const rec = store.records[q.id] ?? { tries: 0, correct: 0 };
+  rec.tries++;
+  if (ok) rec.correct++;
+  rec.last = ok;
+  rec.at = Date.now();
+  store.records[q.id] = rec;
+  saveStore();
+
+  // 選択肢に色を付けて、選べないようにする
+  choicesEl.classList.add("locked");
+  choicesEl.querySelectorAll("label").forEach(function (label) {
+    const input = label.querySelector("input");
+    input.disabled = true;
+    const idx = Number(input.value);
+    if (idx === q.answer) label.classList.add("is-correct");
+    else if (idx === Number(picked.value)) label.classList.add("is-wrong");
+  });
+
+  // 正誤と解説
+  feedbackEl.innerHTML = "";
+  feedbackEl.className = "feedback " + (ok ? "ok" : "ng");
+  const verdict = document.createElement("p");
+  verdict.className = "verdict";
+  verdict.textContent = ok ? "正解！" : "不正解";
+  const explain = document.createElement("p");
+  renderInline(explain, q.explain);
+  feedbackEl.append(verdict, explain);
+  if (!ok) {
+    const hint = document.createElement("p");
+    hint.className = "hint";
+    hint.textContent = "この問題は次回以降にもう一度出題されます。";
+    feedbackEl.appendChild(hint);
+  }
+  feedbackEl.hidden = false;
+
+  answerBtn.hidden = true;
+  nextBtn.textContent = count + 1 < plan.length ? "次の問題へ" : "結果を見る";
+  nextBtn.hidden = false;
+  nextBtn.focus();
+});
+
+nextBtn.addEventListener("click", function () {
+  count++;
+  if (count < plan.length) {
+    showQuestion();
+    scrollToView(playView);
+  } else {
+    showResult();
+  }
+});
+
+// =====================================================================
+//  結果
+// =====================================================================
+
+function formatDate(d) {
+  const pad = n => String(n).padStart(2, "0");
+  return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${pad(d.getMinutes())}`;
+}
+
+function showResult() {
+  const score = results.filter(r => r).length;
+  store.runs.push({ date: formatDate(new Date()), score: score, total: plan.length });
+  saveStore();
+
+  document.querySelector("#score").innerHTML =
+    `${score} / ${plan.length}<small>問正解</small>`;
+
+  const listEl = document.querySelector("#reviewList");
+  listEl.innerHTML = "";
+  plan.forEach(function (item, i) {
+    const li = document.createElement("li");
+    const mark = document.createElement("span");
+    mark.className = results[i] ? "mark-ok" : "mark-ng";
+    mark.textContent = results[i] ? "○" : "×";
+    mark.setAttribute("aria-label", results[i] ? "正解" : "不正解");
+    const body = document.createElement("span");
+    const topic = document.createElement("span");
+    topic.className = "topic";
+    topic.textContent = TOPICS[item.q.topic];
+    const text = document.createElement("span");
+    renderInline(text, item.q.question);
+    body.append(topic, text);
+    li.append(mark, body);
+    listEl.appendChild(li);
+  });
+
+  plan = [];
+  show(resultView);
+}
+
+document.querySelector("#startBtn").addEventListener("click", startQuiz);
+document.querySelector("#againBtn").addEventListener("click", function () {
+  plan = makePlan();
+  startQuiz();
+});
+document.querySelector("#homeBtn").addEventListener("click", renderHome);
+
+// 記録のリセット。確認ダイアログを出さず、2回押すと消える方式にする
+const resetBtn = document.querySelector("#resetBtn");
+let resetTimer = null;
+resetBtn.addEventListener("click", function () {
+  if (!resetBtn.classList.contains("armed")) {
+    resetBtn.classList.add("armed");
+    resetBtn.textContent = "もう一度押すとすべての記録を消します";
+    resetTimer = setTimeout(function () {
+      resetBtn.classList.remove("armed");
+      resetBtn.textContent = "記録をリセット";
+    }, 4000);
+    return;
+  }
+  clearTimeout(resetTimer);
+  try { localStorage.removeItem(STORAGE_KEY); } catch (error) { /* 消せなくても画面は初期化する */ }
+  store = { records: {}, runs: [] };
+  resetBtn.classList.remove("armed");
+  resetBtn.textContent = "記録をリセット";
+  renderHome();
+});
+
+renderHome();
+
+// ---- 明るい配色 / 暗い配色の切り替え（授業資料と同じ） ----
+(function () {
+  const root = document.documentElement;
+  const btn = document.querySelector("[data-theme-toggle]");
+  const dark = window.matchMedia("(prefers-color-scheme: dark)");
+
+  function current() {
+    const chosen = root.getAttribute("data-theme");
+    if (chosen === "dark" || chosen === "light") return chosen;
+    return dark.matches ? "dark" : "light";
+  }
+
+  function describe() {
+    const next = current() === "dark" ? "ライト" : "ダーク";
+    btn.setAttribute("aria-label", next + "モードに切り替える");
+    btn.title = next + "モードに切り替える";
+  }
+
+  btn.addEventListener("click", function () {
+    const next = current() === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("theme", next); } catch (e) { /* 保存できなくても切り替えは効く */ }
+    describe();
+  });
+
+  if (dark.addEventListener) dark.addEventListener("change", describe);
+  describe();
+})();
+</script>
+</body>
+</html>
